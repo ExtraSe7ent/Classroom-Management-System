@@ -1,0 +1,78 @@
+# ==========================================
+# 1. Chặn các file rác hệ thống của WINDOWS
+# ==========================================
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.lnk
+*.l产
+[Dd]ownloads/
+$RECYCLE.BIN/
+System Volume Information/
+
+# ==========================================
+# 2. Chặn các file rác hệ thống của macOS
+# ==========================================
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon_
+._*
+.Spotlight-V100
+.Trashes
+
+# ==========================================
+# 3. Chặn bộ nhớ đệm và file biên dịch của Python
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# ==========================================
+# 4. Chặn môi trường ảo của Python (Nếu nhóm có dùng)
+# ==========================================
+venv/
+.venv/
+ENV/
+env/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ==========================================
+# 5. Chặn Database chạy thử ở máy cá nhân (Django mặc định)
+# ==========================================
+db.sqlite3
+db.sqlite3-journal
+
+# ==========================================
+# 6. Chặn cấu hình cá nhân của các Editor (VS Code, JetBrains...)
+# ==========================================
+.vscode/
+*.code-workspace
+.history/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
