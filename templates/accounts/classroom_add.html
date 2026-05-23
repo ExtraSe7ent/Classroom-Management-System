@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Tạo Lớp Học{% endblock %}
+{% block header %}Thêm lớp học mới{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm p-4">
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-success">Tạo lớp</button>
+                    <a href="{% url 'classroom_list' %}" class="btn btn-light">Hủy</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
