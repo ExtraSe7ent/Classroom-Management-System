@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}Quản lý Bài tập | EduManager{% endblock %}
+{% block header %}<i class="fas fa-book-reader me-2"></i>Quản lý Bài tập{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'assignment_create' %}" class="btn btn-primary shadow-sm">
+    <i class="fas fa-plus-circle me-1"></i>Giao bài tập mới
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="card border shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Tên bài tập</th>
+                        <th>Lớp học</th>
+                        <th>Tệp đính kèm</th>
+                        <th>Hạn nộp</th>
+                        <th class="text-end pe-4">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for a in assignments %}
+                    <tr>
+                        <td class="ps-4">
+                            <a href="{% url 'assignment_detail' a.id %}" class="fw-bold text-primary text-decoration-none">{{ a.title }}</a>
+                            <small class="text-muted">Tạo lúc: {{ a.created_at|date:"d/m H:i" }}</small>
+                        </td>
+                        <td><span class="badge bg-indigo-100 text-indigo-700" style="background: #eef2ff; color: #4f46e5;">{{ a.classroom.name }}</span></td>
+                        <td>
+                            {% if a.file_attachment %}
+                                <a href="{{ a.file_attachment.url }}" class="btn btn-sm btn-light" target="_blank"><i class="fas fa-download me-1"></i>Tải đề</a>
+                            {% else %}
+                                <span class="text-muted small">Không có tệp</span>
+                            {% endif %}
+                        </td>
+                        <td><span class="text-danger small fw-bold"><i class="far fa-clock me-1"></i>{{ a.due_date|date:"d/m/Y H:i" }}</span></td>
+                        <td class="text-end pe-4">
+                            <a href="{% url 'assignment_edit' a.id %}" class="btn btn-sm btn-light text-primary me-1"><i class="fas fa-edit"></i></a>
+                            <button class="btn btn-sm btn-light text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ a.id }}"><i class="fas fa-trash"></i></button>
+
+                            <!-- Delete Modal -->
+                            <div class="modal fade" id="deleteModal{{ a.id }}" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content border-0 shadow">
+                                        <div class="modal-header bg-light">
+                                            <h5 class="modal-title fw-bold text-danger">Xác nhận xóa bài tập</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body text-start">
+                                            Bạn có chắc chắn muốn xóa bài tập <strong>{{ a.title }}</strong>? <br>
+                                            <small class="text-muted">Lưu ý: Tất cả bài nộp của học sinh cho bài tập này cũng sẽ bị xóa sạch.</small>
+                                        </div>
+                                        <div class="modal-footer bg-light">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                            <form action="{% url 'assignment_delete' a.id %}" method="POST" class="d-inline">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5" class="text-center py-5 text-muted">Chưa có bài tập nào được giao.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
