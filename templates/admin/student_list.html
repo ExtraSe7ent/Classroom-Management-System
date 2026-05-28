@@ -1,0 +1,435 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Quản lý học sinh | EduManager{% endblock %}
+
+{% block page_title %}Quản lý học sinh{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header" style="flex-wrap: wrap; gap: var(--space-4);">
+    <div class="search-bar">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+      <input type="text" id="studentSearchInput" placeholder="Tìm kiếm học sinh (tên, SĐT, mã)..." autocomplete="off">
+    </div>
+    
+    <button class="btn btn-primary" onclick="openAddStudentModal()">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="margin-right:2px;">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      </svg>
+      Thêm học sinh
+    </button>
+  </div>
+
+  <div class="card-body" style="padding: 0;">
+    <div class="table-wrapper" style="border: none; border-radius: 0;">
+      <table class="table" id="studentTable">
+        <thead>
+          <tr>
+            <th style="width: 100px;">Mã HS</th>
+            <th style="width: 200px;">Họ và Tên</th>
+            <th style="width: 140px;">Tên đăng nhập</th>
+            <th style="width: 130px;">Số điện thoại</th>
+            <th style="width: 180px;">Email</th>
+            <th>Lớp tham gia</th>
+            <th style="width: 120px; text-align: center;">Hành động</th>
+          </tr>
+        </thead>
+        <tbody id="studentTableBody">
+          {% for student in students %}
+          <tr data-id="{{ student.id }}" 
+              data-student-id="{{ student.student_id }}"
+              data-first-name="{{ student.first_name }}"
+              data-last-name="{{ student.last_name }}"
+              data-username="{{ student.username }}"
+              data-phone="{{ student.phone }}"
+              data-email="{{ student.email }}"
+              data-dob="{{ student.date_of_birth }}"
+              data-address="{{ student.address }}"
+              data-classes="{{ student.classes }}">
+            <td>
+              <span class="badge badge-info">{{ student.student_id }}</span>
+            </td>
+            <td>
+              <strong class="student-name-text">{{ student.last_name }} {{ student.first_name }}</strong>
+            </td>
+            <td class="student-username-text">{{ student.username }}</td>
+            <td class="student-phone-text">{{ student.phone }}</td>
+            <td class="student-email-text">{{ student.email }}</td>
+            <td class="student-classes-text">
+              <span style="font-size: var(--text-xs); color: var(--gray-600);">{{ student.classes }}</span>
+            </td>
+            <td>
+              <div style="display: flex; gap: var(--space-2); justify-content: center;">
+                <button class="btn btn-secondary btn-sm" onclick="openEditStudentModal(this)" title="Chỉnh sửa">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                  </svg>
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="triggerDeleteStudent(this)" title="Xóa học sinh">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+          
+          <tr id="noResultsRow" style="display: none;">
+            <td colspan="7">
+              <div class="empty-state">
+                <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                </svg>
+                <p>Không tìm thấy học sinh nào khớp với từ khóa tìm kiếm.</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL THÊM / SỬA HỌC SINH -->
+<div class="modal-overlay" id="studentModal">
+  <div class="modal" style="max-width: 560px;">
+    <div class="modal-header">
+      <h3 class="modal-title" id="modalFormTitle">Thêm học sinh mới</h3>
+      <button class="modal-close" onclick="closeStudentModal()">&times;</button>
+    </div>
+    <div class="modal-body" style="margin-bottom: var(--space-4);">
+      <form id="studentForm" novalidate>
+        <input type="hidden" id="formStudentDbId" value="">
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
+          <div class="form-group">
+            <label class="form-label">Mã học sinh <span class="required">*</span></label>
+            <input type="text" id="formStudentId" class="form-control" readonly style="background-color: var(--gray-100);">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Tên đăng nhập <span class="required">*</span></label>
+            <input type="text" id="formUsername" class="form-control" placeholder="Ví dụ: quanganh" required>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: var(--space-4);">
+          <div class="form-group">
+            <label class="form-label">Họ học sinh <span class="required">*</span></label>
+            <input type="text" id="formLastName" class="form-control" placeholder="Ví dụ: Nguyễn Quang" required>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Tên học sinh <span class="required">*</span></label>
+            <input type="text" id="formFirstName" class="form-control" placeholder="Ví dụ: Anh" required>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
+          <div class="form-group">
+            <label class="form-label">Số điện thoại</label>
+            <input type="tel" id="formPhone" class="form-control" placeholder="Nhập SĐT phụ huynh/học sinh">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" id="formEmail" class="form-control" placeholder="hs@gmail.com">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
+          <div class="form-group">
+            <label class="form-label">Ngày sinh</label>
+            <input type="date" id="formDob" class="form-control">
+          </div>
+
+          <!-- Thông tin lớp học: Admin có thể sửa trong edit mode -->
+          <div class="form-group">
+            <label class="form-label">Thông tin lớp học</label>
+            <input type="text" id="formClasses" class="form-control" placeholder="Chưa xếp lớp" maxlength="1000">
+            <div class="form-hint" id="classesHint" style="display:none;">Admin có thể cập nhật thông tin lớp học.</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Địa chỉ</label>
+          <textarea id="formAddress" class="form-control" rows="2" placeholder="Nhập địa chỉ cư trú học sinh" maxlength="200"></textarea>
+        </div>
+      </form>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeStudentModal()">Hủy</button>
+      <button class="btn btn-primary" onclick="submitStudentForm()">Lưu</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const searchInput = document.getElementById('studentSearchInput');
+  const studentTableBody = document.getElementById('studentTableBody');
+  const studentRows = Array.from(studentTableBody.querySelectorAll('tr:not(#noResultsRow)'));
+  const noResultsRow = document.getElementById('noResultsRow');
+
+  const studentModal = document.getElementById('studentModal');
+  const modalFormTitle = document.getElementById('modalFormTitle');
+  const studentForm = document.getElementById('studentForm');
+
+  const formStudentDbId = document.getElementById('formStudentDbId');
+  const formStudentId = document.getElementById('formStudentId');
+  const formUsername = document.getElementById('formUsername');
+  const formLastName = document.getElementById('formLastName');
+  const formFirstName = document.getElementById('formFirstName');
+  const formPhone = document.getElementById('formPhone');
+  const formEmail = document.getElementById('formEmail');
+  const formDob = document.getElementById('formDob');
+  const formClasses = document.getElementById('formClasses');
+  const classesHint = document.getElementById('classesHint');
+  const formAddress = document.getElementById('formAddress');
+
+  // ===== TÌM KIẾM TRỰC TIẾP =====
+  searchInput.addEventListener('input', function() {
+    const keyword = this.value.trim().toLowerCase();
+    let matchCount = 0;
+
+    studentRows.forEach(row => {
+      const studentId = row.getAttribute('data-student-id').toLowerCase();
+      const lastName = row.getAttribute('data-last-name').toLowerCase();
+      const firstName = row.getAttribute('data-first-name').toLowerCase();
+      const fullName = `${lastName} ${firstName}`.toLowerCase();
+      const username = row.getAttribute('data-username').toLowerCase();
+      const phone = row.getAttribute('data-phone').toLowerCase();
+      const email = row.getAttribute('data-email').toLowerCase();
+      const classes = row.getAttribute('data-classes').toLowerCase();
+
+      const isMatch = studentId.includes(keyword) || fullName.includes(keyword) || 
+                      username.includes(keyword) || phone.includes(keyword) || 
+                      email.includes(keyword) || classes.includes(keyword);
+
+      row.style.display = isMatch ? '' : 'none';
+      if (isMatch) matchCount++;
+    });
+
+    noResultsRow.style.display = (matchCount === 0) ? '' : 'none';
+  });
+
+  // ===== MỞ MODAL THÊM MỚI =====
+  function openAddStudentModal() {
+    studentForm.reset();
+    
+    formStudentDbId.value = '';
+    formStudentId.value = '{{ next_student_id }}';
+    formUsername.readOnly = false;
+    formUsername.style.backgroundColor = '';
+    formClasses.value = 'Chưa xếp lớp';
+    formClasses.readOnly = true;
+    formClasses.style.backgroundColor = 'var(--gray-100)';
+    classesHint.style.display = 'none';
+
+    modalFormTitle.textContent = "Thêm học sinh mới";
+    studentModal.classList.add('open');
+    formUsername.focus();
+  }
+
+  // ===== MỞ MODAL SỬA =====
+  function openEditStudentModal(button) {
+    studentForm.reset();
+    const row = button.closest('tr');
+    
+    formStudentDbId.value = row.getAttribute('data-id');
+    formStudentId.value = row.getAttribute('data-student-id');
+    formUsername.value = row.getAttribute('data-username');
+    formUsername.readOnly = true; // Username không được sửa
+    formUsername.style.backgroundColor = 'var(--gray-100)';
+    
+    formLastName.value = row.getAttribute('data-last-name');
+    formFirstName.value = row.getAttribute('data-first-name');
+    formPhone.value = row.getAttribute('data-phone');
+    formEmail.value = row.getAttribute('data-email');
+    formDob.value = row.getAttribute('data-dob');
+    formAddress.value = row.getAttribute('data-address');
+
+    // D.2: Admin có thể sửa thông tin lớp học trong edit mode
+    formClasses.value = row.getAttribute('data-classes') || 'Chưa xếp lớp';
+    formClasses.readOnly = false;
+    formClasses.style.backgroundColor = '';
+    classesHint.style.display = '';
+
+    modalFormTitle.textContent = "Sửa thông tin học sinh";
+    studentModal.classList.add('open');
+    formLastName.focus();
+  }
+
+  function closeStudentModal() {
+    studentModal.classList.remove('open');
+  }
+
+  studentModal.addEventListener('click', function(e) {
+    if (e.target === this) closeStudentModal();
+  });
+
+  // ===== LƯĂ FORM (AJAX POST) =====
+  async function submitStudentForm() {
+    const studentDbId = formStudentDbId.value;
+    const studentId = formStudentId.value;
+    const username = formUsername.value.trim();
+    const lastName = formLastName.value.trim();
+    const firstName = formFirstName.value.trim();
+    const phone = formPhone.value.trim();
+    const email = formEmail.value.trim();
+    const dob = formDob.value;
+    const classes = formClasses.value;
+    const address = formAddress.value.trim();
+
+    if (!username || !lastName || !firstName) {
+      showToast('Vui lòng nhập đầy đủ các trường bắt buộc (*).', 'danger');
+      return;
+    }
+
+    const usernameRegex = /^[a-zA-Z0-9_]{3,30}$/;
+    if (!usernameRegex.test(username)) {
+      showToast('Tên đăng nhập từ 3-30 ký tự, không chứa ký tự đặc biệt hoặc dấu tiếng Việt.', 'danger');
+      return;
+    }
+
+    if (phone) {
+      const phoneRegex = /^[0-9]{9,11}$/;
+      if (!phoneRegex.test(phone)) {
+        showToast('Số điện thoại không hợp lệ (phải từ 9-11 chữ số).', 'danger');
+        formPhone.focus();
+        return;
+      }
+    }
+
+    const formData = new FormData();
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+    formData.append('student_id', studentId);
+    formData.append('username', username);
+    formData.append('last_name', lastName);
+    formData.append('first_name', firstName);
+    formData.append('phone', phone);
+    formData.append('email', email);
+    formData.append('date_of_birth', dob);
+    formData.append('address', address);
+    formData.append('classes', classes);
+
+    if (studentDbId) {
+      formData.append('action', 'edit');
+      formData.append('student_db_id', studentDbId);
+    } else {
+      formData.append('action', 'add');
+    }
+
+    try {
+      const res = await fetch('{% url "student_list" %}', { method: 'POST', body: formData });
+      const data = await res.json();
+
+      if (!res.ok) {
+        const firstError = Object.values(data.errors || {})[0];
+        showToast(firstError ? firstError[0] : 'Có lỗi xảy ra.', 'danger');
+        return;
+      }
+
+      if (studentDbId) {
+        const targetRow = studentRows.find(r => r.getAttribute('data-id') === studentDbId);
+        if (targetRow) {
+          targetRow.setAttribute('data-first-name', data.first_name);
+          targetRow.setAttribute('data-last-name', data.last_name);
+          targetRow.setAttribute('data-phone', data.phone);
+          targetRow.setAttribute('data-email', data.email);
+          targetRow.setAttribute('data-classes', data.classes);
+          targetRow.querySelector('.student-name-text').textContent = `${data.last_name} ${data.first_name}`;
+          targetRow.querySelector('.student-phone-text').textContent = data.phone;
+          targetRow.querySelector('.student-email-text').textContent = data.email;
+          targetRow.querySelector('.student-classes-text span').textContent = data.classes;
+        }
+        showToast('Cập nhật thông tin thành công!', 'success');
+      } else {
+        const newTr = document.createElement('tr');
+        newTr.setAttribute('data-id', data.id);
+        newTr.setAttribute('data-student-id', data.student_id);
+        newTr.setAttribute('data-first-name', data.first_name);
+        newTr.setAttribute('data-last-name', data.last_name);
+        newTr.setAttribute('data-username', data.username);
+        newTr.setAttribute('data-phone', data.phone);
+        newTr.setAttribute('data-email', data.email);
+        newTr.setAttribute('data-dob', data.date_of_birth);
+        newTr.setAttribute('data-address', data.address);
+        newTr.setAttribute('data-classes', data.classes);
+
+        newTr.innerHTML = `
+          <td><span class="badge badge-info">${data.student_id}</span></td>
+          <td><strong class="student-name-text">${data.last_name} ${data.first_name}</strong></td>
+          <td class="student-username-text">${data.username}</td>
+          <td class="student-phone-text">${data.phone}</td>
+          <td class="student-email-text">${data.email}</td>
+          <td class="student-classes-text"><span style="font-size: var(--text-xs); color: var(--gray-600);">${data.classes}</span></td>
+          <td>
+            <div style="display: flex; gap: var(--space-2); justify-content: center;">
+              <button class="btn btn-secondary btn-sm" onclick="openEditStudentModal(this)" title="Chỉnh sửa">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+              </button>
+              <button class="btn btn-danger btn-sm" onclick="triggerDeleteStudent(this)" title="Xóa học sinh">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+              </button>
+            </div>
+          </td>
+        `;
+
+        studentTableBody.insertBefore(newTr, noResultsRow);
+        studentRows.push(newTr);
+        showToast(`Lưu thành công! Mật khẩu mặc định: Student@123`, 'success');
+      }
+
+      closeStudentModal();
+
+    } catch (err) {
+      showToast('Lỗi kết nối. Vui lòng thử lại.', 'danger');
+    }
+  }
+
+  // ===== XÓA HỌC SINH (AJAX) =====
+  function triggerDeleteStudent(button) {
+    const row = button.closest('tr');
+    const studentDbId = row.getAttribute('data-id');
+    const studentId = row.getAttribute('data-student-id');
+    const lastName = row.getAttribute('data-last-name');
+    const firstName = row.getAttribute('data-first-name');
+    const fullName = `${lastName} ${firstName}`;
+
+    openModal(
+      'Xác nhận xóa học sinh',
+      `Bạn có chắc chắn muốn xóa học sinh [${fullName}] (${studentId})? Toàn bộ dữ liệu liên đới sẽ bị xóa vĩnh viễn.`,
+      async function() {
+        const formData = new FormData();
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+        formData.append('action', 'delete');
+        formData.append('student_db_id', studentDbId);
+
+        try {
+          const res = await fetch('{% url "student_list" %}', { method: 'POST', body: formData });
+          const data = await res.json();
+
+          if (!res.ok) {
+            showToast('Xóa thất bại. Vui lòng thử lại.', 'danger');
+            return;
+          }
+
+          row.remove();
+          const index = studentRows.indexOf(row);
+          if (index > -1) studentRows.splice(index, 1);
+          if (studentRows.length === 0) noResultsRow.style.display = '';
+          showToast(`Đã xóa học sinh ${studentId} thành công!`, 'success');
+
+        } catch (err) {
+          showToast('Lỗi kết nối. Vui lòng thử lại.', 'danger');
+        }
+      }
+    );
+  }
+</script>
+{% endblock %}

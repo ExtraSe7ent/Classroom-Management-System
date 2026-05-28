@@ -1,0 +1,282 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Trang chủ Học sinh | EduManager{% endblock %}
+
+{% block page_title %}Bảng điều khiển Học sinh{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Premium dashboard design */
+  .welcome-banner {
+    background: linear-gradient(135deg, var(--primary) 0%, #6366F1 100%);
+    color: #fff;
+    border-radius: var(--radius-lg);
+    padding: var(--space-6) var(--space-8);
+    margin-bottom: var(--space-6);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .welcome-banner::before {
+    content: '';
+    position: absolute;
+    right: -20px;
+    bottom: -20px;
+    width: 180px;
+    height: 180px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-full);
+  }
+
+  .welcome-text h1 {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    margin-bottom: var(--space-2);
+  }
+
+  .welcome-text p {
+    font-size: var(--text-sm);
+    opacity: 0.9;
+    margin: 0;
+  }
+
+  /* Orange Alert Card for Urgent Deadlines */
+  .alert-deadline {
+    background: linear-gradient(to right, #FFFBEB, #FEF3C7);
+    border: 1px solid #F59E0B;
+    border-radius: var(--radius-lg);
+    padding: var(--space-4) var(--space-6);
+    margin-bottom: var(--space-6);
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    color: #92400E;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .alert-deadline-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: var(--radius-full);
+    background-color: #FEF3C7;
+    border: 1px solid #F59E0B;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #D97706;
+    flex-shrink: 0;
+  }
+
+  /* Giant interactive shortcut cards grid */
+  .shortcut-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-6);
+    margin-bottom: var(--space-6);
+  }
+
+  .shortcut-card {
+    background-color: #fff;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-4);
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--gray-800);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .shortcut-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--primary);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .shortcut-card:hover .shortcut-icon-wrapper {
+    transform: scale(1.1);
+  }
+
+  .shortcut-icon-wrapper {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+  }
+
+  .shortcut-card.sc-schedule .shortcut-icon-wrapper {
+    background-color: var(--primary-light);
+    color: var(--primary);
+  }
+
+  .shortcut-card.sc-attendance .shortcut-icon-wrapper {
+    background-color: var(--success-light);
+    color: var(--success);
+  }
+
+  .shortcut-card.sc-assignments .shortcut-icon-wrapper {
+    background-color: var(--warning-light);
+    color: var(--warning);
+  }
+
+  .shortcut-title {
+    font-weight: 700;
+    font-size: var(--text-base);
+    margin: 0;
+  }
+
+  .shortcut-desc {
+    font-size: var(--text-xs);
+    color: var(--gray-500);
+    line-height: 1.5;
+    margin: 0;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Welcome Banner -->
+<div class="welcome-banner">
+  <div class="welcome-text">
+    <h1>Xin chào, {{ student.name }}!</h1>
+    <p>Mã học sinh: <strong>{{ student.student_id }}</strong> | Chúc bạn có một ngày học tập thật hiệu quả.</p>
+  </div>
+  
+  <div style="font-family: monospace; font-size: var(--text-sm); font-weight: bold; background: rgba(255,255,255,0.15); padding: var(--space-2) var(--space-4); border-radius: var(--radius-md);">
+    {{ student.email }}
+  </div>
+</div>
+
+<!-- Cảnh báo Bài tập Sắp đến hạn -->
+{% if urgent_assignments %}
+<div class="alert-deadline">
+  <div class="alert-deadline-icon">
+    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+    </svg>
+  </div>
+  <div style="flex: 1;">
+    <h4 style="font-weight: 700; font-size: var(--text-sm); margin-bottom: 2px;">Cảnh báo bài tập sắp đến hạn nộp!</h4>
+    <p style="font-size: var(--text-xs); margin: 0; opacity: 0.95;">
+      Bạn đang có <strong>{{ urgent_assignments|length }}</strong> bài tập chưa hoàn thành cần nộp trước thời hạn. Hãy tranh thủ làm bài nhé!
+    </p>
+  </div>
+  
+  <a href="{% url 'user_assignment_list' %}" class="btn btn-secondary btn-sm" style="color: #92400E; border-color: #F59E0B; background: transparent; font-weight: 600;">
+    Xem bài tập ngay
+  </a>
+</div>
+{% endif %}
+
+<!-- Shortcut Cards Grid -->
+<div class="shortcut-grid">
+  <!-- Xem lịch học -->
+  <a href="{% url 'user_schedule' %}" class="shortcut-card sc-schedule">
+    <div class="shortcut-icon-wrapper">
+      <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+      </svg>
+    </div>
+    <h3 class="shortcut-title">Lịch học hàng tuần</h3>
+    <p class="shortcut-desc">Xem thời khóa biểu, ca học và phòng học cố định của bạn trong tuần.</p>
+  </a>
+
+  <!-- Xem chuyên cần -->
+  <a href="{% url 'user_attendance' %}" class="shortcut-card sc-attendance">
+    <div class="shortcut-icon-wrapper">
+      <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    </div>
+    <h3 class="shortcut-title">Nhận xét & Chuyên cần</h3>
+    <p class="shortcut-desc">Theo dõi thống kê số ngày đi học, vắng mặt cùng những nhận xét của thầy cô giáo.</p>
+  </a>
+
+  <!-- Danh sách bài tập -->
+  <a href="{% url 'user_assignment_list' %}" class="shortcut-card sc-assignments">
+    <div class="shortcut-icon-wrapper">
+      <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+      </svg>
+    </div>
+    <h3 class="shortcut-title">Nhiệm vụ & Bài tập</h3>
+    <p class="shortcut-desc">Tải đề bài tập về nhà, nộp lời giải và cập nhật điểm số kèm nhận xét trực tiếp.</p>
+  </a>
+</div>
+
+<!-- Hộp thống kê phụ -->
+<div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-4);">
+  <div class="stat-card">
+    <div class="stat-icon indigo">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.33l-7.5-5-7.5 5V21M3 21h18" />
+      </svg>
+    </div>
+    <div class="stat-info">
+      <div class="stat-value">{{ stats.active_classes_count }}</div>
+      <div class="stat-label">Lớp đang học</div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon green">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    </div>
+    <div class="stat-info">
+      <div class="stat-value">{{ stats.attendance_rate|floatformat:0 }}%</div>
+      <div class="stat-label">Tỷ lệ đi học</div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon amber">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    </div>
+    <div class="stat-info">
+      <div class="stat-value">{{ stats.not_submitted_count }}</div>
+      <div class="stat-label">Bài tập chưa nộp</div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon violet">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+      </svg>
+    </div>
+    <div class="stat-info">
+      <div class="stat-value">{{ stats.waiting_graded_count }}</div>
+      <div class="stat-label">Đang chờ chấm</div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon red">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+      </svg>
+    </div>
+    <div class="stat-info">
+      <div class="stat-value">{{ stats.graded_assignments_count }}</div>
+      <div class="stat-label">Bài tập đã chấm</div>
+    </div>
+  </div>
+</div>
+{% endblock %}

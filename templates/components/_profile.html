@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Hồ sơ cá nhân | EduManager{% endblock %}
+
+{% block page_title %}Hồ sơ cá nhân{% endblock %}
+
+{% block content %}
+<div class="row" style="gap: var(--space-4); display: grid; grid-template-columns: 1fr;">
+
+  <!-- Card Thông tin cá nhân -->
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title">Thông tin cá nhân</h2>
+    </div>
+    <div class="card-body">
+      <form method="post" id="profileForm" novalidate>
+        {% csrf_token %}
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
+          <div class="form-group">
+            <label class="form-label">Họ <span class="required">*</span></label>
+            {{ profile_form.last_name }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tên <span class="required">*</span></label>
+            {{ profile_form.first_name }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          {{ profile_form.email }}
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
+          <div class="form-group">
+            <label class="form-label">Số điện thoại</label>
+            {{ profile_form.phone }}
+          </div>
+
+          <!-- SĐT liên hệ: thông tin bổ sung để liên hệ khẩn -->
+          <div class="form-group">
+            <label class="form-label">SĐT liên hệ</label>
+            <input type="tel" name="contact_phone" class="form-control"
+                   placeholder="SĐT khẩn cấp / phụ huynh"
+                   value="{{ profile.contact_phone|default:'' }}">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Địa chỉ</label>
+          {{ profile_form.address }}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Ngày sinh</label>
+          {{ profile_form.date_of_birth }}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Vai trò</label>
+          <input type="text" class="form-control" value="{{ profile.get_role_display }}" disabled>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Card Đổi mật khẩu -->
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title">Đổi mật khẩu</h2>
+    </div>
+    <div class="card-body">
+      <form method="post" id="passwordForm" novalidate>
+        {% csrf_token %}
+
+        <div class="form-group">
+          <label class="form-label">Mật khẩu cũ</label>
+          {{ password_form.old_password }}
+          <div class="form-hint" style="margin-top:var(--space-1);">
+            Để trống nếu không muốn đổi mật khẩu.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Mật khẩu mới</label>
+          {{ password_form.new_password }}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Xác nhận mật khẩu mới</label>
+          {{ password_form.confirm_password }}
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Nút Lưu thay đổi -->
+  <div style="display:flex; gap:var(--space-3);">
+    <button type="submit" form="profileForm" class="btn btn-primary">
+      Cập nhật
+    </button>
+    <a href="{% if user.is_staff %}{% url 'admin_dashboard' %}{% else %}{% url 'user_dashboard' %}{% endif %}" class="btn btn-secondary">
+      Quay lại
+    </a>
+  </div>
+
+</div>
+
+<!-- Container ẩn để nhận Django messages -->
+<div id="django-messages" style="display: none;">
+  {% if messages %}
+    {% for message in messages %}
+      <div class="django-message" data-type="{% if message.tags == 'error' %}danger{% else %}success{% endif %}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const messageElements = document.querySelectorAll('#django-messages .django-message');
+    messageElements.forEach(function(el) {
+      showToast(el.textContent.trim(), el.getAttribute('data-type'));
+    });
+  });
+
+  const profileForm = document.getElementById('profileForm');
+  const passwordForm = document.getElementById('passwordForm');
+
+  profileForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const firstName = profileForm.querySelector('[name="first_name"]').value.trim();
+    const lastName = profileForm.querySelector('[name="last_name"]').value.trim();
+    
+    if (!firstName || !lastName) {
+      showToast('Vui lòng điền đầy đủ Họ và Tên.', 'danger');
+      return;
+    }
+
+    const oldPw = passwordForm.querySelector('[name="old_password"]');
+    const newPw = passwordForm.querySelector('[name="new_password"]');
+    const confirmPw = passwordForm.querySelector('[name="confirm_password"]');
+
+    const oldPwVal = oldPw.value;
+    const newPwVal = newPw.value;
+    const confirmPwVal = confirmPw.value;
+
+    // Nếu người dùng có ý định đổi mật khẩu
+    if (oldPwVal || newPwVal || confirmPwVal) {
+      if (!oldPwVal) {
+        showToast('Vui lòng nhập mật khẩu cũ để đổi mật khẩu mới.', 'danger');
+        oldPw.focus();
+        return;
+      }
+      if (!newPwVal) {
+        showToast('Vui lòng nhập mật khẩu mới.', 'danger');
+        newPw.focus();
+        return;
+      }
+      
+      // Kiểm tra độ phức tạp: [8;50], ít nhất 1 chữ hoa, 1 số, 1 ký tự đặc biệt
+      const hasUppercase = /[A-Z]/.test(newPwVal);
+      const hasNumber = /[0-9]/.test(newPwVal);
+      const hasSpecial = /[^A-Za-z0-9]/.test(newPwVal);
+
+      if (newPwVal.length < 8 || newPwVal.length > 50 || !hasUppercase || !hasNumber || !hasSpecial) {
+        showToast('Mật khẩu mới từ 8-50 ký tự, chứa ít nhất 1 chữ hoa, số và ký tự đặc biệt.', 'danger');
+        newPw.focus();
+        return;
+      }
+
+      if (newPwVal !== confirmPwVal) {
+        showToast('Lỗi nhập liệu/Xác nhận mật khẩu mới không trùng khớp.', 'danger');
+        confirmPw.focus();
+        return;
+      }
+    }
+
+    const oldPwClone = oldPw.cloneNode(true);
+    const newPwClone = newPw.cloneNode(true);
+    const confirmPwClone = confirmPw.cloneNode(true);
+
+    oldPwClone.value = oldPwVal;
+    newPwClone.value = newPwVal;
+    confirmPwClone.value = confirmPwVal;
+
+    profileForm.appendChild(oldPwClone);
+    profileForm.appendChild(newPwClone);
+    profileForm.appendChild(confirmPwClone);
+
+    profileForm.submit();
+  });
+</script>
+{% endblock %}
