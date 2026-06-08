@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
+from django.db import transaction
 from .models import UserProfile, Class, Student, Schedule, Assignment, Submission, Attendance
 
 
@@ -90,11 +91,30 @@ class StudentForm(forms.Form):
         profile.address = data.get('address', '')
         profile.role = 'student'
         profile.save()
+        with transaction.atomic():
+            user = User.objects.create_user(
+                username=data['username'],
+                password='Student@123',
+                first_name=data['first_name'],
+                last_name=data['last_name'],
+                email=data.get('email', ''),
+            )
+            profile, _ = UserProfile.objects.get_or_create(user=user)
+            profile.phone = data.get('phone', '')
+            profile.date_of_birth = data.get('date_of_birth')
+            profile.address = data.get('address', '')
+            profile.role = 'student'
+            profile.save()
 
         student = Student.objects.create(
             user=user,
             student_id=data['student_id'],
         )
+        return student
+        student = Student.objects.create(
+                user=user,
+                student_id=data['student_id'],
+            )
         return student
 
 
@@ -112,6 +132,8 @@ class StudentEditForm(forms.Form):
 # ===== SCHEDULE =====
 
 class ScheduleForm(forms.ModelForm):
+    class_obj = forms.ModelChoiceField(queryset=Class.objects.all(), required=False)
+
     class Meta:
         model = Schedule
         fields = ['day_of_week', 'start_time', 'end_time', 'room']
@@ -124,8 +146,21 @@ class ScheduleForm(forms.ModelForm):
         cleaned_data = super().clean()
         start = cleaned_data.get('start_time')
         end = cleaned_data.get('end_time')
+        room = cleaned_data.get('room')
+        day = cleaned_data.get('day_of_week')
+        class_obj = cleaned_data.get('class_obj')
+
         if start and end and end <= start:
             raise forms.ValidationError('Giờ kết thúc phải lớn hơn giờ bắt đầu.')
+
+        if room and day and start and end:
+            conflict = Schedule.objects.filter(day_of_week=day, room__iexact=room)
+            if class_obj:
+                conflict = conflict.exclude(class_obj=class_obj)
+            for s in conflict:
+                if max(start, s.start_time) < min(end, s.end_time):
+                    raise forms.ValidationError(f'Phòng {room} đã có lớp {s.class_obj.name} đăng ký trong thời gian này.')
+
         return cleaned_data
 
 
