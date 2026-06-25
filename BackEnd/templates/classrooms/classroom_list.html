@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}Manage Classrooms{% endblock %}
+{% block header %}<i class="fas fa-chalkboard me-2"></i>Classroom List{% endblock %}
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Managed Classes</h5>
+        <a href="{% url 'classroom_add' %}" class="btn btn-primary shadow-sm"><i class="fas fa-plus me-1"></i>Create New Class</a>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            {% for class in classes %}
+            <div class="col-md-4 mb-3">
+                <div class="card h-100 transition-hover border">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="badge {% if class.is_active %}bg-success{% else %}bg-secondary{% endif %} bg-opacity-10 {% if class.is_active %}text-success{% else %}text-secondary{% endif %} px-3">
+                                {{ class.get_is_active_display }}
+                            </span>
+                            <div class="dropdown">
+                                <i class="fas fa-ellipsis-v text-muted cursor-pointer" data-bs-toggle="dropdown"></i>
+                                <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                                    <li><a class="dropdown-item" href="{% url 'classroom_edit' class.id %}"><i class="fas fa-edit me-2"></i>Edit Class</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <form action="{% url 'classroom_delete' class.id %}" method="POST" onsubmit="return confirm('Deleting this class will delete all schedules and attendance data. Are you sure?')">
+                                            {% csrf_token %}
+                                            <button type="submit" class="dropdown-item text-danger"><i class="fas fa-trash me-2"></i>Delete Class</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <h5 class="card-title text-primary">{{ class.name }}</h5>
+                        <div class="row g-0 mt-2 mb-3">
+                            <div class="col-6"><small class="text-muted">Students: <strong>{{ class.student_count }}</strong></small></div>
+                            <div class="col-6 text-end"><small class="text-muted">Tuition: <strong>{{ class.tuition|intcomma }} VND</strong></small></div>
+                        </div>
+                        <p class="card-text text-muted small">{{ class.description|truncatewords:20 }}</p>
+                        <hr class="my-3 opacity-25">
+                        <p class="mb-0 small text-dark"><i class="fas fa-user-tie me-2"></i>{{ class.teacher.get_full_name|default:class.teacher.username }}</p>
+                    </div>
+                    <div class="card-footer bg-transparent border-0 p-3 pt-0">
+                        <a href="{% url 'classroom_detail' class.id %}" class="btn btn-sm btn-primary w-100 shadow-sm mb-2"><i class="fas fa-eye me-2"></i>View Details</a>
+                        <a href="{% url 'schedule_create' class.id %}" class="btn btn-sm btn-outline-primary w-100 border-0"><i class="fas fa-calendar-plus me-2"></i>Quick Schedule</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <p class="text-muted">No classrooms found. Click "Create New Class" to add one.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

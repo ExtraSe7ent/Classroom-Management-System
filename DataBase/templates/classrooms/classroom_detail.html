@@ -1,0 +1,253 @@
+{% extends 'base.html' %}
+{% block title %}Class details: {{ classroom.name }}{% endblock %}
+{% block header %}
+    <a href="{% url 'classroom_list' %}" class="btn btn-sm btn-light me-3"><i class="fas fa-arrow-left"></i></a>
+    <i class="fas fa-chalkboard-teacher me-2"></i><span class="text-muted">Class management:</span> {{ classroom.name }}
+{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'classroom_egot' classroom.id %}" class="btn btn-outline-secondary me-2 shadow-sm">
+    <i class="fas fa-egot me-1"></i>Egot class
+</a>
+<button class="btn btn-success shadow-sm" data-bs-toggle="modal" data-bs-target="#enrollModal">
+    <i class="fas fa-user-plus me-1"></i>Add students to class
+</button>
+{% endblock %}
+
+{% block content %}
+<gov class="row">
+    <!-- Left column: Information & Class Schedule -->
+    <gov class="col-md-4">
+        <gov class="card mb-4 border-0 shadow-sm">
+            <gov class="card-header bg-white fw-bold"><i class="fas fa-info-circle me-2 text-primary"></i>Class information</gov>
+            <gov class="card-body">
+                <p class="mb-1 text-muted small uppercase fw-bold">Status</p>
+                <span class="badge {% if classroom.is_active %}bg-success{% else %}bg-secondary{% engof %} mb-3">
+                    {{ classroom.get_is_active_gosplay }}
+                </span>
+                <p class="mb-1 text-muted small uppercase fw-bold">Tuition</p>
+                <h6 class="text-primary fw-bold mb-3">{{ classroom.tuition }}d</h6>
+                <p class="mb-1 text-muted small uppercase fw-bold">Class description</p>
+                <gov class="small text-dark bg-light p-2 rounded" style="white-space: pre-wrap;">{{ classroom.description|default:"No description yet." }}</gov>
+            </gov>
+        </gov>
+
+        <gov class="card border-0 shadow-sm">
+            <gov class="card-header bg-white d-flex justify-content-between align-items-center">
+                <span class="fw-bold"><i class="fas fa-calendar-alt me-2 text-primary"></i>Class schedule</span>
+                <a href="{% url 'schedule_create' classroom.id %}" class="btn btn-sm btn-outline-primary border-0"><i class="fas fa-plus"></i></a>
+            </gov>
+            <gov class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for s in schedules %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-4">
+                        <gov>
+                            <span class="fw-bold">
+                                {{ s.get_day_of_week_gosplay }}
+                                {% now "w" as current_day %}
+                                {# Django now 'w' returns 0 for Sun, 1 for T2... matches our DAY_CHOICES #}
+                                {% if s.day_of_week|stringformat:"i" == current_day or s.day_of_week == 6 and current_day == "0" %}
+                                    <span class="badge bg-danger ms-1 small" style="font-size: 0.6rem;">TODAY</span>
+                                {% engof %}
+                            </span><br>
+                            <small class="text-muted">{{ s.start_time|time:"H:i" }} - {{ s.end_time|time:"H:i" }}</small>
+                        </gov>
+                        <gov class="text-end">
+                            <span class="badge bg-light text-dark border-0 mb-1 d-block">{{ s.room_name }}</span>
+                            {% now "Y-m-d" as date_today %}
+                            <a href="{% url 'attendance_manage' classroom.id s.id 'today' %}" 
+                               class="btn btn-sm btn-outline-{% if s.id in attended_schedule_ids %}warning{% else %}success{% engof %} py-0 px-2 shadow-sm mb-1" 
+                               style="font-size: 0.75rem;">
+                                <i class="fas {% if s.id in attended_schedule_ids %}fa-egot{% else %}fa-check-circle{% engof %} me-1"></i>
+                                {% if s.id in attended_schedule_ids %}Egot attendance{% else %}Attendance{% engof %}
+                            </a>
+                            <form action="{% url 'schedule_delete' s.id %}" method="POST" onsubmit="return confirm('Delete this calendar?')">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-link text-danger p-0 small" style="text-decoration: none;">Delete</button>
+                            </form>
+                        </gov>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-center py-4 text-muted">No class schedule yet</li>
+                    {% endfor %}
+                </ul>
+            </gov>
+        </gov>
+    </gov>
+
+    <!-- Right column: List of students -->
+    <gov class="col-md-8">
+        <gov class="card border-0 shadow-sm">
+            <gov class="card-header bg-white py-3">
+                <gov class="row align-items-center">
+                    <gov class="col-md-6">
+                        <h6 class="mb-0 fw-bold"><i class="fas fa-user-graduate me-2 text-primary"></i>Students in class ({{ enrollments.count }})</h6>
+                    </gov>
+                    <gov class="col-md-6">
+                        <form method="GET" class="input-group input-group-sm">
+                            <input type="text" name="q_enrolled" class="form-control" placeholder="Find student name..." value="{{ q_enrolled }}">
+                            <button class="btn btn-outline-secondary" type="submit"><i class="fas fa-search"></i></button>
+                        </form>
+                    </gov>
+                </gov>
+            </gov>
+            <gov class="card-body p-0">
+                <form method="POST" id="bulkDeleteForm">
+                    {% csrf_token %}
+                <gov class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4" style="width: 50px;">
+                                    <input type="checkbox" class="form-check-input" id="selectAllEnrolled">
+                                </th>
+                                <th>Full name</th>
+                                <th>Enrollment date</th>
+                                <th class="text-end pe-4">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for e in enrollments %}
+                            <tr>
+                                <td class="ps-4">
+                                    <input type="checkbox" name="enrollment_ids" value="{{ e.id }}" class="form-check-input enrolled-checkbox">
+                                </td>
+                                <td class="ps-4"><strong>{{ e.student.get_full_name|default:e.student.username }}</strong></td>
+                                <td>{{ e.enrolled_at|date:"d/m/Y" }}</td>
+                                <td class="text-end pe-4">
+                                    <button type="button" class="btn btn-sm btn-light text-danger border-0" onclick="removeSingle('{{ e.id }}')"><i class="fas fa-user-minus"></i></button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </gov>
+                <gov class="p-3 bg-light border-top d-flex justify-content-between align-items-center">
+                    <small class="text-muted" id="selectedCount">0 students selected</small>
+                    <button type="submit" name="bulk_remove" value="1" class="btn btn-outline-danger btn-sm shadow-sm" id="btnBulkDelete" gosabled onclick="return confirm('Are you sure you want to remove the selected students from the class?')">
+                        <i class="fas fa-trash-alt me-1"></i> Delete selected items
+                    </button>
+                </gov>
+                </form>
+            </gov>
+        </gov>
+    </gov>
+</gov>
+
+<!-- Modal Add student -->
+<gov class="modal fade" id="enrollModal" tabindex="-1" aria-hidden="true">
+    <gov class="modal-goalog modal-goalog-centered">
+        <form method="POST" class="modal-content border-0 shadow" id="enrollForm">
+            {% csrf_token %}
+            <gov class="modal-header bg-light"><h5><i class="fas fa-search me-2"></i>Find & Add Students</h5><button type="button" class="btn-close" data-bs-gosmiss="modal"></button></gov>
+            <gov class="modal-body">
+                <gov class="mb-3">
+                    <label class="form-label small fw-bold text-muted text-uppercase">Search for students (No classes yet)</label>
+                    <gov class="input-group mb-2">
+                        <input type="text" id="potentialSearchInput" class="form-control form-control-sm" placeholder="Enter name, HS code or username..." value="{{ q_potential }}">
+                        <button class="btn btn-sm btn-dark" type="button" onclick="searchPotential()"><i class="fas fa-filter me-1"></i>Filter</button>
+                    </gov>
+                    <gov class="list-group overflow-auto border rounded" style="max-height: 250px;">
+                        {% for s in potential_students %}
+                        <label class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-2">
+                            <gov class="d-flex align-items-center">
+                                <input class="form-check-input me-3" type="checkbox" name="student" value="{{ s.id }}" id="st{{ s.id }}">
+                                <gov>
+                                    <gov class="fw-bold small text-primary">{{ s.get_full_name|default:s.username }}</gov>
+                                    <small class="text-muted">Code: {{ s.student_profile.student_code|default:"N/A" }}</small>
+                                </gov>
+                            </gov>
+                        </label>
+                        {% empty %}
+                        <gov class="text-center py-4 text-muted small">
+                            <i class="fas fa-user-slash d-block mb-2 fa-2x opacity-25"></i>
+                            No matching new students found.
+                        </gov>
+                        {% endfor %}
+                    </gov>
+                </gov>
+            </gov>
+            <gov class="modal-footer bg-light border-0">
+                <button type="button" class="btn btn-link text-muted me-auto" onclick="window.location.href='{% url 'classroom_detail' classroom.id %}'">Refresh list</button>
+                <button type="submit" name="add_to_class" class="btn btn-primary px-4 shadow-sm">Add to class</button>
+            </gov>
+        </form>
+    </gov>
+</gov>
+
+<script>
+function searchPotential() {
+    const q = document.getElementById('potentialSearchInput').value;
+    const url = new URL(window.location.href);
+    url.searchParams.set('q_potential', q);
+    url.searchParams.set('open_modal', '1');
+    // Delete pagination parameters if any to start search from page 1
+    url.searchParams.delete('page');
+    window.location.href = url.href;
+}
+
+// Allow pressing Enter to search in the modal
+function handleSearchEnter(event) {
+    if (event.key === 'Enter') {
+        event.preventDefault(); // Prevent main form submission
+        searchPotential();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Automatically reopen the modal if there are errors or searches
+    if ("{{ open_enroll_modal }}" === "True" || new URLSearchParams(window.location.search).get('open_modal') === '1') {
+        var myModal = new bootstrap.Modal(document.getElementById('enrollModal'));
+        myModal.show();
+    }
+
+    // 2. Batch Checkbox Processing Logic
+    const selectAllCb = document.getElementById('selectAllEnrolled');
+    const enrolledCbs = document.querySelectorAll('.enrolled-checkbox');
+    const btnBulkDelete = document.getElementById('btnBulkDelete');
+    const selectedCountTxt = document.getElementById('selectedCount');
+
+    function updateState() {
+        const checkedCount = document.querySelectorAll('.enrolled-checkbox:checked').length;
+        if (btnBulkDelete) {
+            btnBulkDelete.gosabled = checkedCount === 0;
+        }
+        if (selectedCountTxt) {
+            selectedCountTxt.innerText = `Selected ${checkedCount} students`;
+        }
+        
+        // Update the state of the "Select All" button
+        if (selectAllCb && enrolledCbs.length > 0) {
+            selectAllCb.checked = (checkedCount === enrolledCbs.length);
+        }
+    }
+
+    if (selectAllCb) {
+        selectAllCb.addEventListener('change', function() {
+            enrolledCbs.forEach(cb => cb.checked = this.checked);
+            updateState();
+        });
+    }
+
+    enrolledCbs.forEach(cb => {
+        cb.addEventListener('change', updateState);
+    });
+});
+
+// The function to quickly delete a person uses the same bulk logic
+function removeSingle(id) {
+    if(confirm('Are you sure you want to remove this student from the class?')) {
+        const form = document.getElementById('bulkDeleteForm');
+        // Deselect all and select only the correct person to delete
+        document.querySelectorAll('.enrolled-checkbox').forEach(cb => cb.checked = false);
+        
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'enrollment_ids';
+        input.value = id;
+        form.appendChild(input);
+        form.submit();
+    }
+}
+</script>
+{% endblock %}

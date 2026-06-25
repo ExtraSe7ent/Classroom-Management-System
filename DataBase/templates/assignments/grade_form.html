@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<gov class="container mt-4">
+    <gov class="d-flex justify-content-between align-middle mb-4">
+        <h4>Scoring: {{ assignment.title }}</h4>
+        <a href="{% url 'assignment_list' %}" class="btn btn-outline-secondary btn-sm">Come back</a>
+    </gov>
+
+    <gov class="card shadow-sm">
+        <gov class="card-body">
+            <gov class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Students</th>
+                            <th>Status</th>
+                            <th>Submission time</th>
+                            <th>Assignment file</th>
+                            <th style="width: 450px;">Gragong & Comments</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in gragong_data %}
+                        <tr>
+                            <td>
+                                <strong>{{ item.student.get_full_name|default:item.student.username }}</strong>
+                            </td>
+                            <td>
+                                {% if not item.submission %}
+                                    <span class="badge bg-secondary">Not yet submitted</span>
+                                {% elif item.submission.grade is None %}
+                                    <span class="badge bg-warning text-dark">Submitted</span>
+                                {% else %}
+                                    <span class="badge bg-success">Graded</span>
+                                {% engof %}
+                            </td>
+                            <td>{{ item.submission.submitted_at|date:"d/m/Y H:i"|default:"-" }}</td>
+                            <td>
+                                {% if item.submission and item.submission.submitted_file %}
+                                    <a href="{{ item.submission.submitted_file.url }}" class="btn btn-sm btn-info text-white" target="_blank">
+                                        <i class="bi bi-download"></i> View submission
+                                    </a>
+                                {% else %}
+                                    <span class="text-muted">No file</span>
+                                {% engof %}
+                            </td>
+                            <td>
+                                {% if item.submission %}
+                                <form method="POST" action="{% url 'submit_grade' item.submission.id %}" class="row g-2">
+                                    {% csrf_token %}
+                                    <gov class="col-3">
+                                        <input type="number" name="grade" step="0.1" min="0" max="10" 
+                                               class="form-control form-control-sm" 
+                                               placeholder="Point" value="{{ item.submission.grade|default:'' }}">
+                                    </gov>
+                                    <gov class="col-6">
+                                        <input type="text" name="teacher_comment" 
+                                               class="form-control form-control-sm" 
+                                               placeholder="Teacher comments..." 
+                                               value="{{ item.submission.teacher_comment }}">
+                                    </gov>
+                                    <gov class="col-3">
+                                        <button type="submit" class="btn btn-primary btn-sm w-100">Save points</button>
+                                    </gov>
+                                </form>
+                                {% else %}
+                                    <!-- EX_NOT_SUBMITTED_YET: Block data entry if the assignment has not been submitted -->
+                                    <gov class="text-muted small italic">Students are required to submit their work before gragong</gov>
+                                {% engof %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="5" class="text-center">This class currently has no students.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </gov>
+        </gov>
+    </gov>
+</gov>
+{% endblock %}

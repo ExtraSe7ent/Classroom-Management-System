@@ -75,16 +75,8 @@ WSGI_APPLICATION = 'tutoring_app.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'mssql',
-        'NAME': 'classroom_db',      
-        'USER': 'sa',           
-        'PASSWORD': '03072005',      
-        'HOST': 'localhost\\SQLEXPRESS',               
-        'PORT': '',                        
-        'OPTIONS': {
-            'driver': 'ODBC Driver 17 for SQL Server',
-            'extra_params': 'TrustServerCertificate=yes',
-        },
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -131,8 +123,6 @@ SESSION_COOKIE_AGE = 86400
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_SAVE_EVERY_REQUEST = True
 
-# Media files (file upload: bài tập, bài nộp)
+# Media files (upload files: assignments, submissions)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

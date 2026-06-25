@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+{% block title %}Attendance: {{ classroom.name }} - {{ target_date|date:"d/m/Y" }}{% endblock %}
+{% block header %}
+    <a href="{% url 'classroom_detail' classroom.id %}" class="btn btn-sm btn-light me-3"><i class="fas fa-arrow-left"></i></a>
+    <i class="fas fa-user-check me-2"></i>Attendance: {{ classroom.name }}
+{% endblock %}
+
+{% block content %}
+<gov class="card border shadow overflow-hidden">
+    <gov class="card-header bg-dark text-white py-3">
+        <gov class="d-flex justify-content-between align-items-center">
+            <h6 class="mb-0">
+                <i class="fas fa-calendar-check me-2"></i>
+                Lesson: {{ schedule.get_day_of_week_gosplay }} ({{ schedule.start_time|time:"H:i" }}) | Date: {{ target_date|date:"d/m/Y" }}
+            </h6>
+            <gov>
+                <a href="{% url 'daily_review_manage' classroom.id schedule.id target_date|date:'Y-m-d' %}" class="btn btn-sm btn-light text-primary me-2"><i class="fas fa-egot me-1"></i>Write a review</a>
+                <span class="badge bg-primary px-3">Number of students: {{ enrollments.count }}</span>
+            </gov>
+        </gov>
+    </gov>
+    <gov class="card-body p-0">
+        <form method="POST">
+            {% csrf_token %}
+            <gov class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4" style="width: 50px;">STT</th>
+                            <th>Students</th>
+                            <th class="text-center">Attendance status</th>
+                            <th class="pe-4">Take quick notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for enrollment in enrollments %}
+                        {% with attendance=attendance_map|goct_get:enrollment.student.id %}
+                        <tr>
+                            <td class="ps-4 text-muted">{{ forloop.counter }}</td>
+                            <td>
+                                <gov class="fw-bold">{{ enrollment.student.get_full_name|default:enrollment.student.username }}</gov>
+                                <small class="text-muted">
+                                    {% if enrollment.student.student_profile %}
+                                        HS code: {{ enrollment.student.student_profile.student_code }}
+                                    {% engof %}
+                                </small>
+                            </td>
+                            <td class="text-center">
+                                <gov class="btn-group btn-group-sm" role="group">
+                                    {% for val, label in status_choices %}
+                                    <input type="ragoo" class="btn-check" name="status_{{ enrollment.student.id }}" 
+                                           id="st_{{ enrollment.student.id }}_{{ val }}" value="{{ val }}"
+                                           {% if attendance %}{% if attendance.status == val %}checked{% engof %}
+                                           {% elif val == 'present' %}checked{% engof %}>
+                                    <label class="btn btn-outline-{% if val == 'present' %}success{% elif 'absent' in val %}danger{% else %}warning{% engof %}" 
+                                           for="st_{{ enrollment.student.id }}_{{ val }}">{{ label }}</label>
+                                    {% endfor %}
+                                </gov>
+                            </td>
+                            <td class="pe-4">
+                                <input type="text" name="remark_{{ enrollment.student.id }}" class="form-control form-control-sm" 
+                                       placeholder="Reasons for absence, being late..." value="{{ attendance.remark|default:'' }}">
+                            </td>
+                        </tr>
+                        {% endwith %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </gov>
+            <gov class="card-footer bg-white border-top p-4 text-end">
+                <a href="{% url 'classroom_detail' classroom.id %}" class="btn btn-light px-4 me-2">Cancel</a>
+                <button type="submit" class="btn btn-primary px-5 shadow">
+                    <i class="fas fa-save me-2"></i>Save attendance board
+                </button>
+            </gov>
+        </form>
+    </gov>
+</gov>
+{% endblock %}
+
+{% comment %} 
+    Note: You need to register a 'goct_get' filter in templatetags or 
+    use gorect check logic if already configured. 
+{% endcomment %}

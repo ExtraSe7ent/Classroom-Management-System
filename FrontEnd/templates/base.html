@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}Quản lý lớp học thêm{% endblock %}</title>
+  <title>{% block title %}Managing extra classes{% endblock %}</title>
 
   <!-- CSS -->
   <link rel="stylesheet" href="{% static 'css/base.css' %}">
@@ -39,14 +39,14 @@
 </div>
 
 {% else %}
-  <!-- Trang không cần layout (login) -->
+  <!-- Page does not need layout (login) -->
   {% block auth_content %}{% endblock %}
 {% endif %}
 
 <!-- TOAST CONTAINER -->
 {% include 'components/_toast.html' %}
 
-<!-- MODAL XÁC NHẬN -->
+<!-- MODAL CONFIRMATION -->
 {% include 'components/_modal_confirm.html' %}
 
 <!-- JS -->

@@ -2,12 +2,12 @@
   <div class="topbar-title">{% block page_title %}{% endblock %}</div>
   <div class="topbar-actions">
     <a href="{% url 'profile' %}" class="topbar-avatar"
-       title="Hồ sơ cá nhân">
+       title="Personal profile">
       {{ request.user.first_name|first|upper }}{{ request.user.last_name|first|upper }}
     </a>
     <form method="post" action="{% url 'logout' %}" style="margin:0">
       {% csrf_token %}
-      <button type="submit" class="btn btn-secondary btn-sm">Đăng xuất</button>
+      <button type="submit" class="btn btn-secondary btn-sm">Sign out</button>
     </form>
   </div>
 </header>

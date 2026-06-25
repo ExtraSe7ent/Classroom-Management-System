@@ -3,26 +3,26 @@ from django.contrib.auth.models import User
 
 
 DAY_CHOICES = [
-    ('Monday', 'Thứ Hai'),
-    ('Tuesday', 'Thứ Ba'),
-    ('Wednesday', 'Thứ Tư'),
-    ('Thursday', 'Thứ Năm'),
-    ('Friday', 'Thứ Sáu'),
-    ('Saturday', 'Thứ Bảy'),
-    ('Sunday', 'Chủ Nhật'),
+    ('Monday', 'Monday'),
+    ('Tuesday', 'Tuesday'),
+    ('Wednesday', 'Wednesday'),
+    ('Thursday', 'Thursday'),
+    ('Friday', 'Friday'),
+    ('Saturday', 'Saturday'),
+    ('Sunday', 'Sunday'),
 ]
 
 
 class UserProfile(models.Model):
     ROLE_CHOICES = [
-        ('teacher', 'Giáo viên'),
-        ('student', 'Học sinh'),
-        ('parent', 'Phụ huynh'),
+        ('teacher', 'Teacher'),
+        ('student', 'Students'),
+        ('parent', 'Parents'),
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     phone = models.CharField(max_length=20, blank=True, null=True)
-    contact_phone = models.CharField(max_length=20, blank=True, null=True)  # SĐT liên hệ/khẩn cấp
+    contact_phone = models.CharField(max_length=20, blank=True, null=True)  # Contact/emergency phone number
     address = models.TextField(blank=True, null=True)
     date_of_birth = models.DateField(blank=True, null=True)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='student')
@@ -31,8 +31,8 @@ class UserProfile(models.Model):
 
     class Meta:
         db_table = 'User_Profiles'
-        verbose_name = 'Hồ sơ người dùng'
-        verbose_name_plural = 'Hồ sơ người dùng'
+        verbose_name = 'User profile'
+        verbose_name_plural = 'User profile'
 
     def __str__(self):
         return f"{self.user.get_full_name()} ({self.role})"
@@ -45,26 +45,26 @@ class Class(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
     teacher = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='classes')
-    teacher_name = models.CharField(max_length=100, blank=True)  # Tên hiển thị của giáo viên
-    room = models.CharField(max_length=100, blank=True)           # Phòng học cố định
+    teacher_name = models.CharField(max_length=100, blank=True)  # Teacher display name
+    room = models.CharField(max_length=100, blank=True)           # Fixed classroom
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = 'Classes'
-        verbose_name = 'Lớp học'
-        verbose_name_plural = 'Các lớp học'
+        verbose_name = 'Classroom'
+        verbose_name_plural = 'Classes'
 
     def __str__(self):
         return self.name
 
     def get_schedule_display(self):
-        """Trả về chuỗi lịch học tổng hợp từ các Schedule liên kết."""
+        """Returns the aggregated schedule string from the linked Schedules."""
         schedules = self.schedules.all().order_by('day_of_week')
         parts = []
         for s in schedules:
             parts.append(f"{s.get_day_of_week_display()} ({s.start_time.strftime('%H:%M')} - {s.end_time.strftime('%H:%M')})")
-        return ', '.join(parts) if parts else 'Chưa xếp lịch'
+        return ', '.join(parts) if parts else 'Not scheduled yet'
 
     def get_student_count(self):
         return self.students.count()
@@ -79,28 +79,28 @@ class Student(models.Model):
 
     class Meta:
         db_table = 'Students'
-        verbose_name = 'Học sinh'
-        verbose_name_plural = 'Các học sinh'
+        verbose_name = 'Students'
+        verbose_name_plural = 'Students'
 
     def __str__(self):
         return f"{self.user.get_full_name()} ({self.student_id})"
 
     def get_classes_display(self):
-        return ', '.join([c.name for c in self.classes.all()]) or 'Chưa xếp lớp'
+        return ', '.join([c.name for c in self.classes.all()]) or 'Not yet placed in class'
 
 
 class Schedule(models.Model):
-    """Lịch học cố định của một lớp học."""
+    """Fixed schedule of a class."""
     class_obj = models.ForeignKey(Class, on_delete=models.CASCADE, related_name='schedules')
     day_of_week = models.CharField(max_length=20, choices=DAY_CHOICES)
     start_time = models.TimeField()
     end_time = models.TimeField()
-    room = models.CharField(max_length=100, blank=True)  # Để trống = học online
+    room = models.CharField(max_length=100, blank=True)  # Leave blank = online learning
 
     class Meta:
         db_table = 'Schedules'
-        verbose_name = 'Lịch học'
-        verbose_name_plural = 'Các lịch học'
+        verbose_name = 'Class schedule'
+        verbose_name_plural = 'Class schedules'
         unique_together = ('class_obj', 'day_of_week', 'start_time')
 
     def __str__(self):
@@ -108,7 +108,7 @@ class Schedule(models.Model):
 
 
 class Assignment(models.Model):
-    """Bài tập được giáo viên/admin giao cho một lớp học."""
+    """Assignments are assigned to a class by a teacher/admin."""
     title = models.CharField(max_length=500)
     description = models.TextField(blank=True)
     class_obj = models.ForeignKey(Class, on_delete=models.CASCADE, related_name='assignments')
@@ -120,8 +120,8 @@ class Assignment(models.Model):
 
     class Meta:
         db_table = 'Assignments'
-        verbose_name = 'Bài tập'
-        verbose_name_plural = 'Các bài tập'
+        verbose_name = 'Exercises'
+        verbose_name_plural = 'Exercises'
         ordering = ['-created_at']
 
     def __str__(self):
@@ -135,11 +135,11 @@ class Assignment(models.Model):
 
 
 class Submission(models.Model):
-    """Bài nộp của một học sinh cho một bài tập."""
+    """A student's submission for an assignment."""
     STATUS_CHOICES = [
-        ('pending', 'Chờ chấm điểm'),
-        ('graded', 'Đã có điểm'),
-        ('missing', 'Thiếu bài / Quá hạn'),
+        ('pending', 'Waiting for scoring'),
+        ('graded', 'Got points'),
+        ('missing', 'Missing / Overdue papers'),
     ]
 
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE, related_name='submissions')
@@ -147,14 +147,14 @@ class Submission(models.Model):
     file = models.FileField(upload_to='submissions/', blank=True, null=True)
     note = models.TextField(blank=True)
     submitted_at = models.DateTimeField(auto_now_add=True)
-    grade = models.FloatField(null=True, blank=True)   # None = chưa chấm
+    grade = models.FloatField(null=True, blank=True)   # None = not scored yet
     feedback = models.TextField(blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
 
     class Meta:
         db_table = 'Submissions'
-        verbose_name = 'Bài nộp'
-        verbose_name_plural = 'Các bài nộp'
+        verbose_name = 'Submissions'
+        verbose_name_plural = 'Submissions'
         unique_together = ('assignment', 'student')
 
     def __str__(self):
@@ -162,23 +162,23 @@ class Submission(models.Model):
 
 
 class Attendance(models.Model):
-    """Bản ghi điểm danh của học sinh trong một buổi học."""
+    """Student attendance record during a class session."""
     STATUS_CHOICES = [
-        ('present', 'Đi học'),
-        ('excused', 'Vắng phép'),
-        ('absent', 'Vắng không phép'),
+        ('present', 'Go to school'),
+        ('excused', 'Absence of leave'),
+        ('absent', 'Absence without permission'),
     ]
 
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='attendances')
     class_obj = models.ForeignKey(Class, on_delete=models.CASCADE, related_name='attendances')
     date = models.DateField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='present')
-    remarks = models.TextField(blank=True)  # Nhận xét của giáo viên
+    remarks = models.TextField(blank=True)  # Teacher comments
 
     class Meta:
         db_table = 'Attendances'
-        verbose_name = 'Điểm danh'
-        verbose_name_plural = 'Các bản ghi điểm danh'
+        verbose_name = 'Attendance'
+        verbose_name_plural = 'Attendance records'
         unique_together = ('student', 'class_obj', 'date')
 
     def __str__(self):

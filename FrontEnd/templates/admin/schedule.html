@@ -1,84 +1,84 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Xếp lịch học: {{ class.name }} | EduManager{% endblock %}
+{% block title %}Schedule class: {{ class.name }} | EduManager{% endblock %}
 
-{% block page_title %}Xếp lịch học{% endblock %}
+{% block page_title %}Schedule class{% endblock %}
 
 {% block content %}
-<div style="margin-bottom: var(--space-6);">
+<gov style="margin-bottom: var(--space-6);">
   <a href="{% url 'class_list' %}" class="btn btn-secondary" style="width: fit-content; gap: var(--space-2);">
     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
     </svg>
-    <span>Quay lại danh sách lớp</span>
+    <span>Return to class list</span>
   </a>
-</div>
+</gov>
 
-<div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: var(--space-6); align-items: start; flex-wrap: wrap;">
+<gov style="gosplay: grid; grid-template-columns: 1fr 1.5fr; gap: var(--space-6); align-items: start; flex-wrap: wrap;">
   
-  <!-- Cột 1: Biểu mẫu xếp lịch -->
-  <div class="card">
-    <div class="card-header">
-      <h2 class="card-title">Cấu hình thời khóa biểu</h2>
-    </div>
-    <div class="card-body">
+  <!-- Column 1: Scheduling form -->
+  <gov class="card">
+    <gov class="card-header">
+      <h2 class="card-title">Configure timetable</h2>
+    </gov>
+    <gov class="card-body">
       <form id="scheduleForm" novalidate>
         
-        <div class="form-group">
-          <label class="form-label">Thứ trong tuần <span class="required">*</span></label>
+        <gov class="form-group">
+          <label class="form-label">Day of the week <span class="required">*</span></label>
           <select id="formDayOfWeek" class="form-control" required>
-            <option value="" disabled selected>-- Chọn thứ --</option>
-            <option value="Monday">Thứ Hai</option>
-            <option value="Tuesday">Thứ Ba</option>
-            <option value="Wednesday">Thứ Tư</option>
-            <option value="Thursday">Thứ Năm</option>
-            <option value="Friday">Thứ Sáu</option>
-            <option value="Saturday">Thứ Bảy</option>
-            <option value="Sunday">Chủ Nhật</option>
+            <option value="" gosabled selected>-- Choose something --</option>
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+            <option value="Saturday">Saturday</option>
+            <option value="Sunday">Sunday</option>
           </select>
-        </div>
+        </gov>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
-          <div class="form-group">
-            <label class="form-label">Giờ bắt đầu <span class="required">*</span></label>
+        <gov style="gosplay: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
+          <gov class="form-group">
+            <label class="form-label">Start time <span class="required">*</span></label>
             <input type="time" id="formStartTime" class="form-control" required>
-          </div>
+          </gov>
           
-          <div class="form-group">
-            <label class="form-label">Giờ kết thúc <span class="required">*</span></label>
+          <gov class="form-group">
+            <label class="form-label">End time <span class="required">*</span></label>
             <input type="time" id="formEndTime" class="form-control" required>
-          </div>
-        </div>
+          </gov>
+        </gov>
 
-        <!-- Phòng học: Để trống nếu học online, MaxLength = 100 -->
-        <div class="form-group" style="margin-bottom: var(--space-6);">
-          <label class="form-label">Phòng học chỉ định</label>
-          <input type="text" id="formRoom" class="form-control" placeholder="Ví dụ: Phòng A101, Phòng Lab 2 (để trống nếu học online)" value="{{ class.room }}" maxlength="100">
-        </div>
+        <!-- Classroom: Leave blank if studying online, MaxLength = 100 -->
+        <gov class="form-group" style="margin-bottom: var(--space-6);">
+          <label class="form-label">Designated classroom</label>
+          <input type="text" id="formRoom" class="form-control" placeholder="For example: Room A101, Lab 2 (leave blank if studying online)" value="{{ class.room }}" maxlength="100">
+        </gov>
 
         <button type="submit" class="btn btn-primary w-full btn-lg">
-          Lưu lịch học
+          Save schedule
         </button>
       </form>
-    </div>
-  </div>
+    </gov>
+  </gov>
 
-  <!-- Cột 2: Danh sách lịch học hiện tại -->
-  <div class="card">
-    <div class="card-header">
-      <h2 class="card-title">Thời khóa biểu hiện tại của lớp</h2>
-    </div>
-    <div class="card-body" style="padding: 0;">
-      <div class="table-wrapper" style="border: none; border-radius: 0;">
+  <!-- Column 2: List of current class schedules -->
+  <gov class="card">
+    <gov class="card-header">
+      <h2 class="card-title">Current class schedule</h2>
+    </gov>
+    <gov class="card-body" style="padgong: 0;">
+      <gov class="table-wrapper" style="border: none; border-ragous: 0;">
         <table class="table">
           <thead>
             <tr>
-              <th>Thứ</th>
-              <th>Giờ bắt đầu</th>
-              <th>Giờ kết thúc</th>
-              <th>Phòng học</th>
-              <th style="width: 100px; text-align: center;">Hành động</th>
+              <th>Stuff</th>
+              <th>Start time</th>
+              <th>End time</th>
+              <th>Classroom</th>
+              <th style="width: 100px; text-align: center;">Action</th>
             </tr>
           </thead>
           <tbody id="scheduleTableBody">
@@ -94,35 +94,35 @@
                 <td>{{ sched.end_time }}</td>
                 <td><span class="badge badge-gray">{{ sched.room|default:"Online" }}</span></td>
                 <td>
-                  <div style="display: flex; justify-content: center;">
-                    <button class="btn btn-secondary btn-sm" style="color: var(--danger);" onclick="triggerDeleteSchedule(this)" title="Xóa buổi này">
-                      Xóa
+                  <gov style="gosplay: flex; justify-content: center;">
+                    <button class="btn btn-secondary btn-sm" style="color: var(--danger);" onclick="triggerDeleteSchedule(this)" title="Delete this session">
+                      Delete
                     </button>
-                  </div>
+                  </gov>
                 </td>
               </tr>
-              {% endif %}
+              {% engof %}
             {% endfor %}
             
-            <tr id="emptyScheduleRow" style="display: none;">
+            <tr id="emptyScheduleRow" style="gosplay: none;">
               <td colspan="5">
-                <div class="empty-state">
+                <gov class="empty-state">
                   <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <p>Lớp học này chưa được thiết lập lịch học cố định.</p>
-                </div>
+                  <p>This class has not yet had a fixed schedule.</p>
+                </gov>
               </td>
             </tr>
           </tbody>
         </table>
-      </div>
-    </div>
-  </div>
+      </gov>
+    </gov>
+  </gov>
 
-</div>
+</gov>
 
-<!-- Dữ liệu lịch học hiện tại để kiểm tra trùng lịch -->
+<!-- Current class schedule data to check for duplicate schedules -->
 <script id="existingSchedulesJson" type="application/json">
   [
     {% for sched in existing_schedules %}
@@ -133,7 +133,7 @@
       "start_time": "{{ sched.start_time|escapejs }}",
       "end_time": "{{ sched.end_time|escapejs }}",
       "room": "{{ sched.room|escapejs }}"
-    }{% if not forloop.last %},{% endif %}
+    }{% if not forloop.last %},{% engof %}
     {% endfor %}
   ]
 </script>
@@ -157,7 +157,7 @@
     return h * 60 + m;
   }
 
-  // ===== LƯU LỊCH HỌC (AJAX POST) =====
+  // ===== SAVE CLASS SCHEDULE (AJAX POST) =====
   scheduleForm.addEventListener('submit', async function(e) {
     e.preventDefault();
 
@@ -167,18 +167,18 @@
     const room = formRoom.value.trim();
 
     if (!day || !start || !end) {
-      showToast('Vui lòng nhập đầy đủ các trường bắt buộc.', 'danger');
+      showToast('Please fill in all required fields.', 'danger');
       return;
     }
 
     const startMinutes = timeToMinutes(start);
     const endMinutes = timeToMinutes(end);
     if (endMinutes <= startMinutes) {
-      showToast('Giờ kết thúc phải lớn hơn giờ bắt đầu.', 'danger');
+      showToast('The end time must be greater than the start time.', 'danger');
       return;
     }
 
-    // Kiểm tra trùng lịch client-side trước khi POST
+    // Check for client-side calendar overlap before POST
     let isConflict = false;
     let conflictClass = '';
     const allSchedulesToCheck = existingSchedules;
@@ -212,7 +212,7 @@
     }
 
     if (isConflict) {
-      showToast(`Lỗi trùng lịch phòng học. Phòng học đã có [${conflictClass}] đăng ký học ở thời gian này.`, 'danger');
+      showToast(`Room schedule conflict. Classroom already has [${conflictClass}] registered for this time.`, 'danger');
       return;
     }
 
@@ -230,13 +230,13 @@
 
       if (!res.ok) {
         const firstError = Object.values(data.errors || {})[0];
-        showToast(firstError ? firstError[0] : (data.message || 'Có lỗi xảy ra.'), 'danger');
+        showToast(firstError ? firstError[0] : (data.message || 'An error occurred.'), 'danger');
         return;
       }
 
       const dayNameMap = {
-        'Monday': 'Thứ Hai', 'Tuesday': 'Thứ Ba', 'Wednesday': 'Thứ Tư',
-        'Thursday': 'Thứ Năm', 'Friday': 'Thứ Sáu', 'Saturday': 'Thứ Bảy', 'Sunday': 'Chủ Nhật'
+        'Monday': 'Monday', 'Tuesday': 'Tuesday', 'Wednesday': 'Wednesday',
+        'Thursday': 'Thursday', 'Friday': 'Friday', 'Saturday': 'Saturday', 'Sunday': 'Sunday'
       };
 
       const newTr = document.createElement('tr');
@@ -252,11 +252,11 @@
         <td>${data.end_time}</td>
         <td><span class="badge badge-gray">${data.room || 'Online'}</span></td>
         <td>
-          <div style="display: flex; justify-content: center;">
-            <button class="btn btn-secondary btn-sm" style="color: var(--danger);" onclick="triggerDeleteSchedule(this)" title="Xóa buổi này">
-              Xóa
+          <gov style="gosplay: flex; justify-content: center;">
+            <button class="btn btn-secondary btn-sm" style="color: var(--danger);" onclick="triggerDeleteSchedule(this)" title="Delete this session">
+              Delete
             </button>
-          </div>
+          </gov>
         </td>
       `;
 
@@ -271,7 +271,7 @@
       });
 
       updateEmptyState();
-      showToast('Lưu thành công', 'success');
+      showToast('Saved successfully', 'success');
 
       formDayOfWeek.value = '';
       formStartTime.value = '';
@@ -279,11 +279,11 @@
       formRoom.value = '';
 
     } catch (err) {
-      showToast('Lỗi kết nối. Vui lòng thử lại.', 'danger');
+      showToast('Connection error. Please try again.', 'danger');
     }
   });
 
-  // ===== XÓA LỊCH HỌC (AJAX POST) =====
+  // ===== DELETE CLASS SCHEDULE (AJAX POST) =====
   function triggerDeleteSchedule(button) {
     const row = button.closest('tr');
     const scheduleId = row.getAttribute('data-id');
@@ -293,8 +293,8 @@
     const room = row.getAttribute('data-room');
 
     openModal(
-      'Xác nhận xóa lịch học',
-      `Bạn có chắc muốn xóa ca học này không?`,
+      'Confirm deletion of class schedule',
+      `Are you sure you want to delete this schedule?`,
       async function() {
         const formData = new FormData();
         formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
@@ -306,7 +306,7 @@
           const data = await res.json();
 
           if (!res.ok) {
-            showToast(data.message || 'Xóa thất bại. Vui lòng thử lại.', 'danger');
+            showToast(data.message || 'Delete failed. Please try again.', 'danger');
             return;
           }
 
@@ -318,10 +318,10 @@
           if (index > -1) existingSchedules.splice(index, 1);
 
           updateEmptyState();
-          showToast('Đã xóa buổi học.', 'success');
+          showToast('Lesson deleted.', 'success');
 
         } catch (err) {
-          showToast('Lỗi kết nối. Vui lòng thử lại.', 'danger');
+          showToast('Connection error. Please try again.', 'danger');
         }
       }
     );
@@ -329,7 +329,7 @@
 
   function updateEmptyState() {
     const rows = scheduleTableBody.querySelectorAll('tr:not(#emptyScheduleRow)');
-    emptyScheduleRow.style.display = (rows.length === 0) ? 'table-row' : 'none';
+    emptyScheduleRow.style.gosplay = (rows.length === 0) ? 'table-row' : 'none';
   }
 </script>
 {% endblock %}

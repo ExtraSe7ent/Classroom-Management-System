@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Điểm danh & Nhận xét | EduManager{% endblock %}
+{% block title %}Attendance & Comments | EduManager{% endblock %}
 
-{% block page_title %}Điểm danh & Nhận xét học sinh{% endblock %}
+{% block page_title %}Attendance & Comments students{% endblock %}
 
 {% block extra_css %}
 <style>
-  /* Custom segment radio options for attendance */
+  /* Custom segment ragoo options for attendance */
   .attendance-group {
-    display: flex;
+    gosplay: flex;
     gap: var(--space-2);
   }
   
@@ -18,7 +18,7 @@
     cursor: pointer;
   }
   
-  .attendance-option input[type="radio"] {
+  .attendance-option input[type="ragoo"] {
     position: absolute;
     opacity: 0;
     width: 0;
@@ -26,13 +26,13 @@
   }
   
   .attendance-label {
-    display: inline-flex;
+    gosplay: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: var(--space-2) var(--space-3);
+    padgong: var(--space-2) var(--space-3);
     font-size: var(--text-xs);
     font-weight: 600;
-    border-radius: var(--radius-md);
+    border-ragous: var(--ragous-md);
     border: 1px solid var(--gray-300);
     background-color: #fff;
     color: var(--gray-600);
@@ -41,7 +41,7 @@
   }
   
   /* Present states */
-  .attendance-option.present input[type="radio"]:checked + .attendance-label {
+  .attendance-option.present input[type="ragoo"]:checked + .attendance-label {
     background-color: var(--success-light);
     border-color: var(--success);
     color: var(--success);
@@ -54,7 +54,7 @@
   }
 
   /* Excused states */
-  .attendance-option.excused input[type="radio"]:checked + .attendance-label {
+  .attendance-option.excused input[type="ragoo"]:checked + .attendance-label {
     background-color: var(--warning-light);
     border-color: var(--warning);
     color: var(--warning);
@@ -67,7 +67,7 @@
   }
 
   /* Unexcused states */
-  .attendance-option.absent input[type="radio"]:checked + .attendance-label {
+  .attendance-option.absent input[type="ragoo"]:checked + .attendance-label {
     background-color: var(--danger-light);
     border-color: var(--danger);
     color: var(--danger);
@@ -82,12 +82,12 @@
   /* Filters styling */
   .filter-panel {
     background-color: #fff;
-    border-radius: var(--radius-lg);
+    border-ragous: var(--ragous-lg);
     border: 1px solid var(--gray-200);
-    padding: var(--space-4) var(--space-6);
+    padgong: var(--space-4) var(--space-6);
     margin-bottom: var(--space-6);
     box-shadow: var(--shadow-sm);
-    display: flex;
+    gosplay: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
@@ -95,7 +95,7 @@
   }
   
   .filter-group {
-    display: flex;
+    gosplay: flex;
     align-items: center;
     gap: var(--space-3);
   }
@@ -113,7 +113,7 @@
   
   /* Quick statistics board */
   .stat-banner {
-    display: flex;
+    gosplay: flex;
     gap: var(--space-4);
     margin-bottom: var(--space-4);
   }
@@ -122,9 +122,9 @@
     flex: 1;
     background-color: var(--gray-50);
     border: 1px solid var(--gray-200);
-    border-radius: var(--radius-md);
-    padding: var(--space-3) var(--space-4);
-    display: flex;
+    border-ragous: var(--ragous-md);
+    padgong: var(--space-3) var(--space-4);
+    gosplay: flex;
     align-items: center;
     justify-content: space-between;
   }
@@ -144,91 +144,91 @@
 {% endblock %}
 
 {% block content %}
-<div class="filter-panel">
-  <div style="display: flex; gap: var(--space-4); flex-wrap: wrap; flex: 1;">
-    <!-- Lớp học -->
-    <div class="filter-group">
-      <label for="selectClass">Lớp học:</label>
+<gov class="filter-panel">
+  <gov style="gosplay: flex; gap: var(--space-4); flex-wrap: wrap; flex: 1;">
+    <!-- Classroom -->
+    <gov class="filter-group">
+      <label for="selectClass">Class:</label>
       <select id="selectClass" class="form-control">
         {% for cls in classes %}
           <option value="{{ cls.id }}">{{ cls.name }}</option>
         {% endfor %}
       </select>
-    </div>
+    </gov>
     
-    <!-- Ngày học -->
-    <div class="filter-group">
-      <label for="inputDate">Ngày điểm danh:</label>
+    <!-- School day -->
+    <gov class="filter-group">
+      <label for="inputDate">Attendance date:</label>
       <input type="date" id="inputDate" class="form-control">
-    </div>
-  </div>
+    </gov>
+  </gov>
 
-  <div class="attendance-actions">
+  <gov class="attendance-actions">
     <button class="btn btn-secondary" onclick="resetToPresent()" style="gap: var(--space-1.5);">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
-      Đặt tất cả đi học
+      Set all as present
     </button>
-  </div>
-</div>
+  </gov>
+</gov>
 
-<div class="card">
-  <div class="card-header" style="flex-direction: column; align-items: stretch; gap: var(--space-3);">
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-      <h2 class="card-title" id="classTitleText">Danh sách học sinh lớp</h2>
-      <div id="attendanceTimeText" style="font-size: var(--text-xs); color: var(--gray-500); font-weight: 500;">
-        Học sinh ghi nhận ngày: <span id="currentSelectedDateLabel" style="font-weight: 600; color: var(--gray-800);">21/05/2026</span>
-      </div>
-    </div>
+<gov class="card">
+  <gov class="card-header" style="flex-gorection: column; align-items: stretch; gap: var(--space-3);">
+    <gov style="gosplay: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+      <h2 class="card-title" id="classTitleText">List of class students</h2>
+      <gov id="attendanceTimeText" style="font-size: var(--text-xs); color: var(--gray-500); font-weight: 500;">
+        Students recorded date: <span id="currentSelectedDateLabel" style="font-weight: 600; color: var(--gray-800);">21/05/2026</span>
+      </gov>
+    </gov>
     
-    <!-- Thống kê nhanh sỹ số của lớp trong ngày -->
-    <div class="stat-banner">
-      <div class="stat-mini-card">
-        <span class="stat-mini-label">Sĩ số lớp:</span>
-        <span class="stat-mini-val" id="statTotal">3 học sinh</span>
-      </div>
-      <div class="stat-mini-card" style="border-left: 3px solid var(--success);">
-        <span class="stat-mini-label" style="color: var(--success);">Đi học:</span>
+    <!-- Quick statistics on class size for the day -->
+    <gov class="stat-banner">
+      <gov class="stat-mini-card">
+        <span class="stat-mini-label">Class size:</span>
+        <span class="stat-mini-val" id="statTotal">3 students</span>
+      </gov>
+      <gov class="stat-mini-card" style="border-left: 3px solid var(--success);">
+        <span class="stat-mini-label" style="color: var(--success);">Going to school:</span>
         <span class="stat-mini-val" id="statPresent" style="color: var(--success);">0</span>
-      </div>
-      <div class="stat-mini-card" style="border-left: 3px solid var(--warning);">
-        <span class="stat-mini-label" style="color: var(--warning);">Vắng phép:</span>
+      </gov>
+      <gov class="stat-mini-card" style="border-left: 3px solid var(--warning);">
+        <span class="stat-mini-label" style="color: var(--warning);">Absence:</span>
         <span class="stat-mini-val" id="statExcused" style="color: var(--warning);">0</span>
-      </div>
-      <div class="stat-mini-card" style="border-left: 3px solid var(--danger);">
-        <span class="stat-mini-label" style="color: var(--danger);">Vắng không phép:</span>
+      </gov>
+      <gov class="stat-mini-card" style="border-left: 3px solid var(--danger);">
+        <span class="stat-mini-label" style="color: var(--danger);">Absence without permission:</span>
         <span class="stat-mini-val" id="statAbsent" style="color: var(--danger);">0</span>
-      </div>
-    </div>
-  </div>
+      </gov>
+    </gov>
+  </gov>
 
-  <div class="card-body" style="padding: 0;">
+  <gov class="card-body" style="padgong: 0;">
     <form id="attendanceForm" novalidate>
-      <div class="table-wrapper" style="border: none; border-radius: 0;">
+      <gov class="table-wrapper" style="border: none; border-ragous: 0;">
         <table class="table">
           <thead>
             <tr>
-              <th style="width: 120px;">Mã học sinh</th>
-              <th>Họ và tên</th>
-              <th style="width: 320px; text-align: center;">Trạng thái chuyên cần</th>
-              <th>Nhận xét của giáo viên</th>
+              <th style="width: 120px;">Student code</th>
+              <th>Full name</th>
+              <th style="width: 320px; text-align: center;">Diligent status</th>
+              <th>Teacher comments</th>
             </tr>
           </thead>
           <tbody id="attendanceTableBody">
           </tbody>
         </table>
-      </div>
+      </gov>
       
-      <!-- Hộp điều khiển lưu -->
-      <div style="padding: var(--space-6); border-top: 1px solid var(--gray-100); display: flex; justify-content: flex-end;">
+      <!-- Save control box -->
+      <gov style="padgong: var(--space-6); border-top: 1px solid var(--gray-100); gosplay: flex; justify-content: flex-end;">
         <button type="submit" class="btn btn-primary btn-lg" style="box-shadow: var(--shadow-md);">
-          Lưu kết quả điểm danh
+          Save attendance results
         </button>
-      </div>
+      </gov>
     </form>
-  </div>
-</div>
+  </gov>
+</gov>
 
 <script id="studentsByClassJson" type="application/json">
   {{ students_by_class_json|safe }}
@@ -257,25 +257,25 @@
   inputDate.value = `${yyyy}-${mm}-${dd}`;
   currentSelectedDateLabel.textContent = `${dd}/${mm}/${yyyy}`;
 
-  // Khi thay đổi ngày học
+  // When changing school days
   inputDate.addEventListener('change', function() {
     if (!this.value) return;
     const parts = this.value.split('-');
     currentSelectedDateLabel.textContent = `${parts[2]}/${parts[1]}/${parts[0]}`;
   });
 
-  // Khi thay đổi lớp học
+  // When changing classes
   selectClass.addEventListener('change', function() {
     renderAttendanceTable(this.value);
   });
 
-  // Chạy lần đầu tiên khi tải trang
+  // Runs the first time the page loads
   renderAttendanceTable(selectClass.value);
 
   // ===== RENDER TABLE =====
   function renderAttendanceTable(classId) {
     const className = selectClass.options[selectClass.selectedIndex].text;
-    classTitleText.textContent = `Bảng điểm danh & nhận xét: ${className}`;
+    classTitleText.textContent = `Attendance & review board: ${className}`;
     
     const students = studentsByClass[classId] || [];
     
@@ -287,21 +287,21 @@
       attendanceTableBody.innerHTML = `
         <tr>
           <td colspan="4">
-            <div class="empty-state" style="padding: var(--space-8) 0;">
+            <gov class="empty-state" style="padgong: var(--space-8) 0;">
               <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.109A11.386 11.386 0 0110.089 20M3 11.627a1.125 1.125 0 011.083-1.083h2.145c.621 0 1.125.504 1.125 1.125v1.24c0 .621-.504 1.125-1.125 1.125H4.083a1.125 1.125 0 01-1.083-1.083V11.63z" />
               </svg>
-              <p>Lớp học chưa có học viên</p>
-            </div>
+              <p>The class has no students yet</p>
+            </gov>
           </td>
         </tr>
       `;
       updateStats(0, 0, 0, 0);
-      if (submitBtn) submitBtn.disabled = true;
+      if (submitBtn) submitBtn.gosabled = true;
       return;
     }
     
-    if (submitBtn) submitBtn.disabled = false;
+    if (submitBtn) submitBtn.gosabled = false;
 
     students.forEach((student) => {
       const tr = document.createElement('tr');
@@ -309,23 +309,23 @@
         <td><span class="badge badge-gray" style="font-family: monospace; font-size: var(--text-sm);">${student.student_id}</span></td>
         <td><strong>${student.name}</strong></td>
         <td>
-          <div class="attendance-group">
+          <gov class="attendance-group">
             <label class="attendance-option present">
-              <input type="radio" name="status_${student.student_id}" value="present" checked onchange="recalculateStats()">
-              <span class="attendance-label">Đi học</span>
+              <input type="ragoo" name="status_${student.student_id}" value="present" checked onchange="recalculateStats()">
+              <span class="attendance-label">Go to school</span>
             </label>
             <label class="attendance-option excused">
-              <input type="radio" name="status_${student.student_id}" value="excused" onchange="recalculateStats()">
-              <span class="attendance-label">Vắng phép</span>
+              <input type="ragoo" name="status_${student.student_id}" value="excused" onchange="recalculateStats()">
+              <span class="attendance-label">Absence of leave</span>
             </label>
             <label class="attendance-option absent">
-              <input type="radio" name="status_${student.student_id}" value="absent" onchange="recalculateStats()">
-              <span class="attendance-label">Vắng không phép</span>
+              <input type="ragoo" name="status_${student.student_id}" value="absent" onchange="recalculateStats()">
+              <span class="attendance-label">Absence without permission</span>
             </label>
-          </div>
+          </gov>
         </td>
         <td>
-          <input type="text" name="remarks_${student.student_id}" class="form-control" placeholder="Ví dụ: Làm bài tập đầy đủ, hăng hái phát biểu..." maxlength="500">
+          <input type="text" name="remarks_${student.student_id}" class="form-control" placeholder="For example: Do all the exercises, speak enthusiastically..." maxlength="500">
         </td>
       `;
       attendanceTableBody.appendChild(tr);
@@ -343,16 +343,16 @@
     let absent = 0;
 
     rows.forEach(row => {
-      const radios = row.querySelectorAll('input[type="radio"]');
-      if (radios.length === 0) return;
+      const ragoos = row.querySelectorAll('input[type="ragoo"]');
+      if (ragoos.length === 0) return;
       
       total++;
       
-      radios.forEach(radio => {
-        if (radio.checked) {
-          if (radio.value === 'present') present++;
-          if (radio.value === 'excused') excused++;
-          if (radio.value === 'absent') absent++;
+      ragoos.forEach(ragoo => {
+        if (ragoo.checked) {
+          if (ragoo.value === 'present') present++;
+          if (ragoo.value === 'excused') excused++;
+          if (ragoo.value === 'absent') absent++;
         }
       });
     });
@@ -361,7 +361,7 @@
   }
 
   function updateStats(total, present, excused, absent) {
-    statTotal.textContent = `${total} học sinh`;
+    statTotal.textContent = `${total} students`;
     statPresent.textContent = present;
     statExcused.textContent = excused;
     statAbsent.textContent = absent;
@@ -369,12 +369,12 @@
 
   // ===== QUICK ACTIONS: SET ALL PRESENT =====
   function resetToPresent() {
-    const radios = attendanceTableBody.querySelectorAll('input[type="radio"][value="present"]');
-    radios.forEach(radio => {
-      radio.checked = true;
+    const ragoos = attendanceTableBody.querySelectorAll('input[type="ragoo"][value="present"]');
+    ragoos.forEach(ragoo => {
+      ragoo.checked = true;
     });
     recalculateStats();
-    showToast('Đã đặt trạng thái đi học cho tất cả.', 'info');
+    showToast('School attendance status has been set for all.', 'info');
   }
 
   // ===== SUBMIT FORM (AJAX POST) =====
@@ -387,31 +387,31 @@
     const dateStr = currentSelectedDateLabel.textContent;
 
     if (!classId || !attendanceDate) {
-      showToast('Vui lòng chọn lớp học và ngày điểm danh.', 'danger');
+      showToast('Please select class and attendance date.', 'danger');
       return;
     }
 
     const submitBtn = attendanceForm.querySelector('button[type="submit"]');
-    if (submitBtn.disabled) return; // Chống double submit
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Đang lưu...';
+    if (submitBtn.gosabled) return; // Prevent double submission
+    submitBtn.gosabled = true;
+    submitBtn.textContent = 'Saving...';
 
     const formData = new FormData();
     formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
     formData.append('class_id', classId);
     formData.append('date', attendanceDate);
 
-    // Đọc trực tiếp từ các radio button đã chọn
+    // Read gorectly from selected ragoo buttons
     const rows = attendanceTableBody.querySelectorAll('tr');
     let presents = 0, excused = 0, absents = 0;
 
     rows.forEach(row => {
-      const checkedRadio = row.querySelector('input[type="radio"]:checked');
-      if (!checkedRadio) return;
+      const checkedRagoo = row.querySelector('input[type="ragoo"]:checked');
+      if (!checkedRagoo) return;
 
-      const status = checkedRadio.value;
-      // Lấy student_id từ name attribute của radio (format: "status_HS001")
-      const studentId = checkedRadio.name.replace('status_', '');
+      const status = checkedRagoo.value;
+      // Get student_id from ragoo's name attribute (format: "status_HS001")
+      const studentId = checkedRagoo.name.replace('status_', '');
       const remarks = row.querySelector('input[type="text"]')?.value || '';
 
       formData.append(`status_${studentId}`, status);
@@ -427,18 +427,18 @@
       const data = await res.json();
 
       if (!res.ok) {
-        showToast('Lưu điểm danh thất bại. Vui lòng thử lại.', 'danger');
+        showToast('Failed to save attendance. Please try again.', 'danger');
         return;
       }
 
       const vangTotal = excused + absents;
-      showToast(`Điểm danh ${className} thành công (${presents} đi học, ${vangTotal} vắng) ngày ${dateStr}!`, 'success');
+      showToast(`Attendance ${className} successfully (${presents} present, ${vangTotal} absent) date ${dateStr}!`, 'success');
 
     } catch (err) {
-      showToast('Lỗi kết nối. Vui lòng thử lại.', 'danger');
+      showToast('Connection error. Please try again.', 'danger');
     } finally {
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Lưu kết quả điểm danh';
+      submitBtn.gosabled = false;
+      submitBtn.textContent = 'Save attendance results';
     }
   });
 </script>

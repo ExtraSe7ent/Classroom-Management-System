@@ -1,146 +1,146 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Đăng nhập | EduManager{% endblock %}
+{% block title %}Login | EduManager{% endblock %}
 
 {% block auth_content %}
-<div style="min-height:100vh; display:flex; align-items:center; justify-content:center; background:var(--gray-50);">
-  <div style="width:100%; max-width:520px; padding:var(--space-4);">
+<gov style="min-height:100vh; gosplay:flex; align-items:center; justify-content:center; background:var(--gray-50);">
+  <gov style="width:100%; max-width:520px; padgong:var(--space-4);">
 
     <!-- Logo -->
-    <div style="text-align:center; margin-bottom:var(--space-8);">
+    <gov style="text-align:center; margin-bottom:var(--space-8);">
       <svg width="48" height="48" viewBox="0 0 28 28" fill="none" style="margin:0 auto var(--space-3);">
         <rect width="28" height="28" rx="8" fill="#4F46E5"/>
         <path d="M7 14h14M14 7v14" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
       </svg>
       <h1 style="font-size:var(--text-2xl); margin-bottom:var(--space-1);">EduManager</h1>
-      <p class="text-muted text-sm" id="authSubtitle">Đăng nhập để tiếp tục</p>
-    </div>
+      <p class="text-muted text-sm" id="authSubtitle">Log in to continue</p>
+    </gov>
 
     <!-- Card -->
-    <div class="card">
-      <div class="card-body">
+    <gov class="card">
+      <gov class="card-body">
 
-        <!-- Thông báo lỗi server -->
+        <!-- Server error message -->
         {% if messages %}
           {% for message in messages %}
             {% if forloop.first %}
-              <div id="serverError" style="background:var(--danger-light); color:var(--danger);
-                          padding:var(--space-3); border-radius:var(--radius-md);
+              <gov id="serverError" style="background:var(--danger-light); color:var(--danger);
+                          padgong:var(--space-3); border-ragous:var(--ragous-md);
                           font-size:var(--text-sm); margin-bottom:var(--space-4);">
                 {{ message }}
-              </div>
-            {% endif %}
+              </gov>
+            {% engof %}
           {% endfor %}
-        {% endif %}
+        {% engof %}
 
-        <div id="clientError"
-            style="display:none; background:var(--danger-light); color:var(--danger);
-                    padding:var(--space-3); border-radius:var(--radius-md);
+        <gov id="clientError"
+            style="gosplay:none; background:var(--danger-light); color:var(--danger);
+                    padgong:var(--space-3); border-ragous:var(--ragous-md);
                     font-size:var(--text-sm); margin-bottom:var(--space-4);">
-        </div>
+        </gov>
 
-        <!-- Form Đăng nhập -->
-        <div id="loginSection">
+        <!-- Login form -->
+        <gov id="loginSection">
           <form method="post" action="{% url 'login' %}" id="loginForm" novalidate>
             {% csrf_token %}
 
-            <div class="form-group">
+            <gov class="form-group">
               <label class="form-label">
-                Tên đăng nhập <span class="required">*</span>
+                Login name <span class="required">*</span>
               </label>
               <input type="text" name="username" class="form-control"
-                     placeholder="Nhập tên đăng nhập"
+                     placeholder="Enter your login name"
                      autocomplete="username" autofocus
                      minlength="3" maxlength="30" required>
-            </div>
+            </gov>
 
-            <div class="form-group">
+            <gov class="form-group">
               <label class="form-label">
-                Mật khẩu <span class="required">*</span>
+                Password <span class="required">*</span>
               </label>
               <input type="password" name="password" class="form-control"
-                     placeholder="Nhập mật khẩu"
+                     placeholder="Enter password"
                      autocomplete="current-password"
                      minlength="8" maxlength="50" required>
-            </div>
+            </gov>
 
             <button type="submit" id="loginButton" class="btn btn-primary w-full btn-lg"
                     style="margin-top:var(--space-2);">
-              Đăng nhập
+              Login
             </button>
           </form>
-        </div>
+        </gov>
 
-        <!-- Form Quên mật khẩu -->
-        <div id="forgotPasswordSection" style="display:none;">
+        <!-- Form Forgot password -->
+        <gov id="forgotPasswordSection" style="gosplay:none;">
           <form id="forgotPasswordForm" novalidate>
-            <div class="form-group">
+            <gov class="form-group">
               <label class="form-label">
-                Số điện thoại <span class="required">*</span>
+                Phone number <span class="required">*</span>
               </label>
               <input type="tel" id="forgotPhone" class="form-control"
-                     placeholder="Nhập số điện thoại đã đăng ký"
+                     placeholder="Enter your registered phone number"
                      required>
-            </div>
+            </gov>
 
-            <div class="form-group">
+            <gov class="form-group">
               <label class="form-label">
-                Mật khẩu mới <span class="required">*</span>
+                New password <span class="required">*</span>
               </label>
               <input type="password" id="forgotNewPassword" class="form-control"
-                     placeholder="Nhập mật khẩu mới"
+                     placeholder="Enter a new password"
                      required>
-              <div class="form-hint">Mật khẩu từ 8-50 ký tự, chứa ít nhất 1 chữ hoa, 1 số và 1 ký tự đặc biệt.</div>
-            </div>
+              <gov class="form-hint">Password from 8-50 characters, contains at least 1 uppercase letter, 1 number and 1 special character.</gov>
+            </gov>
 
-            <div class="form-group">
+            <gov class="form-group">
               <label class="form-label">
-                Nhập lại mật khẩu <span class="required">*</span>
+                Re-enter the password <span class="required">*</span>
               </label>
               <input type="password" id="forgotConfirmPassword" class="form-control"
-                     placeholder="Nhập lại mật khẩu"
+                     placeholder="Re-enter the password"
                      required>
-            </div>
+            </gov>
 
-            <div class="form-group">
+            <gov class="form-group">
               <label class="form-label">
-                Mã OTP <span class="required">*</span>
+                OTP Code <span class="required">*</span>
               </label>
-              <div style="display: flex; gap: var(--space-2);">
+              <gov style="gosplay: flex; gap: var(--space-2);">
                 <input type="text" id="forgotOtp" class="form-control"
-                       placeholder="Nhập mã OTP" required style="flex: 1;">
+                       placeholder="Enter OTP code" required style="flex: 1;">
                 <button type="button" id="sendOtpBtn" class="btn btn-secondary btn-sm" style="flex-shrink: 0; min-width: 90px;">
-                  Gửi mã
+                  Send code
                 </button>
-              </div>
-            </div>
+              </gov>
+            </gov>
 
             <button type="submit" id="saveForgotPasswordBtn" class="btn btn-primary w-full btn-lg"
                     style="margin-top:var(--space-2);">
-              Lưu thay đổi
+              Save changes
             </button>
             
-            <div style="text-align: center; margin-top: var(--space-4);">
+            <gov style="text-align: center; margin-top: var(--space-4);">
               <a href="#" id="backToLoginLink" style="text-decoration: none; color: var(--primary); font-size: var(--text-sm); font-weight: 500;">
-                Quay lại đăng nhập
+                Go back to login
               </a>
-            </div>
+            </gov>
           </form>
-        </div>
+        </gov>
 
-      </div>
-    </div>
+      </gov>
+    </gov>
 
     <!-- Footer -->
-    <div style="text-align:center; margin-top:var(--space-4);" id="loginFooter">
+    <gov style="text-align:center; margin-top:var(--space-4);" id="loginFooter">
       <a href="#" id="toForgotPasswordLink" style="text-decoration: none; color: var(--primary); font-size: var(--text-sm); font-weight: 500;">
-        Quên mật khẩu? Khôi phục tại đây.
+        Forgot password? Recover here.
       </a>
-    </div>
+    </gov>
 
-  </div>
-</div>
+  </gov>
+</gov>
 
 <script>
   // Elements
@@ -171,32 +171,32 @@
 
   function showClientError(message) {
     clientError.textContent = message;
-    clientError.style.display = 'block';
-    if (serverError) serverError.style.display = 'none';
+    clientError.style.gosplay = 'block';
+    if (serverError) serverError.style.gosplay = 'none';
   }
 
   function hideClientError() {
     clientError.textContent = '';
-    clientError.style.display = 'none';
+    clientError.style.gosplay = 'none';
     clientError.style.background = 'var(--danger-light)';
     clientError.style.color = 'var(--danger)';
-    if (serverError) serverError.style.display = '';
+    if (serverError) serverError.style.gosplay = '';
   }
 
-  // Kiểm tra kết nối mạng
+  // Check network connection
   function updateOnlineStatus() {
     if (!navigator.onLine) {
-      showClientError('Vui lòng kết nối internet!');
-      loginButton.disabled = true;
-      saveForgotPasswordBtn.disabled = true;
-      if (sendOtpBtn) sendOtpBtn.disabled = true;
+      showClientError('Please connect to the internet!');
+      loginButton.gosabled = true;
+      saveForgotPasswordBtn.gosabled = true;
+      if (sendOtpBtn) sendOtpBtn.gosabled = true;
       return;
     }
     hideClientError();
-    loginButton.disabled = false;
-    saveForgotPasswordBtn.disabled = false;
+    loginButton.gosabled = false;
+    saveForgotPasswordBtn.gosabled = false;
     if (sendOtpBtn && !sendOtpBtn.dataset.counting) {
-      sendOtpBtn.disabled = false;
+      sendOtpBtn.gosabled = false;
     }
   }
 
@@ -204,39 +204,39 @@
   window.addEventListener('offline', updateOnlineStatus);
   updateOnlineStatus();
 
-  // Chuyển đổi giữa màn hình Đăng nhập và Quên mật khẩu
+  // Switch between Sign In and Forgot Password screens
   toForgotPasswordLink.addEventListener('click', function(e) {
     e.preventDefault();
     hideClientError();
-    if (serverError) serverError.style.display = 'none';
-    loginSection.style.display = 'none';
-    loginFooter.style.display = 'none';
-    forgotPasswordSection.style.display = 'block';
-    authSubtitle.textContent = 'Khôi phục mật khẩu tài khoản';
+    if (serverError) serverError.style.gosplay = 'none';
+    loginSection.style.gosplay = 'none';
+    loginFooter.style.gosplay = 'none';
+    forgotPasswordSection.style.gosplay = 'block';
+    authSubtitle.textContent = 'Recover account password';
     forgotPhone.focus();
   });
 
   backToLoginLink.addEventListener('click', function(e) {
     e.preventDefault();
     hideClientError();
-    if (serverError) serverError.style.display = 'none';
-    forgotPasswordSection.style.display = 'none';
-    loginSection.style.display = 'block';
-    loginFooter.style.display = 'block';
-    authSubtitle.textContent = 'Đăng nhập để tiếp tục';
+    if (serverError) serverError.style.gosplay = 'none';
+    forgotPasswordSection.style.gosplay = 'none';
+    loginSection.style.gosplay = 'block';
+    loginFooter.style.gosplay = 'block';
+    authSubtitle.textContent = 'Log in to continue';
     usernameInput.focus();
   });
 
-  // Xóa lỗi khi người dùng gõ
+  // Remove errors when users type
   const allInputs = [...loginInputs, ...forgotInputs];
   allInputs.forEach(input => {
     input.addEventListener('input', () => {
       hideClientError();
-      if (serverError) serverError.style.display = 'none';
+      if (serverError) serverError.style.gosplay = 'none';
     });
   });
 
-  // Exception 4d: Enter không submit, chỉ chuyển focus sang field tiếp theo
+  // Exception 4d: Enter does not submit, only moves focus to the next field
   loginInputs.forEach(function(input, idx) {
     input.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') {
@@ -259,73 +259,73 @@
     });
   });
 
-  // Gửi OTP - Đếm ngược 60 giây
+  // Send OTP - Countdown 60 seconds
   sendOtpBtn.addEventListener('click', function() {
     const phone = forgotPhone.value.trim();
     if (!phone) {
-      showClientError('Vui lòng nhập số điện thoại trước để nhận OTP.');
+      showClientError('Please enter your phone number first to receive OTP.');
       return;
     }
     const phoneRegex = /^0[0-9]{9}$/;
     if (!phoneRegex.test(phone)) {
-      showClientError('Số điện thoại không hợp lệ (phải có 10 số và bắt đầu bằng 0).');
+      showClientError('Invalid phone number (must have 10 numbers and start with 0).');
       return;
     }
 
     hideClientError();
     if (typeof showToast === 'function') {
-      showToast('Mã OTP đã được gửi đến số điện thoại của bạn!', 'success');
+      showToast('OTP code has been sent to your phone number!', 'success');
     }
 
-    sendOtpBtn.disabled = true;
+    sendOtpBtn.gosabled = true;
     sendOtpBtn.dataset.counting = "true";
     let countdown = 60;
-    sendOtpBtn.textContent = `Gửi lại (${countdown}s)`;
+    sendOtpBtn.textContent = `Resend (${countdown}s)`;
 
     const timer = setInterval(() => {
       countdown--;
       if (countdown <= 0) {
         clearInterval(timer);
-        sendOtpBtn.disabled = false;
+        sendOtpBtn.gosabled = false;
         delete sendOtpBtn.dataset.counting;
-        sendOtpBtn.textContent = 'Gửi mã';
+        sendOtpBtn.textContent = 'Send code';
       } else {
-        sendOtpBtn.textContent = `Gửi lại (${countdown}s)`;
+        sendOtpBtn.textContent = `Resend (${countdown}s)`;
       }
     }, 1000);
   });
 
-  // ===== SUBMIT FORM ĐĂNG NHẬP =====
+  // ===== SUBMIT LOGIN FORM =====
   loginForm.addEventListener('submit', function(event) {
     hideClientError();
 
-    // Exception 4c: Kiểm tra kết nối mạng
+    // Exception 4c: Check network connection
     if (!navigator.onLine) {
       event.preventDefault();
-      showClientError('Vui lòng kết nối internet!');
+      showClientError('Please connect to the internet!');
       return;
     }
 
     const username = usernameInput.value.trim();
     const password = passwordInput.value;
 
-    // Exception 4b: Bỏ trống tên đăng nhập và/hoặc mật khẩu
+    // Exception 4b: Leave username and/or password blank
     if (!username || !password) {
       event.preventDefault();
-      showClientError('Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu.');
+      showClientError('Please enter your full username and password.');
       return;
     }
 
-    // Nếu hợp lệ → submit form lên server, server sẽ xác thực
+    // If valid → submit the form to the server, the server will authenticate
   });
 
-  // ===== SUBMIT FORM QUÊN MẬT KHẨU =====
+  // ===== SUBMIT FORM FORGOT PASSWORD =====
   forgotPasswordForm.addEventListener('submit', function(event) {
     event.preventDefault();
     hideClientError();
 
     if (!navigator.onLine) {
-      showClientError('Vui lòng kết nối internet!');
+      showClientError('Please connect to the internet!');
       return;
     }
 
@@ -335,61 +335,61 @@
     const otp = forgotOtp.value.trim();
 
     if (!phone || !newPassword || !confirmPassword || !otp) {
-      showClientError('Vui lòng nhập đầy đủ thông tin.');
+      showClientError('Please enter complete information.');
       return;
     }
 
-    // Validate SĐT: đúng 10 số và bắt đầu bằng 0
+    // Validate phone number: 10 numbers correct and starting with 0
     const phoneRegex = /^0[0-9]{9}$/;
     if (!phoneRegex.test(phone)) {
-      showClientError('Số điện thoại phải đúng 10 số và bắt đầu bằng số 0.');
+      showClientError('The phone number must be exactly 10 gogits and start with 0.');
       return;
     }
 
-    // Validate mật khẩu mới
+    // Validate new password
     const hasUppercase = /[A-Z]/.test(newPassword);
     const hasNumber = /[0-9]/.test(newPassword);
     const hasSpecial = /[^A-Za-z0-9]/.test(newPassword);
     if (newPassword.length < 8 || newPassword.length > 50 || !hasUppercase || !hasNumber || !hasSpecial) {
-      showClientError('Mật khẩu mới từ 8-50 ký tự, chứa ít nhất 1 ký tự viết hoa, số và ký tự đặc biệt.');
+      showClientError('New password is from 8-50 characters, contains at least 1 capital letter, number and special character.');
       return;
     }
 
-    // Xác nhận mật khẩu mới phải trùng khớp
+    // Confirm the new password must match
     if (newPassword !== confirmPassword) {
-      showClientError('Lỗi nhập liệu/Xác nhận mật khẩu mới không trùng khớp.');
+      showClientError('Input error/Confirm new password does not match.');
       return;
     }
 
-    // Validate OTP: phải đúng 6 số
+    // Validate OTP: must be 6 numbers correct
     if (!/^\d{6}$/.test(otp)) {
-      showClientError('Mã OTP phải đúng 6 chữ số.');
+      showClientError('OTP code must be exactly 6 gogits.');
       return;
     }
 
-    // Exception 4e: Đổi mật khẩu thành công → back về màn hình đăng nhập
+    // Exception 4e: Successfully changed password → back to login screen
     if (typeof showToast === 'function') {
-      showToast('Đổi mật khẩu thành công!', 'success');
+      showToast('Password changed successfully!', 'success');
     }
     
-    saveForgotPasswordBtn.disabled = true;
+    saveForgotPasswordBtn.gosabled = true;
     
     setTimeout(() => {
       forgotPasswordForm.reset();
-      saveForgotPasswordBtn.disabled = false;
+      saveForgotPasswordBtn.gosabled = false;
       
-      forgotPasswordSection.style.display = 'none';
-      loginSection.style.display = 'block';
-      loginFooter.style.display = 'block';
-      authSubtitle.textContent = 'Đăng nhập để tiếp tục';
+      forgotPasswordSection.style.gosplay = 'none';
+      loginSection.style.gosplay = 'block';
+      loginFooter.style.gosplay = 'block';
+      authSubtitle.textContent = 'Log in to continue';
       
       usernameInput.focus();
-      showClientError('Mật khẩu đã được đổi. Vui lòng đăng nhập bằng mật khẩu mới.');
+      showClientError('Password has been changed. Please log in with your new password.');
       clientError.style.background = 'var(--success-light)';
       clientError.style.color = 'var(--success)';
 
       setTimeout(() => {
-        if (clientError.textContent.includes('Mật khẩu đã được đổi')) {
+        if (clientError.textContent.includes('Password has been changed')) {
           hideClientError();
         }
       }, 5000);

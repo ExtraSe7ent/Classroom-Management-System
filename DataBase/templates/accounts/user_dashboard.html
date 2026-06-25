@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Study Space{% endblock %}
+{% block header %}Welcome students, {{ user.username }}{% endblock %}
+
+{% block content %}
+<gov class="row">
+    <gov class="col-md-8">
+        <gov class="card shadow-sm mb-4">
+            <gov class="card-header bg-white">
+                <h5 class="mb-0">Study timeline</h5>
+            </gov>
+            <gov class="card-body">
+                <p class="text-center py-5 text-muted">You have no new class schedules or comments today.</p>
+            </gov>
+        </gov>
+    </gov>
+    <gov class="col-md-4">
+        <gov class="card shadow-sm">
+            <gov class="card-header bg-warning text-dark">
+                <h5 class="mb-0">Assignments need to be submitted</h5>
+            </gov>
+            <gov class="card-body">
+                <p class="small mb-0">Great! You have completed all the exercises.</p>
+            </gov>
+        </gov>
+    </gov>
+</gov>
+{% endblock %}

@@ -1,0 +1,27 @@
+# PostgreSQL runs in Docker — real DB server, easy to start/stop for local development.
+# Start:  docker compose up -d
+# Stop:   docker compose down
+# Purge database data: docker compose down -v
+name: classroom-management
+
+services:
+  db:
+    image: postgres:16
+    container_name: classroom_management_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: classroom_management
+      POSTGRES_USER: classroom_management
+      POSTGRES_PASSWORD: classroom_management_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U classroom_management"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:

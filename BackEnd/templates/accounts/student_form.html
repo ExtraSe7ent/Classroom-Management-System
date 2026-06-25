@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} | EduManager{% endblock %}
+{% block header %}
+    <a href="{% url 'student_list' %}" class="btn btn-sm btn-light me-3"><i class="fas fa-arrow-left"></i></a>
+    {{ title }}
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card border shadow overflow-hidden">
+            <div class="card-header bg-primary bg-opacity-10 py-3 border-0">
+                <h6 class="mb-0 text-primary fw-bold">Account &amp; Identity Information</h6>
+            </div>
+            <div class="card-body p-4">
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors.0 }}
+                    </div>
+                {% endif %}
+            <form method="POST">
+                {% csrf_token %}
+                <div class="row g-3">
+                    {% for field in form %}
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold small text-uppercase text-muted">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="text-danger x-small mt-1"><i class="fas fa-info-circle me-1"></i>{{ field.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="mt-4 pt-4 border-top d-flex justify-content-between">
+                    <a href="{% url 'student_list' %}" class="btn btn-light px-4">Cancel</a>
+                    <button type="submit" class="btn btn-primary px-5 shadow-sm">Save Student</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

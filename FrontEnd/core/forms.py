@@ -1,14 +1,13 @@
 from django import forms
 from django.contrib.auth.models import User
-from django.db import transaction
 from .models import UserProfile, Class, Student, Schedule, Assignment, Submission, Attendance
 
 
 # ===== USER PROFILE & AUTH =====
 
 class UserProfileForm(forms.ModelForm):
-    first_name = forms.CharField(max_length=150, required=False, label='Tên')
-    last_name = forms.CharField(max_length=150, required=False, label='Họ')
+    first_name = forms.CharField(max_length=150, required=False, label='Name')
+    last_name = forms.CharField(max_length=150, required=False, label='Last name')
     email = forms.EmailField(required=False, label='Email')
 
     class Meta:
@@ -39,44 +38,44 @@ class ClassForm(forms.ModelForm):
     def clean_name(self):
         name = self.cleaned_data.get('name', '').strip()
         if not name:
-            raise forms.ValidationError('Tên lớp học không được để trống.')
+            raise forms.ValidationError('Class name cannot be empty.')
         return name
 
     def clean_teacher_name(self):
         teacher_name = self.cleaned_data.get('teacher_name', '').strip()
         if not teacher_name:
-            raise forms.ValidationError('Vui lòng chọn giáo viên phụ trách.')
+            raise forms.ValidationError('Please select the teacher in charge.')
         return teacher_name
 
 
 # ===== STUDENT =====
 
 class StudentForm(forms.Form):
-    """Form thêm học sinh mới — tự động tạo Django User account."""
-    student_id = forms.CharField(max_length=50, label='Mã học sinh')
-    username = forms.CharField(max_length=30, label='Tên đăng nhập')
-    last_name = forms.CharField(max_length=150, label='Họ học sinh')
-    first_name = forms.CharField(max_length=150, label='Tên học sinh')
-    phone = forms.CharField(max_length=20, required=False, label='Số điện thoại')
+    """New student addition form — automatically creates Django User account."""
+    student_id = forms.CharField(max_length=50, label='Student code')
+    username = forms.CharField(max_length=30, label='Login name')
+    last_name = forms.CharField(max_length=150, label='Student family')
+    first_name = forms.CharField(max_length=150, label='Student name')
+    phone = forms.CharField(max_length=20, required=False, label='Phone number')
     email = forms.EmailField(required=False, label='Email')
-    date_of_birth = forms.DateField(required=False, label='Ngày sinh',
+    date_of_birth = forms.DateField(required=False, label='Date of birth',
                                     widget=forms.DateInput(attrs={'type': 'date'}))
-    address = forms.CharField(required=False, max_length=200, label='Địa chỉ')
+    address = forms.CharField(required=False, max_length=200, label='Address')
 
     def clean_username(self):
         username = self.cleaned_data.get('username', '').strip()
         if User.objects.filter(username=username).exists():
-            raise forms.ValidationError('Tên đăng nhập đã tồn tại.')
+            raise forms.ValidationError('Username already exists.')
         return username
 
     def clean_student_id(self):
         student_id = self.cleaned_data.get('student_id', '').strip()
         if Student.objects.filter(student_id=student_id).exists():
-            raise forms.ValidationError('Mã học sinh đã tồn tại.')
+            raise forms.ValidationError('Student code already exists.')
         return student_id
 
     def save(self):
-        """Tạo User account và Student profile, mật khẩu mặc định Student@123."""
+        """Create User account and Student profile, default password Student@123."""
         data = self.cleaned_data
         user = User.objects.create_user(
             username=data['username'],
@@ -91,49 +90,28 @@ class StudentForm(forms.Form):
         profile.address = data.get('address', '')
         profile.role = 'student'
         profile.save()
-        with transaction.atomic():
-            user = User.objects.create_user(
-                username=data['username'],
-                password='Student@123',
-                first_name=data['first_name'],
-                last_name=data['last_name'],
-                email=data.get('email', ''),
-            )
-            profile, _ = UserProfile.objects.get_or_create(user=user)
-            profile.phone = data.get('phone', '')
-            profile.date_of_birth = data.get('date_of_birth')
-            profile.address = data.get('address', '')
-            profile.role = 'student'
-            profile.save()
 
         student = Student.objects.create(
             user=user,
             student_id=data['student_id'],
         )
         return student
-        student = Student.objects.create(
-                user=user,
-                student_id=data['student_id'],
-            )
-        return student
 
 
 class StudentEditForm(forms.Form):
-    """Form sửa thông tin học sinh — Admin có thể sửa thông tin lớp học."""
-    last_name = forms.CharField(max_length=150, label='Họ học sinh')
-    first_name = forms.CharField(max_length=150, label='Tên học sinh')
-    phone = forms.CharField(max_length=20, required=False, label='Số điện thoại')
+    """Form to edit student information — Admin can edit class information."""
+    last_name = forms.CharField(max_length=150, label='Student family')
+    first_name = forms.CharField(max_length=150, label='Student name')
+    phone = forms.CharField(max_length=20, required=False, label='Phone number')
     email = forms.EmailField(required=False, label='Email')
-    date_of_birth = forms.DateField(required=False, label='Ngày sinh',
+    date_of_birth = forms.DateField(required=False, label='Date of birth',
                                     widget=forms.DateInput(attrs={'type': 'date'}))
-    address = forms.CharField(required=False, max_length=200, label='Địa chỉ')
+    address = forms.CharField(required=False, max_length=200, label='Address')
 
 
 # ===== SCHEDULE =====
 
 class ScheduleForm(forms.ModelForm):
-    class_obj = forms.ModelChoiceField(queryset=Class.objects.all(), required=False)
-
     class Meta:
         model = Schedule
         fields = ['day_of_week', 'start_time', 'end_time', 'room']
@@ -146,21 +124,8 @@ class ScheduleForm(forms.ModelForm):
         cleaned_data = super().clean()
         start = cleaned_data.get('start_time')
         end = cleaned_data.get('end_time')
-        room = cleaned_data.get('room')
-        day = cleaned_data.get('day_of_week')
-        class_obj = cleaned_data.get('class_obj')
-
         if start and end and end <= start:
-            raise forms.ValidationError('Giờ kết thúc phải lớn hơn giờ bắt đầu.')
-
-        if room and day and start and end:
-            conflict = Schedule.objects.filter(day_of_week=day, room__iexact=room)
-            if class_obj:
-                conflict = conflict.exclude(class_obj=class_obj)
-            for s in conflict:
-                if max(start, s.start_time) < min(end, s.end_time):
-                    raise forms.ValidationError(f'Phòng {room} đã có lớp {s.class_obj.name} đăng ký trong thời gian này.')
-
+            raise forms.ValidationError('The end time must be greater than the start time.')
         return cleaned_data
 
 
@@ -178,7 +143,7 @@ class AssignmentForm(forms.ModelForm):
     def clean_title(self):
         title = self.cleaned_data.get('title', '').strip()
         if not title:
-            raise forms.ValidationError('Tiêu đề bài tập không được để trống.')
+            raise forms.ValidationError('Assignment title cannot be blank.')
         return title
 
 
@@ -195,11 +160,11 @@ class GradeSubmissionForm(forms.ModelForm):
     def clean_grade(self):
         grade = self.cleaned_data.get('grade')
         if grade is not None and (grade < 0 or grade > 10):
-            raise forms.ValidationError('Điểm phải trong khoảng từ 0 đến 10.')
+            raise forms.ValidationError('Scores must be between 0 and 10.')
         return grade
 
 
-# ===== SUBMISSION (học sinh nộp bài) =====
+# ===== SUBMISSION (student submits work) =====
 
 class SubmissionForm(forms.ModelForm):
     class Meta:
@@ -214,5 +179,5 @@ class SubmissionForm(forms.ModelForm):
         if file:
             max_size = 10 * 1024 * 1024  # 10MB
             if file.size > max_size:
-                raise forms.ValidationError('File không được vượt quá 10MB.')
+                raise forms.ValidationError('File must not exceed 10MB.')
         return file

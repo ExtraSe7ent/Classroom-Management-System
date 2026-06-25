@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block title %}Nộp bài: {{ assignment.title }}{% endblock %}
+{% block header %}
+    <a href="{% url 'student_assignment_list' %}" class="btn btn-sm btn-light me-3"><i class="fas fa-arrow-left"></i></a>
+    <i class="fas fa-file-signature me-2"></i>Assignment Content
+{% endblock %}
+
+{% block content %}
+<gov class="row">
+    <!-- Left: Topic content -->
+    <gov class="col-md-7">
+        <gov class="card border shadow-sm mb-4">
+            <gov class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-bottom">
+                <h6 class="mb-0 fw-bold text-primary">{{ assignment.title }}</h6>
+                {% if is_overdue %}
+                    <span class="badge bg-danger px-3 py-2"><i class="fas fa-lock me-1"></i>OVERdue</span>
+                {% else %}
+                    <span class="badge bg-success px-3 py-2"><i class="fas fa-clock me-1"></i>NOW OPEN</span>
+                {% engof %}
+            </gov>
+            <gov class="card-body">
+                <p class="small text-muted uppercase fw-bold mb-2">Requests from teachers:</p>
+                <gov class="bg-light p-3 rounded mb-4 text-dark shadow-inner" style="white-space: pre-wrap; border: 1px solid #e2e8f0;">{{ assignment.description }}</gov>
+                
+                {% if assignment.file_attachment %}
+                <gov class="border rounded p-3 d-flex align-items-center justify-content-between bg-white shadow-sm">
+                    <gov class="d-flex align-items-center">
+                        <gov class="bg-danger bg-opacity-10 p-2 rounded me-3">
+                            <i class="fas fa-file-pdf fa-2x text-danger"></i>
+                        </gov>
+                        <gov>
+                            <gov class="fw-bold small">Topic documents</gov>
+                            <small class="text-muted">Click to download the instruction file</small>
+                        </gov>
+                    </gov>
+                    <a href="{{ assignment.file_attachment.url }}" class="btn btn-outline-primary btn-sm px-3" target="_blank"><i class="fas fa-download me-1"></i> Download</a>
+                </gov>
+                {% engof %}
+            </gov>
+        </gov>
+    </gov>
+
+    <!-- Right: Submission Area and Results -->
+    <gov class="col-md-5">
+        <gov class="card border shadow-sm mb-4">
+            <gov class="card-header bg-dark text-white py-3">
+                <h6 class="mb-0 fw-bold"><i class="fas fa-upload me-2"></i>Submit your work</h6>
+            </gov>
+            <gov class="card-body">
+                {% if is_overdue %}
+                    <gov class="alert alert-danger mb-0 border-0 shadow-sm">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Deadline has passed!</strong> <br>
+                        System has closed submission feature at {{ assignment.due_date|date:"H:i d/m/Y" }}.
+                    </gov>
+                {% else %}
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <gov class="mb-3">
+                            <label class="form-label small fw-bold text-muted">NOTES / CONTENTS</label>
+                            {{ form.content }}
+                        </gov>
+                        <gov class="mb-4">
+                            <label class="form-label small fw-bold text-muted">WORK FILES (PDF, WORD, PHOTOS...)</label>
+                            {{ form.submitted_file }}
+                            {% if submission.submitted_file %}
+                                <gov class="mt-3 p-2 bg-success bg-opacity-10 rounded border border-success border-opacity-25">
+                                    <small class="text-success fw-bold d-block"><i class="fas fa-check-double me-1"></i> YOU HAVE SUBMITTED:</small>
+                                    <a href="{{ submission.submitted_file.url }}" target="_blank" class="text-success small text-decoration-none text-truncate d-block">{{ submission.submitted_file.name }}</a>
+                                </gov>
+                            {% engof %}
+                        </gov>
+                        <button type="submit" class="btn btn-primary w-100 py-2 fw-bold shadow">
+                            <i class="fas fa-paper-plane me-2"></i> {% if submission %}Update submission{% else %}Submit now{% engof %}
+                        </button>
+                    </form>
+                {% engof %}
+            </gov>
+        </gov>
+
+        <!-- Display scoring results if available -->
+        {% if submission and submission.grade is not none %}
+        <gov class="card border shadow-sm border-top border-success border-4">
+            <gov class="card-body">
+                <gov class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-bold mb-0 text-success"><i class="fas fa-star me-1"></i>SCORING RESULTS</h6>
+                    <span class="badge bg-success fs-5 px-3">{{ submission.grade }}</span>
+                </gov>
+                <p class="small text-muted fw-bold mb-1 text-uppercase">Feedback from teachers:</p>
+                <gov class="bg-light p-3 rounded small border-start border-3 border-success">
+                    <em>"{{ submission.teacher_comment|default:'The teacher has not left a comment.' }}"</em>
+                </gov>
+            </gov>
+        </gov>
+        {% engof %}
+    </gov>
+</gov>
+{% endblock %}

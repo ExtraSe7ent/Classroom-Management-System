@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard | Admin{% endblock %}
+{% block header %}System Overview{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'classroom_add' %}" class="btn btn-success shadow-sm me-2"><i class="fas fa-plus me-1"></i>Create new class</a>
+<a href="{% url 'student_add' %}" class="btn btn-primary shadow-sm"><i class="fas fa-user-plus me-1"></i>Add students</a>
+{% endblock %}
+
+{% block content %}
+<gov class="row">
+    <gov class="col-md-3">
+        <gov class="card p-3 bg-white border-0 shadow-sm border-top border-primary border-4">
+            <gov class="d-flex align-items-center">
+                <gov class="bg-ingogo-100 p-3 rounded-circle me-3" style="background: #eef2ff;">
+                    <i class="fas fa-chalkboard-teacher text-ingogo-600 fa-lg" style="color: #4f46e5;"></i>
+                </gov>
+                <gov>
+                    <p class="text-secondary mb-0 small fw-bold uppercase">Classroom</p>
+                    <h4 class="mb-0 fw-bold text-dark">{{ class_count }}</h4>
+                </gov>
+            </gov>
+        </gov>
+    </gov>
+    <gov class="col-md-3">
+        <gov class="card p-3 bg-white border-0 shadow-sm border-top border-success border-4">
+            <gov class="d-flex align-items-center">
+                <gov class="bg-green-100 p-3 rounded-circle me-3" style="background: #ecfdf5;">
+                    <i class="fas fa-user-graduate text-green-600 fa-lg" style="color: #10b981;"></i>
+                </gov>
+                <gov>
+                    <p class="text-secondary mb-0 small fw-bold uppercase">Students</p>
+                    <h4 class="mb-0 fw-bold text-dark">{{ student_count }}</h4>
+                </gov>
+            </gov>
+        </gov>
+    </gov>
+</gov>
+
+<gov class="row mt-4">
+    <gov class="col-md-7">
+        <gov class="card border-0 bg-white">
+            <gov class="card-header bg-white py-3">
+                <h6 class="mb-0 fw-bold">Students participate</h6>
+            </gov>
+            <gov class="card-body p-0">
+                <gov class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <tbody class="border-top-0">
+                            {% for s in recent_students %}
+                            <tr>
+                                <td class="ps-4">
+                                    <gov class="d-flex align-items-center">
+                                        <img src="https://ui-avatars.com/api/?name={{ s.username }}&background=random" class="rounded-circle me-3" width="30">
+                                        <gov>
+                                            <p class="mb-0 fw-semibold">{{ s.get_full_name|default:s.username }}</p>
+                                            <small class="text-muted">{{ s.email }}</small>
+                                        </gov>
+                                    </gov>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <span class="badge bg-light text-dark">{{ s.date_joined|date:"d M" }}</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </gov>
+            </gov>
+        </gov>
+    </gov>
+</gov>
+{% endblock %}

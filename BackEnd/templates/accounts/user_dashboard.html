@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Dashboard{% endblock %}
+{% block header %}Welcome, {{ user.get_full_name|default:user.username }} 👋{% endblock %}
+
+{% block content %}
+<!-- Quick Stats Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm border-top border-primary border-4 p-3">
+            <p class="text-muted small fw-bold text-uppercase mb-1">Enrolled Classes</p>
+            <h3 class="fw-bold mb-0">{{ class_count }}</h3>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm border-top border-success border-4 p-3">
+            <p class="text-muted small fw-bold text-uppercase mb-1">Attendance Rate</p>
+            <h3 class="fw-bold mb-0 text-success">{{ attendance_rate }}%</h3>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm border-top border-warning border-4 p-3">
+            <p class="text-muted small fw-bold text-uppercase mb-1">Pending Homework</p>
+            <h3 class="fw-bold mb-0 text-warning">{{ upcoming_assignments|length }}</h3>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Homework approaching deadline -->
+    <div class="col-md-7">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h6 class="mb-0 fw-bold"><i class="fas fa-bell text-warning me-2"></i>Upcoming Homework</h6>
+                <a href="{% url 'student_assignment_list' %}" class="small text-decoration-none">View All</a>
+            </div>
+            <div class="card-body">
+                {% for a in upcoming_assignments %}
+                <a href="{% url 'student_submit_assignment' a.id %}" class="text-decoration-none">
+                    <div class="d-flex justify-content-between align-items-center p-2 rounded mb-2 border">
+                        <div>
+                            <div class="fw-semibold text-dark">{{ a.title }}</div>
+                            <small class="text-muted">{{ a.classroom.name }}</small>
+                        </div>
+                        <span class="badge bg-warning bg-opacity-10 text-warning border-0">
+                            <i class="far fa-clock me-1"></i>{{ a.due_date|date:"m/d H:i" }}
+                        </span>
+                    </div>
+                </a>
+                {% empty %}
+                <p class="text-center text-muted py-4 mb-0">
+                    <i class="fas fa-check-circle text-success me-1"></i>Excellent! You have completed all assignments.
+                </p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Today's Schedule -->
+    <div class="col-md-5">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h6 class="mb-0 fw-bold"><i class="fas fa-calendar-day text-primary me-2"></i>Today's Schedule</h6>
+                <a href="{% url 'student_schedule' %}" class="small text-decoration-none">Full Week</a>
+            </div>
+            <div class="card-body">
+                {% for s in today_sessions %}
+                <div class="d-flex align-items-center p-2 rounded mb-2 bg-light">
+                     <div class="text-center me-3">
+                        <div class="fw-bold text-primary">{{ s.start_time|time:"H:i" }}</div>
+                        <small class="text-muted">{{ s.end_time|time:"H:i" }}</small>
+                    </div>
+                    <div>
+                        <div class="fw-semibold">{{ s.classroom.name }}</div>
+                        <small class="text-muted"><i class="fas fa-door-open me-1"></i>{{ s.room_name|default:"Online" }}</small>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-center text-muted py-4 mb-0">You have no scheduled classes today.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

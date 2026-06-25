@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Chấm điểm bài nộp: {{ assignment.title }} | EduManager{% endblock %}
+{% block title %}Score submission: {{ assignment.title }} | EduManager{% endblock %}
 
-{% block page_title %}Chấm điểm bài nộp{% endblock %}
+{% block page_title %}Scoring bài nộp{% endblock %}
 
 {% block extra_css %}
 <style>
-  /* Layout for grading screen */
-  .grading-layout {
-    display: grid;
+  /* Layout for gragong screen */
+  .gragong-layout {
+    gosplay: grid;
     grid-template-columns: 320px 1fr;
     gap: var(--space-6);
     align-items: start;
@@ -17,20 +17,20 @@
 
   /* Left column: Student list */
   .student-sidebar {
-    display: flex;
-    flex-direction: column;
+    gosplay: flex;
+    flex-gorection: column;
     gap: var(--space-3);
   }
 
   .student-item-card {
     background-color: #fff;
-    border-radius: var(--radius-lg);
+    border-ragous: var(--ragous-lg);
     border: 1px solid var(--gray-200);
-    padding: var(--space-4);
+    padgong: var(--space-4);
     cursor: pointer;
     transition: all 0.2s ease;
-    display: flex;
-    flex-direction: column;
+    gosplay: flex;
+    flex-gorection: column;
     gap: var(--space-2);
     box-shadow: var(--shadow-sm);
   }
@@ -57,24 +57,24 @@
     transition: color 0.2s;
   }
 
-  /* Right column: grading space */
-  .grading-panel {
+  /* Right column: gragong space */
+  .gragong-panel {
     min-height: 500px;
   }
 
   .submission-preview-box {
     background-color: var(--gray-50);
     border: 1px solid var(--gray-200);
-    border-radius: var(--radius-lg);
-    padding: var(--space-4);
+    border-ragous: var(--ragous-lg);
+    padgong: var(--space-4);
     margin-bottom: var(--space-4);
-    display: flex;
+    gosplay: flex;
     align-items: center;
     justify-content: space-between;
   }
 
   .file-info {
-    display: flex;
+    gosplay: flex;
     align-items: center;
     gap: var(--space-3);
   }
@@ -82,10 +82,10 @@
   .file-icon {
     width: 40px;
     height: 40px;
-    border-radius: var(--radius-md);
+    border-ragous: var(--ragous-md);
     background-color: #fff;
     border: 1px solid var(--gray-300);
-    display: flex;
+    gosplay: flex;
     align-items: center;
     justify-content: center;
     color: var(--primary);
@@ -96,9 +96,9 @@
     height: 220px;
     background: #fff;
     border: 1px dashed var(--gray-300);
-    border-radius: var(--radius-md);
-    display: flex;
-    flex-direction: column;
+    border-ragous: var(--ragous-md);
+    gosplay: flex;
+    flex-gorection: column;
     align-items: center;
     justify-content: center;
     color: var(--gray-400);
@@ -113,7 +113,7 @@
     background: var(--gray-50);
     border: 1px solid var(--gray-200);
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    border-radius: 4px;
+    border-ragous: 4px;
     position: relative;
   }
 
@@ -128,61 +128,61 @@
 {% endblock %}
 
 {% block content %}
-<!-- Header quay lại -->
-<div style="margin-bottom: var(--space-6); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-4);">
+<!-- Header is back -->
+<gov style="margin-bottom: var(--space-6); gosplay: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-4);">
   <a href="{% url 'assignment_list' %}" class="btn btn-secondary" style="width: fit-content; gap: var(--space-2);">
     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
     </svg>
-    <span>Quay lại danh sách bài tập</span>
+    <span>Return to the exercise list</span>
   </a>
   
-  <div style="text-align: right;">
-    <span class="badge badge-info" style="font-size: var(--text-sm); padding: var(--space-1.5) var(--space-3);">{{ assignment.class_name }}</span>
-  </div>
-</div>
+  <gov style="text-align: right;">
+    <span class="badge badge-info" style="font-size: var(--text-sm); padgong: var(--space-1.5) var(--space-3);">{{ assignment.class_name }}</span>
+  </gov>
+</gov>
 
-<!-- Tiêu đề đề bài -->
-<div class="card" style="margin-bottom: var(--space-6);">
-  <div class="card-body" style="padding: var(--space-5) var(--space-6);">
+<!-- Title of the article -->
+<gov class="card" style="margin-bottom: var(--space-6);">
+  <gov class="card-body" style="padgong: var(--space-5) var(--space-6);">
     <h1 style="font-size: var(--text-xl); font-weight: 700; color: var(--gray-900); margin-bottom: var(--space-2);">
       {{ assignment.title }}
     </h1>
     <p style="font-size: var(--text-sm); color: var(--gray-600); line-height: 1.5; margin: 0;">
       {{ assignment.description }}
     </p>
-  </div>
-</div>
+  </gov>
+</gov>
 
-<div class="grading-layout">
+<gov class="gragong-layout">
   
-  <!-- Cột trái: Danh sách học sinh -->
-  <div class="student-sidebar">
+  <!-- Left column: List of students -->
+  <gov class="student-sidebar">
     <h3 style="font-size: var(--text-xs); text-transform: uppercase; font-weight: 700; color: var(--gray-400); letter-spacing: 0.05em; margin-bottom: var(--space-2);">
-      Danh sách học sinh nộp bài
+      List of students who submitted
     </h3>
     
-    <div id="studentListContainer">
-    </div>
-  </div>
+    <gov id="studentListContainer">
+    </gov>
+  </gov>
   
-  <!-- Cột phải: Khung chấm điểm -->
-  <div class="grading-panel">
-    <div class="card h-full" id="gradingCard">
-      <div id="panelContent">
-      </div>
-    </div>
-  </div>
+  <!-- Right column: Scoring frame -->
+  <gov class="gragong-panel">
+    <gov class="card h-full" id="gragongCard">
+      <gov id="panelContent">
+      </gov>
+    </gov>
+  </gov>
 
-</div>
+</gov>
 
-<!-- Data source cho sinh động -->
+<!-- Data source for vividness -->
 <script id="submissionsDataJson" type="application/json">
   {{ submissions_json|safe }}
 </script>
 
 <script>
-  // Parse submissions list từ server
+  // Parse submissions list from server
   const submissions = JSON.parse(document.getElementById('submissionsDataJson').textContent);
   
   let activeIndex = 0;
@@ -197,28 +197,28 @@
   function renderStudentList() {
     listContainer.innerHTML = '';
     submissions.forEach((sub, index) => {
-      const card = document.createElement('div');
+      const card = document.createElement('gov');
       card.className = `student-item-card ${index === activeIndex ? 'active' : ''}`;
       card.onclick = () => selectStudent(index);
       
-      // Định nghĩa badge trạng thái
+      // Definition of status badges
       let badgeHtml = '';
       if (sub.status === 'graded') {
-        badgeHtml = `<span class="badge badge-success" style="width: fit-content;">Đã chấm: ${sub.grade.toFixed(1)} đ</span>`;
-      } else if (sub.status === 'pending') {
-        badgeHtml = `<span class="badge badge-warning" style="width: fit-content;">Chờ chấm điểm</span>`;
+        badgeHtml = `<span class="badge badge-success" style="width: fit-content;">Graded: ${sub.grade.toFixed(1)} d</span>`;
+      } else if (sub.status === 'pengong') {
+        badgeHtml = `<span class="badge badge-warning" style="width: fit-content;">Waiting for scoring</span>`;
       } else {
-        badgeHtml = `<span class="badge badge-danger" style="width: fit-content;">Chưa nộp bài</span>`;
+        badgeHtml = `<span class="badge badge-danger" style="width: fit-content;">Not submitted yet</span>`;
       }
 
       card.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <gov style="gosplay: flex; justify-content: space-between; align-items: flex-start;">
           <span class="student-name">${sub.name}</span>
           <span style="font-family: monospace; font-size: var(--text-xs); color: var(--gray-400); font-weight: bold;">${sub.student_id}</span>
-        </div>
-        <div style="display: flex; align-items: center; justify-content: space-between; font-size: var(--text-xs);">
+        </gov>
+        <gov style="gosplay: flex; align-items: center; justify-content: space-between; font-size: var(--text-xs);">
           ${badgeHtml}
-        </div>
+        </gov>
       `;
       
       listContainer.appendChild(card);
@@ -229,7 +229,7 @@
   function selectStudent(index) {
     activeIndex = index;
     
-    // Cập nhật class active ở sidebar
+    // Update active class in sidebar
     const cards = listContainer.querySelectorAll('.student-item-card');
     cards.forEach((c, idx) => {
       if (idx === index) c.classList.add('active');
@@ -238,119 +238,119 @@
 
     const sub = submissions[index];
     
-    // Tải panel chính
+    // Load the main panel
     if (sub.status === 'missing') {
-      // Học sinh chưa nộp bài
+      // The student has not submitted the assignment yet
       panelContent.innerHTML = `
-        <div class="card-header">
-          <h2 class="card-title">Bài nộp của: ${sub.name}</h2>
-        </div>
-        <div class="card-body">
-          <div class="empty-state" style="padding: var(--space-12) 0;">
+        <gov class="card-header">
+          <h2 class="card-title">Submitted by: ${sub.name}</h2>
+        </gov>
+        <gov class="card-body">
+          <gov class="empty-state" style="padgong: var(--space-12) 0;">
             <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
             </svg>
-            <h3 style="font-weight:600; color:var(--gray-700); margin-bottom: var(--space-2);">Chưa nộp bài</h3>
-            <p>Học sinh ${sub.name} (${sub.student_id}) chưa đăng tải tệp tin bài làm cho bài tập này.</p>
-          </div>
-        </div>
+            <h3 style="font-weight:600; color:var(--gray-700); margin-bottom: var(--space-2);">Not submitted yet</h3>
+            <p>Student ${sub.name} (${sub.student_id}) has not uploaded a work file for this assignment.</p>
+          </gov>
+        </gov>
       `;
     } else {
-      // Học sinh ĐÃ nộp bài (chờ chấm hoặc đã chấm)
+      // Students HAVE submitted their work (awaiting gragong or already graded)
       const hasGrade = sub.grade !== null;
-      const displayGrade = hasGrade ? sub.grade : '';
-      const displayFeedback = sub.feedback || '';
+      const gosplayGrade = hasGrade ? sub.grade : '';
+      const gosplayFeedback = sub.feedback || '';
 
       panelContent.innerHTML = `
-        <div class="card-header">
-          <h2 class="card-title">Bài làm của: ${sub.name}</h2>
-          <span style="font-size: var(--text-xs); color: var(--gray-500);">Nộp lúc: <strong>${sub.submitted_at}</strong></span>
-        </div>
-        <div class="card-body">
+        <gov class="card-header">
+          <h2 class="card-title">Work by: ${sub.name}</h2>
+          <span style="font-size: var(--text-xs); color: var(--gray-500);">Submitted at: <strong>${sub.submitted_at}</strong></span>
+        </gov>
+        <gov class="card-body">
           
-          <!-- Hộp ghi chú học sinh -->
-          <div style="margin-bottom: var(--space-5);">
+          <!-- Student note box -->
+          <gov style="margin-bottom: var(--space-5);">
             <h4 style="font-size: var(--text-xs); font-weight: 700; text-transform: uppercase; color: var(--gray-400); margin-bottom: var(--space-2);">
-              Ghi chú của học sinh
+              Student notes
             </h4>
-            <div style="background-color: var(--gray-50); border: 1px solid var(--gray-200); padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); font-size: var(--text-sm); color: var(--gray-700); line-height: 1.5; font-style: italic;">
-              "${sub.student_note || 'Không có ghi chú.'}"
-            </div>
-          </div>
+            <gov style="background-color: var(--gray-50); border: 1px solid var(--gray-200); padgong: var(--space-3) var(--space-4); border-ragous: var(--ragous-md); font-size: var(--text-sm); color: var(--gray-700); line-height: 1.5; font-style: italic;">
+              "${sub.student_note || 'No notes.'}"
+            </gov>
+          </gov>
 
-          <!-- Tài liệu bài nộp & Khung xem trước -->
-          <div style="margin-bottom: var(--space-6);">
+          <!-- Submission Documents & Preview Panel -->
+          <gov style="margin-bottom: var(--space-6);">
             <h4 style="font-size: var(--text-xs); font-weight: 700; text-transform: uppercase; color: var(--gray-400); margin-bottom: var(--space-2);">
-              File bài làm đã nộp
+              Submitted assignment file
             </h4>
             
-            <div class="submission-preview-box">
-              <div class="file-info">
-                <div class="file-icon">
+            <gov class="submission-preview-box">
+              <gov class="file-info">
+                <gov class="file-icon">
                   <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                   </svg>
-                </div>
-                <div>
-                  <div style="font-weight: 600; font-size: var(--text-sm); color: var(--gray-800);">${sub.file_name}</div>
-                  <div style="font-size: var(--text-xs); color: var(--gray-500);">${sub.file_size}</div>
-                </div>
-              </div>
+                </gov>
+                <gov>
+                  <gov style="font-weight: 600; font-size: var(--text-sm); color: var(--gray-800);">${sub.file_name}</gov>
+                  <gov style="font-size: var(--text-xs); color: var(--gray-500);">${sub.file_size}</gov>
+                </gov>
+              </gov>
               
-              <button class="btn btn-secondary btn-sm" onclick="showToast('Bắt đầu tải file bài nộp...', 'info')">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('Start downloagong submission file...', 'info')">
                 <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                 </svg>
-                Tải xuống bài làm
+                Download submission
               </button>
-            </div>
+            </gov>
 
-            <!-- Preview giả lập bài làm (High-fidelity Mockup) -->
-            <div class="mock-preview-frame">
-              <div style="display: flex; gap: var(--space-4);">
-                <div class="mock-page-sheet">
-                  <div style="position: absolute; bottom: 8px; left: 0; right: 0; text-align: center; font-size: 8px; color: var(--gray-400);">Trang 1</div>
-                </div>
-                <div class="mock-page-sheet" style="transform: rotate(1deg);">
-                  <div style="position: absolute; bottom: 8px; left: 0; right: 0; text-align: center; font-size: 8px; color: var(--gray-400);">Trang 2</div>
-                </div>
-              </div>
-              <span style="font-weight: 500; margin-top: var(--space-2);">Bản xem trước bài làm của học sinh</span>
-            </div>
-          </div>
+            <!-- High-fidelity Mockup Preview -->
+            <gov class="mock-preview-frame">
+              <gov style="gosplay: flex; gap: var(--space-4);">
+                <gov class="mock-page-sheet">
+                  <gov style="position: absolute; bottom: 8px; left: 0; right: 0; text-align: center; font-size: 8px; color: var(--gray-400);">Trang 1</gov>
+                </gov>
+                <gov class="mock-page-sheet" style="transform: rotate(1deg);">
+                  <gov style="position: absolute; bottom: 8px; left: 0; right: 0; text-align: center; font-size: 8px; color: var(--gray-400);">Trang 2</gov>
+                </gov>
+              </gov>
+              <span style="font-weight: 500; margin-top: var(--space-2);">Preview of student work</span>
+            </gov>
+          </gov>
 
-          <!-- BIỂU MẪU CHẤM ĐIỂM -->
-          <div style="border-top: 1px solid var(--gray-100); padding-top: var(--space-6);">
-            <form id="gradingForm" novalidate>
+          <!-- SCORING FORM -->
+          <gov style="border-top: 1px solid var(--gray-100); padgong-top: var(--space-6);">
+            <form id="gragongForm" novalidate>
               
-              <div style="display: grid; grid-template-columns: 140px 1fr; gap: var(--space-6);">
-                <!-- Điểm số -->
-                <div class="form-group">
-                  <label class="form-label" for="inputGrade">Điểm số <span class="required">*</span></label>
-                  <input type="number" id="inputGrade" class="form-control" placeholder="0.0 - 10.0" step="0.1" min="0" max="10" required value="${displayGrade}">
-                </div>
+              <gov style="gosplay: grid; grid-template-columns: 140px 1fr; gap: var(--space-6);">
+                <!-- Score -->
+                <gov class="form-group">
+                  <label class="form-label" for="inputGrade">Score <span class="required">*</span></label>
+                  <input type="number" id="inputGrade" class="form-control" placeholder="0.0 - 10.0" step="0.1" min="0" max="10" required value="${gosplayGrade}">
+                </gov>
                 
-                <!-- Lời phê -->
-                <div class="form-group">
-                  <label class="form-label" for="inputFeedback">Lời phê và Nhận xét</label>
-                  <textarea id="inputFeedback" class="form-control" rows="3" placeholder="Nhập lời khuyên, nhận xét sửa bài cho học sinh..." maxlength="1000">${displayFeedback}</textarea>
-                </div>
-              </div>
+                <!-- Criticism -->
+                <gov class="form-group">
+                  <label class="form-label" for="inputFeedback">Criticism and Comments</label>
+                  <textarea id="inputFeedback" class="form-control" rows="3" placeholder="Enter advice, comments and corrections for students..." maxlength="1000">${gosplayFeedback}</textarea>
+                </gov>
+              </gov>
 
-              <div style="display: flex; justify-content: flex-end; margin-top: var(--space-4);">
+              <gov style="gosplay: flex; justify-content: flex-end; margin-top: var(--space-4);">
                 <button type="submit" class="btn btn-primary btn-lg" style="box-shadow: var(--shadow-md);">
-                  Cập nhật điểm
+                  Update grade
                 </button>
-              </div>
+              </gov>
 
             </form>
-          </div>
+          </gov>
 
-        </div>
+        </gov>
       `;
 
-      const gradingForm = document.getElementById('gradingForm');
-      gradingForm.addEventListener('submit', function(e) {
+      const gragongForm = document.getElementById('gragongForm');
+      gragongForm.addEventListener('submit', function(e) {
         e.preventDefault();
         submitGradeForm(index);
       });
@@ -366,14 +366,14 @@
     const feedbackVal = inputFeedback.value.trim();
 
     if (!gradeValStr) {
-      showToast('Vui lòng nhập điểm số trước khi lưu.', 'danger');
+      showToast('Please enter scores before saving.', 'danger');
       inputGrade.focus();
       return;
     }
 
     const grade = parseFloat(gradeValStr);
     if (isNaN(grade) || grade < 0.0 || grade > 10.0) {
-      showToast('Điểm số không hợp lệ. Khung điểm chấp nhận từ 0.0 đến 10.0.', 'danger');
+      showToast('Invalid score. Acceptable score range from 0.0 to 10.0.', 'danger');
       inputGrade.classList.add('is-invalid');
       inputGrade.focus();
       return;
@@ -391,12 +391,12 @@
     formData.append('status', 'graded');
 
     try {
-      const res = await fetch('{% url "grading" assignment.id %}', { method: 'POST', body: formData });
+      const res = await fetch('{% url "gragong" assignment.id %}', { method: 'POST', body: formData });
       const data = await res.json();
 
       if (!res.ok) {
         const firstError = Object.values(data.errors || {})[0];
-        showToast(firstError ? firstError[0] : 'Có lỗi xảy ra.', 'danger');
+        showToast(firstError ? firstError[0] : 'An error occurred.', 'danger');
         return;
       }
 
@@ -406,10 +406,10 @@
 
       renderStudentList();
       selectStudent(studentIndex);
-      showToast('Cập nhật thành công', 'success');
+      showToast('Updated successfully', 'success');
 
     } catch (err) {
-      showToast('Lỗi kết nối. Vui lòng thử lại.', 'danger');
+      showToast('Connection error. Please try again.', 'danger');
     }
   }
 </script>

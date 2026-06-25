@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Management | EduManager{% endblock %}
+{% block header %}<i class="fas fa-user-graduate me-2"></i>Student Management{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'student_add' %}" class="btn btn-primary shadow-sm"><i class="fas fa-user-plus me-1"></i>Add Student</a>
+{% endblock %}
+
+{% block content %}
+<!-- Search Bar -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <form method="GET" class="row g-2">
+            <div class="col-md-10">
+                <div class="input-group">
+                    <input type="text" name="q" class="form-control shadow-none" placeholder="Search by name, student code or username..." value="{{ query }}">
+                    <button class="btn btn-light border" type="submit">
+                        <i class="fas fa-search text-muted"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-dark w-100 shadow-sm">Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Student ID</th>
+                        <th>Full Name</th>
+                        <th>Username</th>
+                        <th>Phone Number</th>
+                        <th>Join Date</th>
+                        <th class="text-end pe-4">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in page_obj %}
+                    <tr>
+                        <td class="ps-4"><span class="badge bg-secondary bg-opacity-10 text-secondary border-0 px-3">{{ s.student_profile.student_code }}</span></td>
+                        <td><strong>{{ s.get_full_name|default:s.username }}</strong></td>
+                        <td><code class="text-primary">{{ s.username }}</code></td>
+                        <td><i class="fas fa-phone-alt me-1 small text-muted"></i> {{ s.phone_number|default:"---" }}</td>
+                        <td><span class="text-muted">{{ s.date_joined|date:"m/d/Y" }}</span></td>
+                        <td class="text-end pe-4">
+                            <a href="{% url 'student_edit' s.id %}" class="btn btn-sm btn-light text-primary me-2" title="Edit"><i class="fas fa-edit"></i></a>
+                            <button class="btn btn-sm btn-light text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ s.id }}"><i class="fas fa-trash"></i></button>
+                            
+                            <!-- Delete Modal -->
+                            <div class="modal fade" id="deleteModal{{ s.id }}" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content border-0 shadow">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title fw-bold text-danger">Confirm Delete</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body text-start">
+                                            The system will delete the student <strong>{{ s.get_full_name|default:s.username }}</strong>.
+                                            <div class="alert alert-warning mt-3 mb-0 py-2 small">
+                                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                                Attendance, comments, and submission records will be permanently deleted (Cascade Delete).
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer bg-light">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <form action="{% url 'student_delete' s.id %}" method="POST" class="d-inline">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-danger">Confirm Delete</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">No students found matching your criteria.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Pagination -->
+{% if page_obj.has_other_pages %}
+<nav class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?q={{ query }}&page={{ page_obj.previous_page_number }}">Previous</a></li>
+        {% endif %}
+        <li class="page-item active"><span class="page-link">{{ page_obj.number }}</span></li>
+        {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?q={{ query }}&page={{ page_obj.next_page_number }}">Next</a></li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}
