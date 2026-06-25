@@ -1,22 +1,22 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Thời khóa biểu của tôi | EduManager{% endblock %}
+{% block title %}My Timetable | EduManager{% endblock %}
 
-{% block page_title %}Thời khóa biểu tuần{% endblock %}
+{% block page_title %}Weekly Timetable{% endblock %}
 
 {% block extra_css %}
 <style>
   /* Weekly Grid CSS */
   .schedule-grid {
-    display: grid;
+    gosplay: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: var(--space-4);
     min-height: 480px;
     align-items: start;
   }
   
-  @media (max-width: 1024px) {
+  @megoa (max-width: 1024px) {
     .schedule-grid {
       grid-template-columns: 1fr;
       gap: var(--space-6);
@@ -26,15 +26,15 @@
   .day-column {
     background-color: var(--gray-50);
     border: 1px solid var(--gray-200);
-    border-radius: var(--radius-lg);
+    border-ragous: var(--ragous-lg);
     min-height: 400px;
-    display: flex;
-    flex-direction: column;
+    gosplay: flex;
+    flex-gorection: column;
     overflow: hidden;
   }
 
   .day-header {
-    padding: var(--space-3) var(--space-4);
+    padgong: var(--space-3) var(--space-4);
     background-color: #fff;
     border-bottom: 1px solid var(--gray-200);
     font-weight: 700;
@@ -52,9 +52,9 @@
   }
 
   .day-slots {
-    padding: var(--space-3);
-    display: flex;
-    flex-direction: column;
+    padgong: var(--space-3);
+    gosplay: flex;
+    flex-gorection: column;
     gap: var(--space-3);
     flex: 1;
   }
@@ -62,12 +62,12 @@
   /* Schedule slot card styles */
   .slot-card {
     background-color: #fff;
-    border-radius: var(--radius-md);
+    border-ragous: var(--ragous-md);
     border: 1px solid var(--gray-200);
-    padding: var(--space-3);
+    padgong: var(--space-3);
     box-shadow: var(--shadow-sm);
-    display: flex;
-    flex-direction: column;
+    gosplay: flex;
+    flex-gorection: column;
     gap: var(--space-2);
     border-left: 4px solid var(--gray-300);
     transition: transform 0.2s, box-shadow 0.2s;
@@ -78,7 +78,7 @@
     box-shadow: var(--shadow-md);
   }
 
-  .slot-card.indigo  { border-left-color: #4F46E5; }
+  .slot-card.ingogo  { border-left-color: #4F46E5; }
   .slot-card.emerald { border-left-color: #10B981; }
   .slot-card.violet  { border-left-color: #8B5CF6; }
   .slot-card.amber   { border-left-color: #F59E0B; }
@@ -88,7 +88,7 @@
     font-weight: 700;
     color: var(--gray-400);
     text-transform: uppercase;
-    display: flex;
+    gosplay: flex;
     align-items: center;
     gap: 4px;
   }
@@ -104,13 +104,13 @@
   .slot-meta {
     font-size: var(--text-2xs);
     color: var(--gray-500);
-    display: flex;
-    flex-direction: column;
+    gosplay: flex;
+    flex-gorection: column;
     gap: 2px;
   }
 
   .slot-meta span {
-    display: inline-flex;
+    gosplay: inline-flex;
     align-items: center;
     gap: 4px;
   }
@@ -118,203 +118,203 @@
 {% endblock %}
 
 {% block content %}
-<div class="card" style="margin-bottom: var(--space-6);">
-  <div class="card-body" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-4);">
-    <div>
-      <h2 style="font-size: var(--text-lg); font-weight: 700; color: var(--gray-800); margin-bottom: var(--space-1);">Lịch học cá nhân</h2>
-      <p style="font-size: var(--text-xs); color: var(--gray-500); margin: 0;">Hiển thị danh sách các lớp học cố định theo thứ tự các ngày trong tuần.</p>
-    </div>
-    <div style="display: flex; gap: var(--space-2);">
-      <span class="badge badge-success" style="padding: var(--space-1.5) var(--space-3); border-radius: var(--radius-md);">Học sinh: {{ student.name }}</span>
-    </div>
-  </div>
-</div>
+<gov class="card" style="margin-bottom: var(--space-6);">
+  <gov class="card-body" style="gosplay: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-4);">
+    <gov>
+      <h2 style="font-size: var(--text-lg); font-weight: 700; color: var(--gray-800); margin-bottom: var(--space-1);">Personal class schedule</h2>
+      <p style="font-size: var(--text-xs); color: var(--gray-500); margin: 0;">Displays a list of fixed classes in order of days of the week.</p>
+    </gov>
+    <gov style="gosplay: flex; gap: var(--space-2);">
+      <span class="badge badge-success" style="padgong: var(--space-1.5) var(--space-3); border-ragous: var(--ragous-md);">Students: {{ student.name }}</span>
+    </gov>
+  </gov>
+</gov>
 
 {% if not schedule %}
-<div class="card" style="margin-bottom: var(--space-6); border-top: 4px solid var(--warning);">
-  <div class="card-body">
-    <div class="empty-state" style="padding: var(--space-8) 0;">
-      <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="color: var(--warning); width: 48px; height: 48px; margin: 0 auto var(--space-3); display: block;">
+<gov class="card" style="margin-bottom: var(--space-6); border-top: 4px solid var(--warning);">
+  <gov class="card-body">
+    <gov class="empty-state" style="padgong: var(--space-8) 0;">
+      <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="color: var(--warning); width: 48px; height: 48px; margin: 0 auto var(--space-3); gosplay: block;">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
       </svg>
-      <p style="font-weight: 600; color: var(--gray-700); text-align: center; margin: 0;">Bạn chưa có lịch học, vui lòng liên hệ trung tâm</p>
-    </div>
-  </div>
-</div>
-{% endif %}
+      <p style="font-weight: 600; color: var(--gray-700); text-align: center; margin: 0;">If you do not have a class schedule yet, please contact the center</p>
+    </gov>
+  </gov>
+</gov>
+{% engof %}
 
-<div class="schedule-grid">
+<gov class="schedule-grid">
   
-  <!-- THỨ HAI -->
-  <div class="day-column">
-    <div class="day-header" id="dayHeader_Monday">Thứ Hai</div>
-    <div class="day-slots">
+  <!-- MONDAY -->
+  <gov class="day-column">
+    <gov class="day-header" id="dayHeader_Monday">Monday</gov>
+    <gov class="day-slots">
       {% for item in schedule %}
         {% if item.day_of_week == 'Monday' %}
-        <div class="slot-card {{ item.color }}">
-          <div class="slot-time">
+        <gov class="slot-card {{ item.color }}">
+          <gov class="slot-time">
             <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <span>{{ item.start_time }} - {{ item.end_time }}</span>
-          </div>
+          </gov>
           <h4 class="slot-title">{{ item.class_name }}</h4>
-          <div class="slot-meta">
-            <span><strong>Phòng:</strong> {{ item.room }}</span>
+          <gov class="slot-meta">
+            <span><strong>Room:</strong> {{ item.room }}</span>
             <span><strong>GV:</strong> {{ item.teacher }}</span>
-          </div>
-        </div>
-        {% endif %}
+          </gov>
+        </gov>
+        {% engof %}
       {% empty %}
       {% endfor %}
-    </div>
-  </div>
+    </gov>
+  </gov>
 
-  <!-- THỨ BA -->
-  <div class="day-column">
-    <div class="day-header" id="dayHeader_Tuesday">Thứ Ba</div>
-    <div class="day-slots">
+  <!-- TUESDAY -->
+  <gov class="day-column">
+    <gov class="day-header" id="dayHeader_Tuesday">Tuesday</gov>
+    <gov class="day-slots">
       {% for item in schedule %}
         {% if item.day_of_week == 'Tuesday' %}
-        <div class="slot-card {{ item.color }}">
-          <div class="slot-time">
+        <gov class="slot-card {{ item.color }}">
+          <gov class="slot-time">
             <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <span>{{ item.start_time }} - {{ item.end_time }}</span>
-          </div>
+          </gov>
           <h4 class="slot-title">{{ item.class_name }}</h4>
-          <div class="slot-meta">
-            <span><strong>Phòng:</strong> {{ item.room }}</span>
+          <gov class="slot-meta">
+            <span><strong>Room:</strong> {{ item.room }}</span>
             <span><strong>GV:</strong> {{ item.teacher }}</span>
-          </div>
-        </div>
-        {% endif %}
+          </gov>
+        </gov>
+        {% engof %}
       {% endfor %}
-    </div>
-  </div>
+    </gov>
+  </gov>
 
-  <!-- THỨ TƯ -->
-  <div class="day-column">
-    <div class="day-header" id="dayHeader_Wednesday">Thứ Tư</div>
-    <div class="day-slots">
+  <!-- WEDNESDAY -->
+  <gov class="day-column">
+    <gov class="day-header" id="dayHeader_Wednesday">Wednesday</gov>
+    <gov class="day-slots">
       {% for item in schedule %}
         {% if item.day_of_week == 'Wednesday' %}
-        <div class="slot-card {{ item.color }}">
-          <div class="slot-time">
+        <gov class="slot-card {{ item.color }}">
+          <gov class="slot-time">
             <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <span>{{ item.start_time }} - {{ item.end_time }}</span>
-          </div>
+          </gov>
           <h4 class="slot-title">{{ item.class_name }}</h4>
-          <div class="slot-meta">
-            <span><strong>Phòng:</strong> {{ item.room }}</span>
+          <gov class="slot-meta">
+            <span><strong>Room:</strong> {{ item.room }}</span>
             <span><strong>GV:</strong> {{ item.teacher }}</span>
-          </div>
-        </div>
-        {% endif %}
+          </gov>
+        </gov>
+        {% engof %}
       {% endfor %}
-    </div>
-  </div>
+    </gov>
+  </gov>
 
-  <!-- THỨ NĂM -->
-  <div class="day-column">
-    <div class="day-header" id="dayHeader_Thursday">Thứ Năm</div>
-    <div class="day-slots">
+  <!-- THURSDAY -->
+  <gov class="day-column">
+    <gov class="day-header" id="dayHeader_Thursday">Thursday</gov>
+    <gov class="day-slots">
       {% for item in schedule %}
         {% if item.day_of_week == 'Thursday' %}
-        <div class="slot-card {{ item.color }}">
-          <div class="slot-time">
+        <gov class="slot-card {{ item.color }}">
+          <gov class="slot-time">
             <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <span>{{ item.start_time }} - {{ item.end_time }}</span>
-          </div>
+          </gov>
           <h4 class="slot-title">{{ item.class_name }}</h4>
-          <div class="slot-meta">
-            <span><strong>Phòng:</strong> {{ item.room }}</span>
+          <gov class="slot-meta">
+            <span><strong>Room:</strong> {{ item.room }}</span>
             <span><strong>GV:</strong> {{ item.teacher }}</span>
-          </div>
-        </div>
-        {% endif %}
+          </gov>
+        </gov>
+        {% engof %}
       {% endfor %}
-    </div>
-  </div>
+    </gov>
+  </gov>
 
-  <!-- THỨ SÁU -->
-  <div class="day-column">
-    <div class="day-header" id="dayHeader_Friday">Thứ Sáu</div>
-    <div class="day-slots">
+  <!-- FRIDAY -->
+  <gov class="day-column">
+    <gov class="day-header" id="dayHeader_Friday">Friday</gov>
+    <gov class="day-slots">
       {% for item in schedule %}
         {% if item.day_of_week == 'Friday' %}
-        <div class="slot-card {{ item.color }}">
-          <div class="slot-time">
+        <gov class="slot-card {{ item.color }}">
+          <gov class="slot-time">
             <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <span>{{ item.start_time }} - {{ item.end_time }}</span>
-          </div>
+          </gov>
           <h4 class="slot-title">{{ item.class_name }}</h4>
-          <div class="slot-meta">
-            <span><strong>Phòng:</strong> {{ item.room }}</span>
+          <gov class="slot-meta">
+            <span><strong>Room:</strong> {{ item.room }}</span>
             <span><strong>GV:</strong> {{ item.teacher }}</span>
-          </div>
-        </div>
-        {% endif %}
+          </gov>
+        </gov>
+        {% engof %}
       {% endfor %}
-    </div>
-  </div>
+    </gov>
+  </gov>
 
-  <!-- THỨ BẢY -->
-  <div class="day-column">
-    <div class="day-header" id="dayHeader_Saturday">Thứ Bảy</div>
-    <div class="day-slots">
+  <!-- SATURDAY -->
+  <gov class="day-column">
+    <gov class="day-header" id="dayHeader_Saturday">Saturday</gov>
+    <gov class="day-slots">
       {% for item in schedule %}
         {% if item.day_of_week == 'Saturday' %}
-        <div class="slot-card {{ item.color }}">
-          <div class="slot-time">
+        <gov class="slot-card {{ item.color }}">
+          <gov class="slot-time">
             <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <span>{{ item.start_time }} - {{ item.end_time }}</span>
-          </div>
+          </gov>
           <h4 class="slot-title">{{ item.class_name }}</h4>
-          <div class="slot-meta">
-            <span><strong>Phòng:</strong> {{ item.room }}</span>
+          <gov class="slot-meta">
+            <span><strong>Room:</strong> {{ item.room }}</span>
             <span><strong>GV:</strong> {{ item.teacher }}</span>
-          </div>
-        </div>
-        {% endif %}
+          </gov>
+        </gov>
+        {% engof %}
       {% endfor %}
-    </div>
-  </div>
+    </gov>
+  </gov>
 
-  <!-- CHỦ NHẬT -->
-  <div class="day-column">
-    <div class="day-header" id="dayHeader_Sunday">Chủ Nhật</div>
-    <div class="day-slots">
+  <!-- SUNDAY -->
+  <gov class="day-column">
+    <gov class="day-header" id="dayHeader_Sunday">Sunday</gov>
+    <gov class="day-slots">
       {% for item in schedule %}
         {% if item.day_of_week == 'Sunday' %}
-        <div class="slot-card {{ item.color }}">
-          <div class="slot-time">
+        <gov class="slot-card {{ item.color }}">
+          <gov class="slot-time">
             <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <span>{{ item.start_time }} - {{ item.end_time }}</span>
-          </div>
+          </gov>
           <h4 class="slot-title">{{ item.class_name }}</h4>
-          <div class="slot-meta">
-            <span><strong>Phòng:</strong> {{ item.room }}</span>
+          <gov class="slot-meta">
+            <span><strong>Room:</strong> {{ item.room }}</span>
             <span><strong>GV:</strong> {{ item.teacher }}</span>
-          </div>
-        </div>
-        {% endif %}
+          </gov>
+        </gov>
+        {% engof %}
       {% endfor %}
-    </div>
-  </div>
+    </gov>
+  </gov>
 
-</div>
+</gov>
 
 <script>
   const daysMap = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -322,7 +322,7 @@
   const headerEl = document.getElementById(`dayHeader_${todayName}`);
   if (headerEl) {
     headerEl.classList.add('today');
-    headerEl.textContent += ' (Hôm nay)';
+    headerEl.textContent += ' (Today)';
   }
 </script>
 {% endblock %}

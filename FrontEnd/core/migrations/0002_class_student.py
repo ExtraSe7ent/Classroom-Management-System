@@ -25,8 +25,8 @@ class Migration(migrations.Migration):
                 ('teacher', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='classes', to=settings.AUTH_USER_MODEL)),
             ],
             options={
-                'verbose_name': 'Lớp học',
-                'verbose_name_plural': 'Các lớp học',
+                'verbose_name': 'Classroom',
+                'verbose_name_plural': 'Classes',
                 'db_table': 'Classes',
             },
         ),
@@ -41,8 +41,8 @@ class Migration(migrations.Migration):
                 ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='student_profile', to=settings.AUTH_USER_MODEL)),
             ],
             options={
-                'verbose_name': 'Học sinh',
-                'verbose_name_plural': 'Các học sinh',
+                'verbose_name': 'Students',
+                'verbose_name_plural': 'Students',
                 'db_table': 'Students',
             },
         ),

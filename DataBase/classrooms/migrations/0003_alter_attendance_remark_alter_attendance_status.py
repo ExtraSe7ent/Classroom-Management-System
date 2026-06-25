@@ -13,11 +13,11 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='attendance',
             name='remark',
-            field=models.TextField(blank=True, verbose_name='Ghi chú'),
+            field=models.TextField(blank=True, verbose_name='Notes'),
         ),
         migrations.AlterField(
             model_name='attendance',
             name='status',
-            field=models.CharField(choices=[('present', 'Có mặt'), ('absent_excused', 'Vắng (Có phép)'), ('absent_unexcused', 'Vắng (Không phép)'), ('late', 'Đi muộn')], default='present', max_length=20),
+            field=models.CharField(choices=[('present', 'Be present'), ('absent_excused', 'Absence (With permission)'), ('absent_unexcused', 'Absent (Unauthorized)'), ('late', 'Going late')], default='present', max_length=20),
         ),
     ]

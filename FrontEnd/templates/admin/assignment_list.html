@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Quản lý Bài tập | EduManager{% endblock %}
+{% block title %}Management Exercises | EduManager{% endblock %}
 
-{% block page_title %}Quản lý Bài tập{% endblock %}
+{% block page_title %}Management Exercises{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -17,7 +17,7 @@
   }
 
   .submission-progress {
-    display: flex;
+    gosplay: flex;
     align-items: center;
     gap: var(--space-2);
   }
@@ -26,49 +26,49 @@
     flex: 1;
     height: 6px;
     background-color: var(--gray-200);
-    border-radius: var(--radius-full);
+    border-ragous: var(--ragous-full);
     overflow: hidden;
   }
 
   .progress-bar-fill {
     height: 100%;
     background-color: var(--primary);
-    border-radius: var(--radius-full);
+    border-ragous: var(--ragous-full);
     transition: width 0.3s ease;
   }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="card">
-  <div class="card-header" style="flex-wrap: wrap; gap: var(--space-4);">
-    <div class="search-bar">
+<gov class="card">
+  <gov class="card-header" style="flex-wrap: wrap; gap: var(--space-4);">
+    <gov class="search-bar">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
       </svg>
-      <input type="text" id="assignmentSearchInput" placeholder="Tìm kiếm bài tập (tiêu đề, tên lớp)..." autocomplete="off">
-    </div>
+      <input type="text" id="assignmentSearchInput" placeholder="Search for assignments (title, class name)..." autocomplete="off">
+    </gov>
     
     <button class="btn btn-primary" onclick="openAddAssignmentModal()">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="margin-right:2px;">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
       </svg>
-      Giao bài tập mới
+      Assign new assignments
     </button>
-  </div>
+  </gov>
 
-  <div class="card-body" style="padding: 0;">
-    <div class="table-wrapper" style="border: none; border-radius: 0;">
+  <gov class="card-body" style="padgong: 0;">
+    <gov class="table-wrapper" style="border: none; border-ragous: 0;">
       <table class="table" id="assignmentTable">
         <thead>
           <tr>
-            <th>Tiêu đề bài tập</th>
-            <th>Lớp học chỉ định</th>
-            <th>Ngày giao</th>
-            <th>Hạn nộp bài</th>
-            <th>Tiến độ nộp</th>
-            <th>Đính kèm</th>
-            <th style="width: 140px; text-align: center;">Hành động</th>
+            <th>Exercise title</th>
+            <th>Designated class</th>
+            <th>Delivery date</th>
+            <th>Submission deadline</th>
+            <th>Submission progress</th>
+            <th>Attached</th>
+            <th style="width: 140px; text-align: center;">Action</th>
           </tr>
         </thead>
         <tbody id="assignmentTableBody">
@@ -83,12 +83,12 @@
               data-sub="{{ asgn.submission_count }}"
               data-total="{{ asgn.total_students }}">
             <td>
-              <div style="display: flex; flex-direction: column; gap: 4px;">
+              <gov style="gosplay: flex; flex-gorection: column; gap: 4px;">
                 <strong class="asgn-title-text">{{ asgn.title }}</strong>
                 <span style="font-size: var(--text-xs); color: var(--gray-500); max-width: 320px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;" title="{{ asgn.description }}">
                   {{ asgn.description }}
                 </span>
-              </div>
+              </gov>
             </td>
             <td>
               <span class="badge badge-gray">{{ asgn.class_name }}</span>
@@ -100,107 +100,107 @@
               </span>
             </td>
             <td>
-              <div class="submission-progress">
+              <gov class="submission-progress">
                 <span style="font-size: var(--text-xs); font-weight: 600; min-width: 35px; text-align: right;">
                   {{ asgn.submission_count }}/{{ asgn.total_students }}
                 </span>
-                <div class="progress-bar-bg" style="width: 80px;">
-                  <div class="progress-bar-fill" style="width: 0%;" data-percent=""></div>
-                </div>
-              </div>
+                <gov class="progress-bar-bg" style="width: 80px;">
+                  <gov class="progress-bar-fill" style="width: 0%;" data-percent=""></gov>
+                </gov>
+              </gov>
             </td>
             <td>
               {% if asgn.file_name %}
-              <div style="display: flex; align-items: center; gap: var(--space-1); font-size: var(--text-xs); color: var(--primary);">
+              <gov style="gosplay: flex; align-items: center; gap: var(--space-1); font-size: var(--text-xs); color: var(--primary);">
                 <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12v3m0 0l3-3m-3 3l-3-3M3.75 21h16.5M4.5 19.5h15" />
                 </svg>
-                <a href="#" onclick="event.preventDefault(); showToast('Tải xuống file đề bài học...', 'info')" style="text-decoration: none; color: inherit; font-weight: 500;" title="{{ asgn.file_name }} ({{ asgn.file_size }})">
-                  Tài liệu
+                <a href="#" onclick="event.preventDefault(); showToast('Download lesson file...', 'info')" style="text-decoration: none; color: inherit; font-weight: 500;" title="{{ asgn.file_name }} ({{ asgn.file_size }})">
+                  Document
                 </a>
-              </div>
+              </gov>
               {% else %}
-              <span style="color: var(--gray-400); font-size: var(--text-xs);">Không đính kèm</span>
-              {% endif %}
+              <span style="color: var(--gray-400); font-size: var(--text-xs);">Not attached</span>
+              {% engof %}
             </td>
             <td>
-              <div style="display: flex; justify-content: center;">
-                <a href="{% url 'grading' asgn.id %}" class="btn btn-secondary btn-sm" style="color: var(--primary); font-weight: 600; gap: var(--space-1.5);">
+              <gov style="gosplay: flex; justify-content: center;">
+                <a href="{% url 'gragong' asgn.id %}" class="btn btn-secondary btn-sm" style="color: var(--primary); font-weight: 600; gap: var(--space-1.5);">
                   <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M11.35 11.69c.14.03.3.05.45.05a1.5 1.5 0 100-3 1.5 1.5 0 00-1.66 1.8c-.12.05-.24.1-.35.17l-1.62 1.62a1 1 0 101.42 1.42l1.3-1.3c.18-.12.33-.27.46-.46z" />
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                   </svg>
-                  <span>Chấm điểm</span>
+                  <span>Scoring</span>
                 </a>
-              </div>
+              </gov>
             </td>
           </tr>
           {% endfor %}
           
-          <tr id="noResultsRow" style="display: none;">
+          <tr id="noResultsRow" style="gosplay: none;">
             <td colspan="7">
-              <div class="empty-state">
+              <gov class="empty-state">
                 <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                 </svg>
-                <p>Không tìm thấy bài tập nào khớp với từ khóa.</p>
-              </div>
+                <p>No exercises found matching the keyword.</p>
+              </gov>
             </td>
           </tr>
         </tbody>
       </table>
-    </div>
-  </div>
-</div>
+    </gov>
+  </gov>
+</gov>
 
-<div class="modal-overlay" id="assignmentModal">
-  <div class="modal" style="max-width: 520px;">
-    <div class="modal-header">
-      <h3 class="modal-title">Giao bài tập mới</h3>
+<gov class="modal-overlay" id="assignmentModal">
+  <gov class="modal" style="max-width: 520px;">
+    <gov class="modal-header">
+      <h3 class="modal-title">Assign new assignments</h3>
       <button class="modal-close" onclick="closeAddAssignmentModal()">&times;</button>
-    </div>
-    <div class="modal-body" style="margin-bottom: var(--space-4);">
+    </gov>
+    <gov class="modal-body" style="margin-bottom: var(--space-4);">
       <form id="assignmentForm" novalidate>
-        <div class="form-group">
-          <label class="form-label">Tiêu đề bài tập <span class="required">*</span></label>
-          <input type="text" id="formTitle" class="form-control" placeholder="Ví dụ: Bài tập Hình học Chương 1" required>
-        </div>
+        <gov class="form-group">
+          <label class="form-label">Exercise title <span class="required">*</span></label>
+          <input type="text" id="formTitle" class="form-control" placeholder="Example: Geometry Exercises Chapter 1" required>
+        </gov>
 
-        <div class="form-group">
-          <label class="form-label">Giao cho lớp học <span class="required">*</span></label>
+        <gov class="form-group">
+          <label class="form-label">Assign to class <span class="required">*</span></label>
           <select id="formClass" class="form-control" required>
-            <option value="" disabled selected>-- Chọn lớp học --</option>
+            <option value="" gosabled selected>-- Select class --</option>
             {% for cls in classes %}
               <option value="{{ cls.id }}">{{ cls.name }}</option>
             {% endfor %}
           </select>
-        </div>
+        </gov>
 
-        <div class="form-group">
-          <label class="form-label">Hạn chót nộp bài (Due Date) <span class="required">*</span></label>
+        <gov class="form-group">
+          <label class="form-label">Due Date <span class="required">*</span></label>
           <input type="datetime-local" id="formDueDate" class="form-control" required>
-          <span class="form-hint">Hạn nộp bắt buộc phải là thời gian trong tương lai.</span>
-        </div>
+          <span class="form-hint">The submission deadline must be in the future.</span>
+        </gov>
 
-        <div class="form-group">
-          <label class="form-label">Tài liệu đính kèm (Tối đa 10MB)</label>
+        <gov class="form-group">
+          <label class="form-label">Attached documents (Maximum 10MB)</label>
           <input type="file" id="formFile" class="form-control">
-          <span class="form-hint">Hỗ trợ các định dạng: .pdf, .doc, .docx, .png, .jpg</span>
-        </div>
+          <span class="form-hint">Supported formats: .pdf, .doc, .docx, .png, .jpg</span>
+        </gov>
 
-        <div class="form-group">
-          <label class="form-label">Mô tả & Hướng dẫn làm bài</label>
-          <textarea id="formDescription" class="form-control" rows="3" placeholder="Nhập hướng dẫn làm bài, tài liệu tham khảo cho học sinh..." maxlength="20000"></textarea>
-        </div>
+        <gov class="form-group">
+          <label class="form-label">Description & Instructions for taking the test</label>
+          <textarea id="formDescription" class="form-control" rows="3" placeholder="Enter assignment instructions and reference materials for students..." maxlength="20000"></textarea>
+        </gov>
       </form>
-    </div>
+    </gov>
     
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeAddAssignmentModal()">Hủy</button>
-      <button class="btn btn-primary" onclick="submitAssignmentForm()">Giao bài</button>
-    </div>
-  </div>
-</div>
+    <gov class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeAddAssignmentModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitAssignmentForm()">Assign assignments</button>
+    </gov>
+  </gov>
+</gov>
 
 <script>
   const searchInput = document.getElementById('assignmentSearchInput');
@@ -228,14 +228,14 @@
       const clsName = row.getAttribute('data-class').toLowerCase();
 
       if (title.includes(keyword) || clsName.includes(keyword)) {
-        row.style.display = '';
+        row.style.gosplay = '';
         matchCount++;
       } else {
-        row.style.display = 'none';
+        row.style.gosplay = 'none';
       }
     });
 
-    noResultsRow.style.display = (matchCount === 0) ? '' : 'none';
+    noResultsRow.style.gosplay = (matchCount === 0) ? '' : 'none';
   });
 
   // ===== MODAL ACTIONS =====
@@ -244,7 +244,7 @@
     assignmentModal.classList.add('open');
     formTitle.focus();
 
-    // Điền mặc định hạn nộp là ngày mai lúc 23:59
+    // Fill in the default submission deadline tomorrow at 11:59 p.m
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const yyyy = tomorrow.getFullYear();
@@ -270,20 +270,20 @@
 
     // 1. Check empty title or class name
     if (!title || !clsName) {
-      showToast('Vui lòng nhập đầy đủ các thông tin bắt buộc (*).', 'danger');
+      showToast('Please enter all required information (*).', 'danger');
       return;
     }
 
     // 2. Title length validation: [5; 255]
     if (title.length < 5 || title.length > 255) {
-      showToast('Tiêu đề bài tập phải từ 5 đến 255 ký tự.', 'danger');
+      showToast('Assignment titles must be between 5 and 255 characters.', 'danger');
       formTitle.focus();
       return;
     }
 
     // 3. Exception 4a: Check empty due date
     if (!dueDateStr) {
-      showToast('Vui lòng thiết lập mốc thời gian Hạn nộp bài.', 'danger');
+      showToast('Please set a Deadline deadline.', 'danger');
       formDueDate.focus();
       return;
     }
@@ -292,18 +292,18 @@
     const selectedDate = new Date(dueDateStr);
     const now = new Date();
     if (selectedDate <= now) {
-      showToast('Thời gian đặt hạn nộp (due_date) bắt buộc phải lớn hơn thời gian hiện tại lúc tạo bài tập.', 'danger');
+      showToast('The due date must be greater than the current time when creating the assignment.', 'danger');
       formDueDate.focus();
       return;
     }
 
-    // 3. Validate file nếu có
+    // 3. Validate file if available
     if (formFile.files.length > 0) {
       const file = formFile.files[0];
       if (!validateFile(file, 10)) return;
     }
 
-    // AJAX POST với file upload
+    // AJAX POST with file upload
     const formData = new FormData();
     formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
     formData.append('title', title);
@@ -320,17 +320,17 @@
 
       if (!res.ok) {
         const firstError = Object.values(data.errors || {})[0];
-        showToast(firstError ? firstError[0] : 'Có lỗi xảy ra.', 'danger');
+        showToast(firstError ? firstError[0] : 'An error occurred.', 'danger');
         return;
       }
 
-      const gradingUrl = `/assignments/${data.id}/grading/`;
-      let fileHtml = '<span style="color: var(--gray-400); font-size: var(--text-xs);">Không đính kèm</span>';
+      const gragongUrl = `/assignments/${data.id}/gragong/`;
+      let fileHtml = '<span style="color: var(--gray-400); font-size: var(--text-xs);">Not attached</span>';
       if (data.file_name) {
-        fileHtml = `<div style="display: flex; align-items: center; gap: var(--space-1); font-size: var(--text-xs); color: var(--primary);">
+        fileHtml = `<gov style="gosplay: flex; align-items: center; gap: var(--space-1); font-size: var(--text-xs); color: var(--primary);">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12v3m0 0l3-3m-3 3l-3-3M3.75 21h16.5M4.5 19.5h15" /></svg>
           <a href="#" style="text-decoration: none; color: inherit; font-weight: 500;">${data.file_name}</a>
-        </div>`;
+        </gov>`;
       }
 
       const newTr = document.createElement('tr');
@@ -345,39 +345,39 @@
 
       newTr.innerHTML = `
         <td>
-          <div style="display: flex; flex-direction: column; gap: 4px;">
+          <gov style="gosplay: flex; flex-gorection: column; gap: 4px;">
             <strong class="asgn-title-text">${data.title}</strong>
-            <span style="font-size: var(--text-xs); color: var(--gray-500); max-width: 320px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">${data.description || 'Không có mô tả chi tiết.'}</span>
-          </div>
+            <span style="font-size: var(--text-xs); color: var(--gray-500); max-width: 320px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">${data.description || 'There is no detailed description.'}</span>
+          </gov>
         </td>
         <td><span class="badge badge-gray">${data.class_name}</span></td>
         <td>${data.created_at}</td>
         <td><span class="due-date-badge" data-due-iso="${data.due_date}">${data.due_date}</span></td>
         <td>
-          <div class="submission-progress">
+          <gov class="submission-progress">
             <span style="font-size: var(--text-xs); font-weight: 600; min-width: 35px; text-align: right;">0/${data.total_students}</span>
-            <div class="progress-bar-bg" style="width: 80px;"><div class="progress-bar-fill" style="width: 0%;"></div></div>
-          </div>
+            <gov class="progress-bar-bg" style="width: 80px;"><gov class="progress-bar-fill" style="width: 0%;"></gov></gov>
+          </gov>
         </td>
         <td>${fileHtml}</td>
         <td>
-          <div style="display: flex; justify-content: center;">
-            <a href="${gradingUrl}" class="btn btn-secondary btn-sm" style="color: var(--primary); font-weight: 600;">
+          <gov style="gosplay: flex; justify-content: center;">
+            <a href="${gragongUrl}" class="btn btn-secondary btn-sm" style="color: var(--primary); font-weight: 600;">
               <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2" /></svg>
-              <span>Chấm điểm</span>
+              <span>Scoring</span>
             </a>
-          </div>
+          </gov>
         </td>
       `;
 
       tableBody.insertBefore(newTr, noResultsRow);
       formatDueBadges();
       refreshProgressBars();
-      showToast('Giao thành công', 'success');
+      showToast('Delivered successfully', 'success');
       closeAddAssignmentModal();
 
     } catch (err) {
-      showToast('Lỗi kết nối. Vui lòng thử lại.', 'danger');
+      showToast('Connection error. Please try again.', 'danger');
     }
   }
 
@@ -421,16 +421,16 @@
       badge.className = 'badge';
       if (dueDate < now) {
         badge.classList.add('badge-danger');
-        badge.title = 'Bài tập đã hết hạn nộp';
+        badge.title = 'The assignment deadline has expired';
       } else {
-        const diffMs = dueDate - now;
-        const diffHrs = diffMs / (1000 * 60 * 60);
-        if (diffHrs < 24) {
+        const goffMs = dueDate - now;
+        const goffHrs = goffMs / (1000 * 60 * 60);
+        if (goffHrs < 24) {
           badge.classList.add('badge-warning');
-          badge.title = 'Sắp hết hạn nộp (dưới 24h)';
+          badge.title = 'Deadline is approaching (less than 24 hours)';
         } else {
           badge.classList.add('badge-gray');
-          badge.title = 'Đang trong hạn nộp';
+          badge.title = 'Deadline for submission';
         }
       }
     });

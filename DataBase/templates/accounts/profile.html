@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
-{% block title %}Hồ sơ cá nhân | EduManager{% endblock %}
-{% block header %}Hồ sơ của tôi{% endblock %}
+{% block title %}Personal profile | EduManager{% endblock %}
+{% block header %}My profile{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -16,7 +16,7 @@
                 <h5 class="fw-bold mb-0">{{ user.get_full_name|default:user.username }}</h5>
                 <p class="text-muted">{{ user.get_role_display }}</p>
                 <hr>
-                <p class="small text-muted mb-0">Tham gia từ: {{ user.date_joined|date:"d/m/Y" }}</p>
+                <p class="small text-muted mb-0">Join from: {{ user.date_joined|date:"d/m/Y" }}</p>
             </div>
         </div>
     </div>
@@ -35,16 +35,16 @@
             <div class="card-header bg-white p-0">
                 <ul class="nav nav-tabs border-0" id="profileTab" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active py-3 px-4 border-0 fw-semibold" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab"><i class="fas fa-id-card me-2"></i>Thông tin cá nhân</button>
+                        <button class="nav-link active py-3 px-4 border-0 fw-semibold" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab"><i class="fas fa-id-card me-2"></i>Personal information</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link py-3 px-4 border-0 fw-semibold" id="pass-tab" data-bs-toggle="tab" data-bs-target="#pass" type="button" role="tab"><i class="fas fa-key me-2"></i>Đổi mật khẩu</button>
+                        <button class="nav-link py-3 px-4 border-0 fw-semibold" id="pass-tab" data-bs-toggle="tab" data-bs-target="#pass" type="button" role="tab"><i class="fas fa-key me-2"></i>Change password</button>
                     </li>
                 </ul>
             </div>
             <div class="card-body p-4">
                 <div class="tab-content" id="profileTabContent">
-                    <!-- Tab Thông tin cá nhân -->
+                    <!-- Personal Information tab -->
                     <div class="tab-pane fade show active" id="info" role="tabpanel">
                         <form method="POST" enctype="multipart/form-data">
                             {% csrf_token %}
@@ -54,19 +54,19 @@
                                 <div class="col-12">{{ profile_form.email.label_tag }}{{ profile_form.email }}</div>
                                 <div class="col-12">{{ profile_form.phone_number.label_tag }}{{ profile_form.phone_number }}</div>
                                 <div class="col-12">
-                                    <label class="form-label">Ảnh đại diện mới</label>
+                                    <label class="form-label">New representative photo</label>
                                     {{ profile_form.avatar }}
                                 </div>
                                 <div class="col-md-6">{{ extra_form.date_of_birth.label_tag }}{{ extra_form.date_of_birth }}</div>
                                 <div class="col-12">{{ extra_form.address.label_tag }}{{ extra_form.address }}</div>
                             </div>
                             <div class="mt-4 pt-3 border-top">
-                                <button type="submit" name="update_profile" class="btn btn-primary px-4"><i class="fas fa-save me-2"></i>Lưu thông tin</button>
+                                <button type="submit" name="update_profile" class="btn btn-primary px-4"><i class="fas fa-save me-2"></i>Save information</button>
                             </div>
                         </form>
                     </div>
 
-                    <!-- Tab Đổi mật khẩu -->
+                    <!-- Tab Change password -->
                     <div class="tab-pane fade" id="pass" role="tabpanel">
                         <form method="POST">
                             {% csrf_token %}
@@ -74,7 +74,7 @@
                             <div class="mb-3">{{ password_form.new_password.label_tag }}{{ password_form.new_password }}</div>
                             <div class="mb-4">{{ password_form.confirm_password.label_tag }}{{ password_form.confirm_password }}</div>
                             <div class="mt-4 pt-3 border-top">
-                                <button type="submit" name="change_password" class="btn btn-danger px-4"><i class="fas fa-sync me-2"></i>Cập nhật mật khẩu</button>
+                                <button type="submit" name="change_password" class="btn btn-danger px-4"><i class="fas fa-sync me-2"></i>Update password</button>
                             </div>
                         </form>
                     </div>

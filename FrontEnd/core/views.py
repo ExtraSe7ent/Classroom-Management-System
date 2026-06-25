@@ -23,7 +23,7 @@ def _get_csrf_token(request):
 
 
 def viet_name(user):
-    """Trả về họ tên theo thứ tự tiếng Việt: last_name (Họ) + first_name (Tên)."""
+    """Returns full name in Vietnamese order: last_name (Last name) + first_name (First name)."""
     parts = [user.last_name, user.first_name]
     return ' '.join(p for p in parts if p).strip() or user.username
 
@@ -46,7 +46,7 @@ def login_view(request):
                 return redirect('admin_dashboard')
             return redirect('user_dashboard')
         else:
-            messages.error(request, 'Tên đăng nhập hoặc mật khẩu không chính xác!')
+            messages.error(request, 'Username or password is incorrect!')
 
     return render(request, 'auth/login.html')
 
@@ -82,16 +82,16 @@ def class_list(request):
                 'name': cls.name,
                 'description': cls.description or '',
                 'teacher_name': cls.teacher_name,
-                'room': cls.room or 'Tự do',
+                'room': cls.room or 'Freedom',
                 'student_count': 0,
                 'created_at': cls.created_at.strftime('%d/%m/%Y'),
-                'schedule': 'Chưa xếp lịch',
+                'schedule': 'Not scheduled yet',
             })
         return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
 
     classes = Class.objects.annotate(student_count=Count('students')).order_by('-created_at')
 
-    # Chuẩn hóa dữ liệu để template render đúng
+    # Normalize the data so the template renders correctly
     class_list_data = []
     for c in classes:
         class_list_data.append({
@@ -100,7 +100,7 @@ def class_list(request):
             'description': c.description or '',
             'teacher_name': c.teacher_name,
             'schedule': c.get_schedule_display(),
-            'room': c.room or 'Tự do',
+            'room': c.room or 'Freedom',
             'student_count': c.student_count,
             'created_at': c.created_at.strftime('%d/%m/%Y'),
         })
@@ -115,7 +115,7 @@ def class_detail(request, pk):
     if request.method == 'POST':
         action = request.POST.get('action')
 
-        # Xếp học sinh vào lớp
+        # Place students in class
         if action == 'enroll':
             student_ids = request.POST.getlist('student_ids[]')
             enrolled = []
@@ -134,7 +134,7 @@ def class_detail(request, pk):
                     pass
             return JsonResponse({'status': 'ok', 'enrolled': enrolled})
 
-        # Xóa học sinh khỏi lớp
+        # Remove students from class
         if action == 'drop':
             student_id = request.POST.get('student_id')
             try:
@@ -142,7 +142,7 @@ def class_detail(request, pk):
                 class_obj.students.remove(student)
                 return JsonResponse({'status': 'ok'})
             except Student.DoesNotExist:
-                return JsonResponse({'status': 'error', 'message': 'Học sinh không tồn tại.'}, status=404)
+                return JsonResponse({'status': 'error', 'message': 'Student does not exist.'}, status=404)
 
     students_in_class = class_obj.students.select_related('user', 'user__profile').all()
     all_center_students = Student.objects.select_related('user', 'user__profile').all()
@@ -170,7 +170,7 @@ def class_detail(request, pk):
             'description': class_obj.description or '',
             'teacher_name': class_obj.teacher_name,
             'schedule': class_obj.get_schedule_display(),
-            'room': class_obj.room or 'Tự do',
+            'room': class_obj.room or 'Freedom',
             'created_at': class_obj.created_at.strftime('%d/%m/%Y'),
         },
         'students_in_class': students_in_class_data,
@@ -191,7 +191,7 @@ def schedule(request, pk):
             Schedule.objects.filter(id=sched_id, class_obj=class_obj).delete()
             return JsonResponse({'status': 'ok'})
 
-        # Thêm lịch học mới
+        # Add new class schedule
         form = ScheduleForm(request.POST)
         if form.is_valid():
             day = form.cleaned_data['day_of_week']
@@ -199,7 +199,7 @@ def schedule(request, pk):
             end = form.cleaned_data['end_time']
             room = form.cleaned_data.get('room', '')
 
-            # Kiểm tra trùng lịch phòng học
+            # Check for duplicate classroom schedules
             if room:
                 conflict = Schedule.objects.filter(
                     day_of_week=day, room__iexact=room
@@ -208,7 +208,7 @@ def schedule(request, pk):
                     if max(start, s.start_time) < min(end, s.end_time):
                         return JsonResponse({
                             'status': 'error',
-                            'message': f'Lỗi trùng lịch phòng học. Phòng học đã có [{s.class_obj.name}] đăng ký học ở thời gian này.'
+                            'message': f'Error in classroom schedule. The classroom has [{s.class_obj.name}] registered at this time.'
                         }, status=400)
 
             sched = form.save(commit=False)
@@ -216,8 +216,8 @@ def schedule(request, pk):
             sched.save()
 
             day_names = dict([
-                ('Monday','Thứ Hai'), ('Tuesday','Thứ Ba'), ('Wednesday','Thứ Tư'),
-                ('Thursday','Thứ Năm'), ('Friday','Thứ Sáu'), ('Saturday','Thứ Bảy'), ('Sunday','Chủ Nhật')
+                ('Monday','Monday'), ('Tuesday','Tuesday'), ('Wednesday','Wednesday'),
+                ('Thursday','Thursday'), ('Friday','Friday'), ('Saturday','Saturday'), ('Sunday','Sunday')
             ])
 
             return JsonResponse({
@@ -234,8 +234,8 @@ def schedule(request, pk):
     all_schedules = Schedule.objects.select_related('class_obj').all()
 
     day_names = {
-        'Monday':'Thứ Hai', 'Tuesday':'Thứ Ba', 'Wednesday':'Thứ Tư',
-        'Thursday':'Thứ Năm', 'Friday':'Thứ Sáu', 'Saturday':'Thứ Bảy', 'Sunday':'Chủ Nhật'
+        'Monday':'Monday', 'Tuesday':'Tuesday', 'Wednesday':'Wednesday',
+        'Thursday':'Thursday', 'Friday':'Friday', 'Saturday':'Saturday', 'Sunday':'Sunday'
     }
 
     existing_data = [{
@@ -310,7 +310,7 @@ def student_list(request):
                 profile.date_of_birth = d.get('date_of_birth')
                 profile.address = d.get('address', '')
                 profile.save()
-                # Admin cập nhật lớp học
+                # Admin updates classes
                 classes_str = request.POST.get('classes', '')
                 return JsonResponse({
                     'status': 'ok',
@@ -326,7 +326,7 @@ def student_list(request):
             student_id = request.POST.get('student_db_id')
             student = get_object_or_404(Student, id=student_id)
             sid = student.student_id
-            student.user.delete()  # Cascade xóa Student và UserProfile
+            student.user.delete()  # Cascade deletes Student and UserProfile
             return JsonResponse({'status': 'ok', 'student_id': sid})
 
     students = Student.objects.select_related('user', 'user__profile').prefetch_related('classes').all()
@@ -344,7 +344,7 @@ def student_list(request):
         'classes': s.get_classes_display(),
     } for s in students]
 
-    # Tự động sinh Mã HS tiếp theo
+    # Automatically generate the next HS Code
     count = Student.objects.count()
     next_student_id = f'HS{str(count + 1).zfill(3)}'
 
@@ -380,7 +380,7 @@ def attendance(request):
     classes = Class.objects.all()
     classes_data = [{'id': c.id, 'name': c.name} for c in classes]
 
-    # Danh sách học sinh theo lớp (key là string id)
+    # List of students by class (key is string id)
     students_by_class = {}
     for c in classes:
         students_by_class[str(c.id)] = [{
@@ -461,7 +461,7 @@ def grading(request, pk):
             return JsonResponse({'status': 'ok', 'grade': sub.grade, 'feedback': sub.feedback})
         return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
 
-    # Lấy tất cả học sinh trong lớp và merge với submissions
+    # Get all students in the class and merge with submissions
     students_in_class = assignment.class_obj.students.select_related('user').all()
     existing_subs = {s.student_id: s for s in Submission.objects.filter(assignment=assignment).select_related('student')}
 
@@ -510,15 +510,15 @@ def user_dashboard(request):
     if student:
         classes = student.classes.all()
         submissions = Submission.objects.filter(student=student).select_related('assignment')
-        waiting_graded = submissions.filter(status='pending').count()  # Đã nộp, chờ chấm
-        graded = submissions.filter(status='graded').count()           # Đã có điểm
+        waiting_graded = submissions.filter(status='pending').count()  # Submitted, awaiting grading
+        graded = submissions.filter(status='graded').count()           # Got points
 
-        # Đếm bài chưa nộp: assignment trong lớp nhưng không có submission hợp lệ
+        # Count unsubmitted papers: assignments in class but no valid submission
         all_assignments = Assignment.objects.filter(class_obj__in=classes)
         submitted_ids = submissions.exclude(status='missing').values_list('assignment_id', flat=True)
         not_submitted_count = all_assignments.exclude(id__in=submitted_ids).count()
 
-        # Tính tỉ lệ chuyên cần
+        # Calculate attendance rate
         total_att = Attendance.objects.filter(student=student).count()
         present_att = Attendance.objects.filter(student=student, status='present').count()
         att_rate = round(present_att / total_att * 100) if total_att > 0 else 0
@@ -546,9 +546,9 @@ def user_dashboard(request):
         stats = {
             'active_classes_count': classes.count(),
             'attendance_rate': att_rate,
-            'not_submitted_count': not_submitted_count,   # Chưa nộp
-            'waiting_graded_count': waiting_graded,        # Đã nộp chờ chấm
-            'graded_assignments_count': graded,            # Đã có điểm
+            'not_submitted_count': not_submitted_count,   # Not yet submitted
+            'waiting_graded_count': waiting_graded,        # Submitted awaiting grading
+            'graded_assignments_count': graded,            # Got points
         }
     else:
         student_info = {'name': viet_name(request.user), 'student_id': '', 'username': request.user.username, 'email': request.user.email, 'classes': []}
@@ -568,8 +568,8 @@ def user_schedule(request):
     student = _get_student_or_none(request)
 
     day_names = {
-        'Monday':'Thứ Hai', 'Tuesday':'Thứ Ba', 'Wednesday':'Thứ Tư',
-        'Thursday':'Thứ Năm', 'Friday':'Thứ Sáu', 'Saturday':'Thứ Bảy', 'Sunday':'Chủ Nhật'
+        'Monday':'Monday', 'Tuesday':'Tuesday', 'Wednesday':'Wednesday',
+        'Thursday':'Thursday', 'Friday':'Friday', 'Saturday':'Saturday', 'Sunday':'Sunday'
     }
     colors = ['indigo', 'emerald', 'violet', 'amber', 'rose', 'cyan']
 
@@ -605,7 +605,7 @@ def user_attendance(request):
     if student:
         attendances = Attendance.objects.filter(student=student).select_related('class_obj').order_by('-date')
 
-        status_names = {'present': 'Đi học', 'excused': 'Vắng phép', 'absent': 'Vắng không phép'}
+        status_names = {'present': 'Go to school', 'excused': 'Absence of leave', 'absent': 'Absence without permission'}
         for att in attendances:
             logs.append({
                 'date': att.date.strftime('%d/%m/%Y'),
@@ -638,7 +638,7 @@ def user_assignment_list(request):
 
     if student:
         classes = student.classes.all()
-        status_names = {'pending': 'Chờ chấm điểm', 'graded': 'Đã có điểm', 'missing': 'Quá hạn / Thiếu bài', 'not_submitted': 'Chưa làm'}
+        status_names = {'pending': 'Waiting for scoring', 'graded': 'Got points', 'missing': 'Overdue / Missing items', 'not_submitted': 'Haven't done it yet'}
 
         for cls in classes:
             for a in Assignment.objects.filter(class_obj=cls).order_by('-created_at'):
@@ -698,7 +698,7 @@ def user_assignment_detail(request, pk):
             })
         return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
 
-    # Lấy submission hiện tại nếu có
+    # Get the current submission if any
     submission = None
     if student:
         try:
@@ -767,17 +767,17 @@ def profile(request):
                     if user.check_password(old_password):
                         user.set_password(new_password)
                         user.save()
-                        messages.success(request, 'Cập nhật thành công!')
+                        messages.success(request, 'Updated successfully!')
                         return redirect('profile')
                     else:
-                        messages.error(request, 'Mật khẩu cũ không chính xác!')
+                        messages.error(request, 'Old password is incorrect!')
                 else:
-                    messages.error(request, 'Mật khẩu mới không hợp lệ!')
+                    messages.error(request, 'New password is not valid!')
             else:
-                messages.success(request, 'Cập nhật thông tin thành công!')
+                messages.success(request, 'Updated information successfully!')
                 return redirect('profile')
         else:
-            messages.error(request, 'Thông tin không hợp lệ. Vui lòng kiểm tra lại.')
+            messages.error(request, 'Invalid information. Please check again.')
 
     else:
         initial_data = {

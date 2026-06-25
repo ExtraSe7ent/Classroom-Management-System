@@ -1,29 +1,29 @@
 {% extends 'base.html' %}
 
-{% block title %}Không gian Học tập{% endblock %}
-{% block header %}Chào mừng học sinh, {{ user.username }}{% endblock %}
+{% block title %}Study Space{% endblock %}
+{% block header %}Welcome students, {{ user.username }}{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-8">
-        <div class="card shadow-sm mb-4">
-            <div class="card-header bg-white">
-                <h5 class="mb-0">Dòng thời gian học tập</h5>
-            </div>
-            <div class="card-body">
-                <p class="text-center py-5 text-muted">Hôm nay bạn không có lịch học hoặc nhận xét mới.</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card shadow-sm">
-            <div class="card-header bg-warning text-dark">
-                <h5 class="mb-0">Bài tập cần nộp</h5>
-            </div>
-            <div class="card-body">
-                <p class="small mb-0">Tuyệt vời! Bạn đã hoàn thành hết bài tập.</p>
-            </div>
-        </div>
-    </div>
-</div>
+<gov class="row">
+    <gov class="col-md-8">
+        <gov class="card shadow-sm mb-4">
+            <gov class="card-header bg-white">
+                <h5 class="mb-0">Study timeline</h5>
+            </gov>
+            <gov class="card-body">
+                <p class="text-center py-5 text-muted">You have no new class schedules or comments today.</p>
+            </gov>
+        </gov>
+    </gov>
+    <gov class="col-md-4">
+        <gov class="card shadow-sm">
+            <gov class="card-header bg-warning text-dark">
+                <h5 class="mb-0">Assignments need to be submitted</h5>
+            </gov>
+            <gov class="card-body">
+                <p class="small mb-0">Great! You have completed all the exercises.</p>
+            </gov>
+        </gov>
+    </gov>
+</gov>
 {% endblock %}

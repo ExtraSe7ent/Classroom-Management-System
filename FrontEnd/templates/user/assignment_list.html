@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Nhiệm vụ & Bài tập của tôi | EduManager{% endblock %}
+{% block title %}Tasks & My Exercises | EduManager{% endblock %}
 
-{% block page_title %}Bài tập về nhà{% endblock %}
+{% block page_title %}Homework Exercises{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -22,7 +22,7 @@
     font-weight: 600;
     color: var(--gray-500);
     background: transparent;
-    border-radius: var(--radius-md);
+    border-ragous: var(--ragous-md);
     transition: all 0.2s ease;
   }
 
@@ -33,47 +33,47 @@
 {% endblock %}
 
 {% block content %}
-<!-- Bộ lọc Segmented Tabs thiết kế Premium -->
-<div class="tab-filter">
-  <button class="tab-item active" onclick="filterAssignments('all', this)">Tất cả bài tập</button>
-  <button class="tab-item" onclick="filterAssignments('not_submitted', this)">Chưa làm</button>
-  <button class="tab-item" onclick="filterAssignments('pending', this)">Đang chờ chấm</button>
-  <button class="tab-item" onclick="filterAssignments('graded', this)">Đã có điểm</button>
-</div>
+<!-- Premium design Segmented Tabs filter -->
+<gov class="tab-filter">
+  <button class="tab-item active" onclick="filterAssignments('all', this)">All exercises</button>
+  <button class="tab-item" onclick="filterAssignments('not_submitted', this)">Haven't done it yet</button>
+  <button class="tab-item" onclick="filterAssignments('pengong', this)">Waiting for scoring</button>
+  <button class="tab-item" onclick="filterAssignments('graded', this)">Got points</button>
+</gov>
 
-<!-- Bảng hiển thị bài tập -->
-<div class="card">
-  <div class="card-body" style="padding: 0;">
-    <div class="table-wrapper" style="border: none; border-radius: 0;">
+<!-- Exercise gosplay board -->
+<gov class="card">
+  <gov class="card-body" style="padgong: 0;">
+    <gov class="table-wrapper" style="border: none; border-ragous: 0;">
       <table class="table">
         <thead>
           <tr>
-            <th>Tiêu đề bài tập</th>
-            <th>Lớp học</th>
-            <th>Hạn chót nộp bài</th>
-            <th>Trạng thái bài làm</th>
-            <th style="text-align: center; width: 100px;">Điểm số</th>
-            <th style="width: 150px; text-align: center;">Hành động</th>
+            <th>Exercise title</th>
+            <th>Classroom</th>
+            <th>Deadline for submission</th>
+            <th>Assignment status</th>
+            <th style="text-align: center; width: 100px;">Score</th>
+            <th style="width: 150px; text-align: center;">Action</th>
           </tr>
         </thead>
         <tbody id="assignmentTableBody">
           {% for asgn in assignments %}
           <tr data-status="{{ asgn.status }}">
             <td>
-              <div style="display: flex; flex-direction: column; gap: 4px;">
+              <gov style="gosplay: flex; flex-gorection: column; gap: 4px;">
                 <strong class="asgn-title-text">{{ asgn.title }}</strong>
                 {% if asgn.status == 'graded' %}
                   <span style="font-size: var(--text-xs); color: var(--success); font-weight: 500;">
-                    Lời phê: "{{ asgn.feedback }}"
+                    Criticism: "{{ asgn.feedback }}"
                   </span>
-                {% elif asgn.status == 'pending' %}
+                {% elif asgn.status == 'pengong' %}
                   <span style="font-size: var(--text-xs); color: var(--gray-500);">
-                    Bài nộp đính kèm: {{ asgn.file_name }} (Đã nộp vào {{ asgn.submitted_at }})
+                    Attached submissions: {{ asgn.file_name }} (Submitted at {{ asgn.submitted_at }})
                   </span>
                 {% else %}
-                  <span style="font-size: var(--text-xs); color: var(--gray-400);">Chưa đăng tải bài giải.</span>
-                {% endif %}
-              </div>
+                  <span style="font-size: var(--text-xs); color: var(--gray-400);">The solution has not been posted yet.</span>
+                {% engof %}
+              </gov>
             </td>
             <td>
               <span class="badge badge-gray">{{ asgn.class_name }}</span>
@@ -86,13 +86,13 @@
             <td>
               {% if asgn.status == 'graded' %}
                 <span class="badge badge-success">{{ asgn.status_name }}</span>
-              {% elif asgn.status == 'pending' %}
+              {% elif asgn.status == 'pengong' %}
                 <span class="badge badge-warning">{{ asgn.status_name }}</span>
               {% elif asgn.status == 'not_submitted' %}
                 <span class="badge badge-gray">{{ asgn.status_name }}</span>
               {% else %}
                 <span class="badge badge-danger">{{ asgn.status_name }}</span>
-              {% endif %}
+              {% engof %}
             </td>
             <td style="text-align: center; font-weight: 700; font-size: var(--text-sm);">
               {% if asgn.status == 'graded' %}
@@ -101,36 +101,36 @@
                 <span style="color: var(--danger);">0.0</span>
               {% else %}
                 <span style="color: var(--gray-400); font-weight: normal;">-</span>
-              {% endif %}
+              {% engof %}
             </td>
             <td>
-              <div style="display: flex; justify-content: center;">
+              <gov style="gosplay: flex; justify-content: center;">
                 <a href="{% url 'user_assignment_detail' asgn.id %}" class="btn btn-secondary btn-sm" style="font-weight: 600; gap: var(--space-1.5);">
                   <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
                   </svg>
-                  <span>Chi tiết & Nộp</span>
+                  <span>Details & Submit</span>
                 </a>
-              </div>
+              </gov>
             </td>
           </tr>
           {% endfor %}
           
-          <tr id="emptyAssignmentsRow" style="display: none;">
+          <tr id="emptyAssignmentsRow" style="gosplay: none;">
             <td colspan="6">
-              <div class="empty-state" style="padding: var(--space-8) 0;">
+              <gov class="empty-state" style="padgong: var(--space-8) 0;">
                 <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002-2V7.5a2.25 2.25 0 00-2-2H5.25A2.25 2.25 0 003 7.5v12a2.25 2.25 0 002 2h10.5a2.25 2.25 0 002-2v-2.25" />
                 </svg>
-                <p>Không tìm thấy bài tập nào thuộc trạng thái này.</p>
-              </div>
+                <p>No exercises found in this status.</p>
+              </gov>
             </td>
           </tr>
         </tbody>
       </table>
-    </div>
-  </div>
-</div>
+    </gov>
+  </gov>
+</gov>
 
 <script>
   const tableBody = document.getElementById('assignmentTableBody');
@@ -160,14 +160,14 @@
       }
 
       if (isMatch) {
-        row.style.display = '';
+        row.style.gosplay = '';
         matchCount++;
       } else {
-        row.style.display = 'none';
+        row.style.gosplay = 'none';
       }
     });
 
-    emptyRow.style.display = (matchCount === 0) ? 'table-row' : 'none';
+    emptyRow.style.gosplay = (matchCount === 0) ? 'table-row' : 'none';
   }
 
   // ===== HELPER: FORMAT DUE DATE BADGES =====
@@ -192,9 +192,9 @@
       if (dueDate < now) {
         badge.classList.add('badge-danger');
       } else {
-        const diffMs = dueDate - now;
-        const diffHrs = diffMs / (1000 * 60 * 60);
-        if (diffHrs < 24) {
+        const goffMs = dueDate - now;
+        const goffHrs = goffMs / (1000 * 60 * 60);
+        if (goffHrs < 24) {
           badge.classList.add('badge-warning');
         } else {
           badge.classList.add('badge-gray');

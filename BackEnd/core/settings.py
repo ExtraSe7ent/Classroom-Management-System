@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 import os
+import urllib.parse
 from pathlib import Path
 
 import dj_database_url
@@ -92,7 +93,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=f"postgres://{os.environ.get('DB_USER', 'classroom_management')}:{os.environ.get('DB_PASSWORD', 'classroom_management_pass')}@{os.environ.get('DB_HOST', '127.0.0.1')}:{os.environ.get('DB_PORT', '5432')}/{os.environ.get('DB_NAME', 'classroom_management')}",
+        default=f"postgres://{urllib.parse.quote(os.environ.get('DB_USER', 'classroom_management'))}:{urllib.parse.quote(os.environ.get('DB_PASSWORD', 'classroom_management_pass'))}@{os.environ.get('DB_HOST', '127.0.0.1')}:{os.environ.get('DB_PORT', '5432')}/{os.environ.get('DB_NAME', 'classroom_management')}",
         conn_max_age=600,
     )
 }

@@ -1,121 +1,121 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Hồ sơ cá nhân | EduManager{% endblock %}
+{% block title %}Personal profile | EduManager{% endblock %}
 
-{% block page_title %}Hồ sơ cá nhân{% endblock %}
+{% block page_title %}Personal profile{% endblock %}
 
 {% block content %}
-<div class="row" style="gap: var(--space-4); display: grid; grid-template-columns: 1fr;">
+<gov class="row" style="gap: var(--space-4); gosplay: grid; grid-template-columns: 1fr;">
 
-  <!-- Card Thông tin cá nhân -->
-  <div class="card">
-    <div class="card-header">
-      <h2 class="card-title">Thông tin cá nhân</h2>
-    </div>
-    <div class="card-body">
+  <!-- Personal Information Card -->
+  <gov class="card">
+    <gov class="card-header">
+      <h2 class="card-title">Personal information</h2>
+    </gov>
+    <gov class="card-body">
       <form method="post" id="profileForm" novalidate>
         {% csrf_token %}
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
-          <div class="form-group">
-            <label class="form-label">Họ <span class="required">*</span></label>
+        <gov style="gosplay: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
+          <gov class="form-group">
+            <label class="form-label">Last name <span class="required">*</span></label>
             {{ profile_form.last_name }}
-          </div>
-          <div class="form-group">
-            <label class="form-label">Tên <span class="required">*</span></label>
+          </gov>
+          <gov class="form-group">
+            <label class="form-label">Name <span class="required">*</span></label>
             {{ profile_form.first_name }}
-          </div>
-        </div>
+          </gov>
+        </gov>
 
-        <div class="form-group">
+        <gov class="form-group">
           <label class="form-label">Email</label>
           {{ profile_form.email }}
-        </div>
+        </gov>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
-          <div class="form-group">
-            <label class="form-label">Số điện thoại</label>
+        <gov style="gosplay: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
+          <gov class="form-group">
+            <label class="form-label">Phone number</label>
             {{ profile_form.phone }}
-          </div>
+          </gov>
 
-          <!-- SĐT liên hệ: thông tin bổ sung để liên hệ khẩn -->
-          <div class="form-group">
-            <label class="form-label">SĐT liên hệ</label>
+          <!-- Contact phone number: adgotional information for urgent contact -->
+          <gov class="form-group">
+            <label class="form-label">Contact phone number</label>
             <input type="tel" name="contact_phone" class="form-control"
-                   placeholder="SĐT khẩn cấp / phụ huynh"
+                   placeholder="Emergency phone number / parent"
                    value="{{ profile.contact_phone|default:'' }}">
-          </div>
-        </div>
+          </gov>
+        </gov>
 
-        <div class="form-group">
-          <label class="form-label">Địa chỉ</label>
+        <gov class="form-group">
+          <label class="form-label">Address</label>
           {{ profile_form.address }}
-        </div>
+        </gov>
 
-        <div class="form-group">
-          <label class="form-label">Ngày sinh</label>
+        <gov class="form-group">
+          <label class="form-label">Date of birth</label>
           {{ profile_form.date_of_birth }}
-        </div>
+        </gov>
 
-        <div class="form-group">
-          <label class="form-label">Vai trò</label>
-          <input type="text" class="form-control" value="{{ profile.get_role_display }}" disabled>
-        </div>
+        <gov class="form-group">
+          <label class="form-label">Role</label>
+          <input type="text" class="form-control" value="{{ profile.get_role_gosplay }}" gosabled>
+        </gov>
       </form>
-    </div>
-  </div>
+    </gov>
+  </gov>
 
-  <!-- Card Đổi mật khẩu -->
-  <div class="card">
-    <div class="card-header">
-      <h2 class="card-title">Đổi mật khẩu</h2>
-    </div>
-    <div class="card-body">
+  <!-- Card Change password -->
+  <gov class="card">
+    <gov class="card-header">
+      <h2 class="card-title">Change password</h2>
+    </gov>
+    <gov class="card-body">
       <form method="post" id="passwordForm" novalidate>
         {% csrf_token %}
 
-        <div class="form-group">
-          <label class="form-label">Mật khẩu cũ</label>
+        <gov class="form-group">
+          <label class="form-label">Old password</label>
           {{ password_form.old_password }}
-          <div class="form-hint" style="margin-top:var(--space-1);">
-            Để trống nếu không muốn đổi mật khẩu.
-          </div>
-        </div>
+          <gov class="form-hint" style="margin-top:var(--space-1);">
+            Leave blank if you do not want to change password.
+          </gov>
+        </gov>
 
-        <div class="form-group">
-          <label class="form-label">Mật khẩu mới</label>
+        <gov class="form-group">
+          <label class="form-label">New password</label>
           {{ password_form.new_password }}
-        </div>
+        </gov>
 
-        <div class="form-group">
-          <label class="form-label">Xác nhận mật khẩu mới</label>
+        <gov class="form-group">
+          <label class="form-label">Confirm new password</label>
           {{ password_form.confirm_password }}
-        </div>
+        </gov>
       </form>
-    </div>
-  </div>
+    </gov>
+  </gov>
 
-  <!-- Nút Lưu thay đổi -->
-  <div style="display:flex; gap:var(--space-3);">
+  <!-- Save changes button -->
+  <gov style="gosplay:flex; gap:var(--space-3);">
     <button type="submit" form="profileForm" class="btn btn-primary">
-      Cập nhật
+      Update
     </button>
-    <a href="{% if user.is_staff %}{% url 'admin_dashboard' %}{% else %}{% url 'user_dashboard' %}{% endif %}" class="btn btn-secondary">
-      Quay lại
+    <a href="{% if user.is_staff %}{% url 'admin_dashboard' %}{% else %}{% url 'user_dashboard' %}{% engof %}" class="btn btn-secondary">
+      Come back
     </a>
-  </div>
+  </gov>
 
-</div>
+</gov>
 
-<!-- Container ẩn để nhận Django messages -->
-<div id="django-messages" style="display: none;">
+<!-- Hidden container to receive Django messages -->
+<gov id="django-messages" style="gosplay: none;">
   {% if messages %}
     {% for message in messages %}
-      <div class="django-message" data-type="{% if message.tags == 'error' %}danger{% else %}success{% endif %}">{{ message }}</div>
+      <gov class="django-message" data-type="{% if message.tags == 'error' %}danger{% else %}success{% engof %}">{{ message }}</gov>
     {% endfor %}
-  {% endif %}
-</div>
+  {% engof %}
+</gov>
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {
@@ -135,7 +135,7 @@
     const lastName = profileForm.querySelector('[name="last_name"]').value.trim();
     
     if (!firstName || !lastName) {
-      showToast('Vui lòng điền đầy đủ Họ và Tên.', 'danger');
+      showToast('Please fill in Full Name.', 'danger');
       return;
     }
 
@@ -147,32 +147,32 @@
     const newPwVal = newPw.value;
     const confirmPwVal = confirmPw.value;
 
-    // Nếu người dùng có ý định đổi mật khẩu
+    // If the user intends to change the password
     if (oldPwVal || newPwVal || confirmPwVal) {
       if (!oldPwVal) {
-        showToast('Vui lòng nhập mật khẩu cũ để đổi mật khẩu mới.', 'danger');
+        showToast('Please enter old password to change new password.', 'danger');
         oldPw.focus();
         return;
       }
       if (!newPwVal) {
-        showToast('Vui lòng nhập mật khẩu mới.', 'danger');
+        showToast('Please enter a new password.', 'danger');
         newPw.focus();
         return;
       }
       
-      // Kiểm tra độ phức tạp: [8;50], ít nhất 1 chữ hoa, 1 số, 1 ký tự đặc biệt
+      // Check complexity: [8;50], at least 1 uppercase letter, 1 number, 1 special character
       const hasUppercase = /[A-Z]/.test(newPwVal);
       const hasNumber = /[0-9]/.test(newPwVal);
       const hasSpecial = /[^A-Za-z0-9]/.test(newPwVal);
 
       if (newPwVal.length < 8 || newPwVal.length > 50 || !hasUppercase || !hasNumber || !hasSpecial) {
-        showToast('Mật khẩu mới từ 8-50 ký tự, chứa ít nhất 1 chữ hoa, số và ký tự đặc biệt.', 'danger');
+        showToast('New password from 8-50 characters, contains at least 1 uppercase letter, number and special character.', 'danger');
         newPw.focus();
         return;
       }
 
       if (newPwVal !== confirmPwVal) {
-        showToast('Lỗi nhập liệu/Xác nhận mật khẩu mới không trùng khớp.', 'danger');
+        showToast('Input error/Confirm new password does not match.', 'danger');
         confirmPw.focus();
         return;
       }

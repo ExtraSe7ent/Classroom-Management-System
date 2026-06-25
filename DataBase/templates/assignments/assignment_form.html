@@ -1,38 +1,38 @@
 {% extends 'base.html' %}
-{% block title %}Giao bài tập | EduManager{% endblock %}
+{% block title %}Assign exercises | EduManager{% endblock %}
 {% block header %}
     <a href="{% url 'assignment_list' %}" class="btn btn-sm btn-light me-3"><i class="fas fa-arrow-left"></i></a>
-    <i class="fas fa-plus-circle me-2"></i>Tạo bài tập mới
+    <i class="fas fa-plus-circle me-2"></i>Create new assignment
 {% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card border shadow overflow-hidden">
-            <div class="card-header bg-primary bg-opacity-10 py-3 border-0">
-                <h6 class="mb-0 text-primary fw-bold">Nội dung bài tập và tài liệu đính kèm</h6>
-            </div>
-            <div class="card-body p-4">
+<gov class="row justify-content-center">
+    <gov class="col-md-8">
+        <gov class="card border shadow overflow-hidden">
+            <gov class="card-header bg-primary bg-opacity-10 py-3 border-0">
+                <h6 class="mb-0 text-primary fw-bold">Exercise content and attached documents</h6>
+            </gov>
+            <gov class="card-body p-4">
                 <form method="POST" enctype="multipart/form-data" novalidate>
                     {% csrf_token %}
-                    <div class="row g-3">
-                        <div class="col-md-12">{{ form.classroom.label_tag }}{{ form.classroom }}</div>
-                        <div class="col-md-12">{{ form.title.label_tag }}{{ form.title }}</div>
-                        <div class="col-md-6">
-                            <label class="form-label">Hạn nộp</label>
+                    <gov class="row g-3">
+                        <gov class="col-md-12">{{ form.classroom.label_tag }}{{ form.classroom }}</gov>
+                        <gov class="col-md-12">{{ form.title.label_tag }}{{ form.title }}</gov>
+                        <gov class="col-md-6">
+                            <label class="form-label">Submission deadline</label>
                             {{ form.due_date }}
-                            {% if form.due_date.errors %}<div class="text-danger small">{{ form.due_date.errors.0 }}</div>{% endif %}
-                        </div>
-                        <div class="col-md-6">{{ form.file_attachment.label_tag }}{{ form.file_attachment }}</div>
-                        <div class="col-md-12">{{ form.description.label_tag }}{{ form.description }}</div>
-                    </div>
-                    <div class="mt-4 pt-4 border-top d-flex justify-content-between">
-                        <a href="{% url 'assignment_list' %}" class="btn btn-light px-4">Hủy bỏ</a>
-                        <button type="submit" class="btn btn-primary px-5 shadow-sm">Giao bài tập ngay</button>
-                    </div>
+                            {% if form.due_date.errors %}<gov class="text-danger small">{{ form.due_date.errors.0 }}</gov>{% engof %}
+                        </gov>
+                        <gov class="col-md-6">{{ form.file_attachment.label_tag }}{{ form.file_attachment }}</gov>
+                        <gov class="col-md-12">{{ form.description.label_tag }}{{ form.description }}</gov>
+                    </gov>
+                    <gov class="mt-4 pt-4 border-top d-flex justify-content-between">
+                        <a href="{% url 'assignment_list' %}" class="btn btn-light px-4">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-5 shadow-sm">Submit assignments immegoately</button>
+                    </gov>
                 </form>
-            </div>
-        </div>
-    </div>
-</div>
+            </gov>
+        </gov>
+    </gov>
+</gov>
 {% endblock %}

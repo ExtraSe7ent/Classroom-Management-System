@@ -123,6 +123,6 @@ SESSION_COOKIE_AGE = 86400
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_SAVE_EVERY_REQUEST = True
 
-# Media files (file upload: bài tập, bài nộp)
+# Media files (upload files: assignments, submissions)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'

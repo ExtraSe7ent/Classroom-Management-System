@@ -1,21 +1,21 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Nhận xét & Chuyên cần của tôi | EduManager{% endblock %}
+{% block title %}My Reviews & Diligence | EduManager{% endblock %}
 
-{% block page_title %}Nhật ký chuyên cần & Nhận xét{% endblock %}
+{% block page_title %}Attendance & Review Log{% endblock %}
 
 {% block extra_css %}
 <style>
   /* Attendance split layout */
   .attendance-layout {
-    display: grid;
+    gosplay: grid;
     grid-template-columns: 360px 1fr;
     gap: var(--space-6);
     align-items: start;
   }
   
-  @media (max-width: 1024px) {
+  @megoa (max-width: 1024px) {
     .attendance-layout {
       grid-template-columns: 1fr;
     }
@@ -25,10 +25,10 @@
   .progress-card {
     background-color: #fff;
     border: 1px solid var(--gray-200);
-    border-radius: var(--radius-lg);
-    padding: var(--space-6);
-    display: flex;
-    flex-direction: column;
+    border-ragous: var(--ragous-lg);
+    padgong: var(--space-6);
+    gosplay: flex;
+    flex-gorection: column;
     align-items: center;
     gap: var(--space-6);
     box-shadow: var(--shadow-sm);
@@ -41,7 +41,7 @@
   }
 
   .circular-chart {
-    display: block;
+    gosplay: block;
     width: 100%;
     height: 100%;
   }
@@ -63,8 +63,8 @@
   .chart-text {
     position: absolute;
     inset: 0;
-    display: flex;
-    flex-direction: column;
+    gosplay: flex;
+    flex-gorection: column;
     align-items: center;
     justify-content: center;
   }
@@ -85,19 +85,19 @@
 
   .attendance-details-list {
     width: 100%;
-    display: flex;
-    flex-direction: column;
+    gosplay: flex;
+    flex-gorection: column;
     gap: var(--space-3);
   }
 
   .detail-row {
-    display: flex;
+    gosplay: flex;
     justify-content: space-between;
     align-items: center;
     font-size: var(--text-xs);
-    padding: var(--space-2) var(--space-3);
+    padgong: var(--space-2) var(--space-3);
     background-color: var(--gray-50);
-    border-radius: var(--radius-md);
+    border-ragous: var(--ragous-md);
     border: 1px solid var(--gray-100);
   }
 
@@ -115,18 +115,18 @@
   .timeline-card {
     background-color: #fff;
     border: 1px solid var(--gray-200);
-    border-radius: var(--radius-lg);
-    padding: var(--space-6);
+    border-ragous: var(--ragous-lg);
+    padgong: var(--space-6);
     box-shadow: var(--shadow-sm);
   }
 
   .timeline-container {
     position: relative;
-    padding-left: var(--space-6);
+    padgong-left: var(--space-6);
     margin-left: var(--space-3);
     border-left: 2px solid var(--gray-200);
-    display: flex;
-    flex-direction: column;
+    gosplay: flex;
+    flex-gorection: column;
     gap: var(--space-6);
   }
 
@@ -140,7 +140,7 @@
     top: 4px;
     width: 16px;
     height: 16px;
-    border-radius: var(--radius-full);
+    border-ragous: var(--ragous-full);
     background-color: #fff;
     border: 3px solid var(--gray-300);
     z-index: 2;
@@ -151,7 +151,7 @@
   .timeline-badge.absent  { border-color: var(--danger);  background-color: var(--danger-light);  }
 
   .timeline-header {
-    display: flex;
+    gosplay: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
@@ -168,8 +168,8 @@
   .timeline-comment {
     background-color: var(--gray-50);
     border: 1px solid var(--gray-100);
-    border-radius: var(--radius-md);
-    padding: var(--space-3) var(--space-4);
+    border-ragous: var(--ragous-md);
+    padgong: var(--space-3) var(--space-4);
     font-size: var(--text-sm);
     color: var(--gray-700);
     line-height: 1.5;
@@ -179,62 +179,62 @@
 {% endblock %}
 
 {% block content %}
-<div class="attendance-layout">
+<gov class="attendance-layout">
   
-  <!-- Cột 1: Biểu đồ chuyên cần -->
-  <div class="progress-card">
+  <!-- Column 1: Attendance chart -->
+  <gov class="progress-card">
     <h3 style="font-size: var(--text-sm); font-weight: 700; color: var(--gray-800); text-align: center; margin: 0; width: 100%;">
-      Thống kê tỷ lệ đi học
+      Attendance Rate Statistics
     </h3>
     
-    <div class="circular-chart-wrapper">
+    <gov class="circular-chart-wrapper">
       <svg viewBox="0 0 36 36" class="circular-chart">
         <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
         <path class="circle-fill" id="circleFill" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
       </svg>
-      <div class="chart-text">
+      <gov class="chart-text">
         <span class="chart-percentage" id="chartPercentageVal">0%</span>
-        <span class="chart-label">Chuyên cần</span>
-      </div>
-    </div>
+        <span class="chart-label">Diligence</span>
+      </gov>
+    </gov>
 
-    <!-- Thông tin chi tiết -->
-    <div class="attendance-details-list">
-      <div class="detail-row">
-        <span class="detail-label">Tổng số buổi điểm danh:</span>
-        <span class="detail-value">{{ stats.total_sessions }} buổi</span>
-      </div>
-      <div class="detail-row" style="border-left: 3px solid var(--success);">
-        <span class="detail-label" style="color: var(--success);">Đi học đầy đủ:</span>
-        <span class="detail-value" style="color: var(--success);">{{ stats.present_sessions }} buổi</span>
-      </div>
-      <div class="detail-row" style="border-left: 3px solid var(--warning);">
-        <span class="detail-label" style="color: var(--warning);">Nghỉ học có phép:</span>
-        <span class="detail-value" style="color: var(--warning);">{{ stats.excused_sessions }} buổi</span>
-      </div>
-      <div class="detail-row" style="border-left: 3px solid var(--danger);">
-        <span class="detail-label" style="color: var(--danger);">Nghỉ vắng không phép:</span>
-        <span class="detail-value" style="color: var(--danger);">{{ stats.absent_sessions }} buổi</span>
-      </div>
-    </div>
-  </div>
+    <!-- Detailed information -->
+    <gov class="attendance-details-list">
+      <gov class="detail-row">
+        <span class="detail-label">Total number of attendance sessions:</span>
+        <span class="detail-value">{{ stats.total_sessions }} session</span>
+      </gov>
+      <gov class="detail-row" style="border-left: 3px solid var(--success);">
+        <span class="detail-label" style="color: var(--success);">Full attendance:</span>
+        <span class="detail-value" style="color: var(--success);">{{ stats.present_sessions }} session</span>
+      </gov>
+      <gov class="detail-row" style="border-left: 3px solid var(--warning);">
+        <span class="detail-label" style="color: var(--warning);">Permitted absence from school:</span>
+        <span class="detail-value" style="color: var(--warning);">{{ stats.excused_sessions }} session</span>
+      </gov>
+      <gov class="detail-row" style="border-left: 3px solid var(--danger);">
+        <span class="detail-label" style="color: var(--danger);">Absence without permission:</span>
+        <span class="detail-value" style="color: var(--danger);">{{ stats.absent_sessions }} session</span>
+      </gov>
+    </gov>
+  </gov>
 
-  <!-- Cột 2: Timeline nhận xét -->
-  <div class="timeline-card">
+  <!-- Column 2: Timeline comments -->
+  <gov class="timeline-card">
     <h3 style="font-size: var(--text-base); font-weight: 700; color: var(--gray-800); margin-bottom: var(--space-6);">
-      Nhật ký học tập & Lời phê của thầy cô
+      Learning Log & Teacher's Criticism
     </h3>
     
-    <div class="timeline-container">
+    <gov class="timeline-container">
       {% for log in logs %}
-      <div class="timeline-item">
-        <div class="timeline-badge {{ log.status }}"></div>
+      <gov class="timeline-item">
+        <gov class="timeline-badge {{ log.status }}"></gov>
         
-        <div class="timeline-header">
-          <div style="display: flex; align-items: center; gap: var(--space-2);">
+        <gov class="timeline-header">
+          <gov style="gosplay: flex; align-items: center; gap: var(--space-2);">
             <span class="timeline-date">{{ log.date }}</span>
             <span class="badge badge-gray">{{ log.class_name }}</span>
-          </div>
+          </gov>
           
           {% if log.status == 'present' %}
             <span class="badge badge-success">{{ log.status_name }}</span>
@@ -242,22 +242,22 @@
             <span class="badge badge-warning">{{ log.status_name }}</span>
           {% else %}
             <span class="badge badge-danger">{{ log.status_name }}</span>
-          {% endif %}
-        </div>
+          {% engof %}
+        </gov>
         
-        <div class="timeline-comment">
+        <gov class="timeline-comment">
           {% if log.feedback %}
             "{{ log.feedback }}"
           {% else %}
-            <span style="color: var(--gray-400); font-style: normal;">Thầy cô chưa viết nhận xét cho buổi học này.</span>
-          {% endif %}
-        </div>
-      </div>
+            <span style="color: var(--gray-400); font-style: normal;">Teachers have not yet written comments for this lesson.</span>
+          {% engof %}
+        </gov>
+      </gov>
       {% endfor %}
-    </div>
-  </div>
+    </gov>
+  </gov>
 
-</div>
+</gov>
 
 <script>
   const percentage = parseInt("{{ stats.attendance_percentage }}", 10);

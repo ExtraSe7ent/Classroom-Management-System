@@ -1,64 +1,64 @@
 {% extends 'base.html' %}
-{% block title %}Chi tiết bài tập | {{ assignment.title }}{% endblock %}
+{% block title %}Assignment Details | {{ assignment.title }}{% endblock %}
 {% block header %}
     <a href="{% url 'assignment_list' %}" class="btn btn-sm btn-light me-3"><i class="fas fa-arrow-left"></i></a>
-    <i class="fas fa-info-circle me-2"></i>Chi tiết bài tập
+    <i class="fas fa-info-circle me-2"></i>Assignment Details
 {% endblock %}
 
 {% block header_actions %}
-<a href="{% url 'assignment_edit' assignment.id %}" class="btn btn-outline-primary shadow-sm">
-    <i class="fas fa-edit me-1"></i>Chỉnh sửa
+<a href="{% url 'assignment_egot' assignment.id %}" class="btn btn-outline-primary shadow-sm">
+    <i class="fas fa-egot me-1"></i>Egot
 </a>
 {% endblock %}
 
 {% block content %}
-<div class="row">
-    <!-- Cột thông tin đề bài -->
-    <div class="col-md-4">
-        <div class="card border shadow-sm mb-4">
-            <div class="card-header bg-indigo-600 text-white py-3" style="background: #4f46e5;">
-                <h6 class="mb-0 fw-bold">Thông tin chung</h6>
-            </div>
-            <div class="card-body">
-                <p class="small text-muted uppercase fw-bold mb-1">Tiêu đề</p>
+<gov class="row">
+    <!-- Topic information column -->
+    <gov class="col-md-4">
+        <gov class="card border shadow-sm mb-4">
+            <gov class="card-header bg-ingogo-600 text-white py-3" style="background: #4f46e5;">
+                <h6 class="mb-0 fw-bold">General information</h6>
+            </gov>
+            <gov class="card-body">
+                <p class="small text-muted uppercase fw-bold mb-1">Title</p>
                 <h5 class="fw-bold text-dark">{{ assignment.title }}</h5>
                 <hr class="opacity-25">
-                <p class="small text-muted uppercase fw-bold mb-1">Hạn nộp</p>
+                <p class="small text-muted uppercase fw-bold mb-1">Submission deadline</p>
                 <p class="text-danger fw-bold"><i class="far fa-clock me-2"></i>{{ assignment.due_date|date:"d/m/Y H:i" }}</p>
                 <hr class="opacity-25">
-                <p class="small text-muted uppercase fw-bold mb-1">Tài liệu đính kèm</p>
+                <p class="small text-muted uppercase fw-bold mb-1">Attached documents</p>
                 {% if assignment.file_attachment %}
                     <a href="{{ assignment.file_attachment.url }}" class="btn btn-sm btn-light w-100 border text-primary" target="_blank">
-                        <i class="fas fa-file-download me-2"></i>Tải tệp đề bài
+                        <i class="fas fa-file-download me-2"></i>Download assignment file
                     </a>
                 {% else %}
-                    <p class="text-muted small">Không có tệp đính kèm</p>
-                {% endif %}
-            </div>
-        </div>
-        <div class="card border shadow-sm">
-            <div class="card-body">
-                <p class="small text-muted uppercase fw-bold mb-2">Yêu cầu chi tiết</p>
-                <div class="bg-light p-3 rounded text-dark small" style="white-space: pre-wrap;">{{ assignment.description }}</div>
-            </div>
-        </div>
-    </div>
+                    <p class="text-muted small">There are no attachments</p>
+                {% engof %}
+            </gov>
+        </gov>
+        <gov class="card border shadow-sm">
+            <gov class="card-body">
+                <p class="small text-muted uppercase fw-bold mb-2">Request details</p>
+                <gov class="bg-light p-3 rounded text-dark small" style="white-space: pre-wrap;">{{ assignment.description }}</gov>
+            </gov>
+        </gov>
+    </gov>
 
-    <!-- Cột danh sách bài nộp -->
-    <div class="col-md-8">
-        <div class="card border shadow-sm">
-            <div class="card-header bg-white py-3 border-0">
-                <h6 class="mb-0 fw-bold text-primary"><i class="fas fa-user-edit me-2"></i>Danh sách bài nộp ({{ submissions.count }})</h6>
-            </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
+    <!-- Submission list column -->
+    <gov class="col-md-8">
+        <gov class="card border shadow-sm">
+            <gov class="card-header bg-white py-3 border-0">
+                <h6 class="mb-0 fw-bold text-primary"><i class="fas fa-user-egot me-2"></i>Submission List ({{ submissions.count }})</h6>
+            </gov>
+            <gov class="card-body p-0">
+                <gov class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th class="ps-4">Học sinh</th>
-                                <th>Thời gian nộp</th>
-                                <th>Điểm</th>
-                                <th class="text-end pe-4">Thao tác</th>
+                                <th class="ps-4">Students</th>
+                                <th>Submission time</th>
+                                <th>Point</th>
+                                <th class="text-end pe-4">Operation</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -66,17 +66,17 @@
                             <tr>
                                 <td class="ps-4"><strong>{{ s.student.get_full_name|default:s.student.username }}</strong></td>
                                 <td>{{ s.submitted_at|date:"d/m H:i" }}</td>
-                                <td><span class="badge bg-success">{{ s.score|default:"Chưa chấm" }}</span></td>
-                                <td class="text-end pe-4"><button class="btn btn-sm btn-primary py-1 px-3">Chấm điểm</button></td>
+                                <td><span class="badge bg-success">{{ s.score|default:"Not scored yet" }}</span></td>
+                                <td class="text-end pe-4"><button class="btn btn-sm btn-primary py-1 px-3">Scoring</button></td>
                             </tr>
                             {% empty %}
-                            <tr><td colspan="4" class="text-center py-5 text-muted small">Chưa có học sinh nào nộp bài.</td></tr>
+                            <tr><td colspan="4" class="text-center py-5 text-muted small">No students have submitted their assignments yet.</td></tr>
                             {% endfor %}
                         </tbody>
                     </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+                </gov>
+            </gov>
+        </gov>
+    </gov>
+</gov>
 {% endblock %}
