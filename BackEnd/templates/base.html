@@ -212,7 +212,7 @@
                 <a href="{% url 'profile' %}" class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
                     <i class="fas fa-user-circle" style="width:18px;"></i>My Profile
                 </a>
-                <a href="{% url 'logout' %}" class="text-danger" style="color:#f87171 !important;">
+                <a href="{% url 'logout' %}" class="text-danger">
                     <i class="fas fa-right-from-bracket" style="width:18px;"></i>Logout
                 </a>
             </div>

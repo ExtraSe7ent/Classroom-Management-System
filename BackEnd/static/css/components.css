@@ -126,7 +126,11 @@
 .stat-icon.red     { background-color: var(--danger-light);  color: var(--danger);  }
 .stat-icon.violet  { background-color: #ede9fe; color: #7c3aed; }
 
-.stat-info {}
+.border-l-5-warning { border-left: 5px solid #ffc107 !important; }
+.border-l-5-success { border-left: 5px solid #198754 !important; }
+.border-l-5-danger { border-left: 5px solid #dc3545 !important; }
+.border-l-5-primary { border-left: 5px solid #4f46e5 !important; }
+
 .stat-value {
   font-size: var(--text-2xl);
   font-weight: 700;

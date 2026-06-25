@@ -168,7 +168,7 @@
                 </div>
             </div>
             <div class="modal-footer bg-light border-0">
-                <button type="button" class="btn btn-link text-muted me-auto" onclick="window.location.href='{% url 'classroom_detail' classroom.id %}'">Refresh List</button>
+                <a href="{% url 'classroom_detail' classroom.id %}" class="btn btn-link text-muted me-auto text-decoration-none">Refresh List</a>
                 <button type="submit" name="add_to_class" class="btn btn-primary px-4 shadow-sm">Add to Class</button>
             </div>
         </form>
