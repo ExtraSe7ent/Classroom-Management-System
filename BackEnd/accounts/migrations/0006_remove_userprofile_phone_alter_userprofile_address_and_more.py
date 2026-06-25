@@ -17,11 +17,11 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='userprofile',
             name='address',
-            field=models.TextField(blank=True, null=True, verbose_name='Địa chỉ'),
+            field=models.TextField(blank=True, null=True, verbose_name='Address'),
         ),
         migrations.AlterField(
             model_name='userprofile',
             name='date_of_birth',
-            field=models.DateField(blank=True, null=True, verbose_name='Ngày sinh'),
+            field=models.DateField(blank=True, null=True, verbose_name='Date of birth'),
         ),
     ]

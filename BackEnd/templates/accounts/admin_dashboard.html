@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 
-{% block title %}Bảng điều khiển | Admin{% endblock %}
-{% block header %}Tổng quan hệ thống{% endblock %}
+{% block title %}Dashboard | Admin{% endblock %}
+{% block header %}System Overview{% endblock %}
 
 {% block header_actions %}
 {% if user.is_admin %}
-<a href="{% url 'classroom_add' %}" class="btn btn-success shadow-sm me-2"><i class="fas fa-plus me-1"></i>Tạo lớp mới</a>
-<a href="{% url 'student_add' %}" class="btn btn-primary shadow-sm"><i class="fas fa-user-plus me-1"></i>Thêm học sinh</a>
+<a href="{% url 'classroom_add' %}" class="btn btn-success shadow-sm me-2"><i class="fas fa-plus me-1"></i>Create Class</a>
+<a href="{% url 'student_add' %}" class="btn btn-primary shadow-sm"><i class="fas fa-user-plus me-1"></i>Add Student</a>
 {% endif %}
 {% endblock %}
 
@@ -19,7 +19,7 @@
                     <i class="fas fa-chalkboard-teacher text-indigo-600 fa-lg" style="color: #4f46e5;"></i>
                 </div>
                 <div>
-                    <p class="text-secondary mb-0 small fw-bold uppercase">Lớp học</p>
+                    <p class="text-secondary mb-0 small fw-bold uppercase">Classrooms</p>
                     <h4 class="mb-0 fw-bold text-dark">{{ class_count }}</h4>
                 </div>
             </div>
@@ -32,7 +32,7 @@
                     <i class="fas fa-user-graduate text-green-600 fa-lg" style="color: #10b981;"></i>
                 </div>
                 <div>
-                    <p class="text-secondary mb-0 small fw-bold uppercase">Học sinh</p>
+                    <p class="text-secondary mb-0 small fw-bold uppercase">Students</p>
                     <h4 class="mb-0 fw-bold text-dark">{{ student_count }}</h4>
                 </div>
             </div>
@@ -44,7 +44,7 @@
     <div class="col-md-7">
         <div class="card border-0 bg-white">
             <div class="card-header bg-white py-3">
-                <h6 class="mb-0 fw-bold">Học sinh tham gia</h6>
+                <h6 class="mb-0 fw-bold">Recent Students</h6>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -62,7 +62,7 @@
                                     </div>
                                 </td>
                                 <td class="text-end pe-4">
-                                    <span class="badge bg-light text-dark">{{ s.date_joined|date:"d M" }}</span>
+                                    <span class="badge bg-light text-dark">{{ s.date_joined|date:"M d" }}</span>
                                 </td>
                             </tr>
                             {% endfor %}

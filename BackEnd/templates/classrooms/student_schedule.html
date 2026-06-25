@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 
-{% block title %}Lịch học của tôi{% endblock %}
-{% block header %}<i class="fas fa-calendar-alt me-2"></i>Thời khóa biểu tuần{% endblock %}
+{% block title %}My Schedule{% endblock %}
+{% block header %}<i class="fas fa-calendar-alt me-2"></i>Weekly Schedule{% endblock %}
 
 {% block content %}
 {% if not has_schedule %}
 <div class="alert alert-info shadow-sm border-0">
-    <i class="fas fa-info-circle me-2"></i>Bạn chưa có lịch học. Vui lòng liên hệ trung tâm để được xếp lớp.
+    <i class="fas fa-info-circle me-2"></i>You have no schedules scheduled. Please contact administration for enrollment.
 </div>
 {% else %}
 <div class="row g-3">

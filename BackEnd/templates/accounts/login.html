@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng nhập | Hệ thống Quản lý Lớp học</title>
+    <title>Login | Classroom Management System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -20,7 +20,7 @@
     </style>
 </head>
 <body>
-    <!-- Vùng thông báo đồng nhất với hệ thống -->
+    <!-- Message display area -->
     <div class="message-container">
         {% if messages %}
             {% for message in messages %}
@@ -41,33 +41,33 @@
                 <div class="card login-card p-4">
                     <div class="text-center mb-4">
                         <div class="brand-logo mb-2"><i class="fas fa-graduation-cap"></i> EDUPRO</div>
-                        <p class="text-secondary small fw-bold text-uppercase">Quản lý trung tâm đào tạo</p>
+                        <p class="text-secondary small fw-bold text-uppercase">Center Management System</p>
                     </div>
 
                     <form method="POST" novalidate>
                         {% csrf_token %}
                         <div class="mb-3">
-                            <label class="form-label small fw-bold">Tên đăng nhập</label>
+                            <label class="form-label small fw-bold">Username</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-user"></i></span>
                                 {{ form.username }}
                             </div>
                         </div>
                         <div class="mb-4">
-                            <label class="form-label small fw-bold">Mật khẩu</label>
+                            <label class="form-label small fw-bold">Password</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-lock"></i></span>
                                 {{ form.password }}
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100 btn-login text-white">ĐĂNG NHẬP</button>
+                        <button type="submit" class="btn btn-primary w-100 btn-login text-white">LOGIN</button>
                     </form>
 
                     <div class="text-center mt-3">
-                        <a href="{% url 'forgot_password' %}" class="small text-decoration-none">Quên mật khẩu?</a>
+                        <a href="{% url 'forgot_password' %}" class="small text-decoration-none">Forgot password?</a>
                     </div>
                     <div class="text-center mt-2">
-                        <small class="text-muted">Chưa có tài khoản? Vui lòng liên hệ Admin.</small>
+                        <small class="text-muted">Don't have an account? Please contact the Administrator.</small>
                     </div>
                 </div>
             </div>
@@ -75,7 +75,6 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Tự động tắt thông báo sau 3 giây giống bên trong hệ thống
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(function() {
                 let alerts = document.querySelectorAll('.message-container .alert');

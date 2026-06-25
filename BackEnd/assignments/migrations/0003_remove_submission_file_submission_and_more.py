@@ -25,21 +25,21 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='submission',
             name='grade',
-            field=models.FloatField(blank=True, null=True, verbose_name='Điểm số'),
+            field=models.FloatField(blank=True, null=True, verbose_name='Grade'),
         ),
         migrations.AddField(
             model_name='submission',
             name='submitted_file',
-            field=models.FileField(blank=True, null=True, upload_to='submissions/', verbose_name='Tệp bài làm'),
+            field=models.FileField(blank=True, null=True, upload_to='submissions/', verbose_name='Submission file'),
         ),
         migrations.AddField(
             model_name='submission',
             name='teacher_comment',
-            field=models.TextField(blank=True, verbose_name='Nhận xét của giáo viên'),
+            field=models.TextField(blank=True, verbose_name='Teacher feedback'),
         ),
         migrations.AlterField(
             model_name='submission',
             name='content',
-            field=models.TextField(blank=True, verbose_name='Nội dung bài làm'),
+            field=models.TextField(blank=True, verbose_name='Submission content'),
         ),
     ]

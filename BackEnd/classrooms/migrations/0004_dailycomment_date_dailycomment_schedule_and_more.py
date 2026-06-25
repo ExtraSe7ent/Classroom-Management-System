@@ -24,6 +24,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='dailycomment',
             name='content',
-            field=models.TextField(verbose_name='Nội dung nhận xét'),
+            field=models.TextField(verbose_name='Comment content'),
         ),
     ]

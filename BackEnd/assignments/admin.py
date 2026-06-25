@@ -10,7 +10,7 @@ class AssignmentAdmin(admin.ModelAdmin):
     ordering      = ('-created_at',)
     date_hierarchy = 'due_date'
 
-    @admin.display(description='Số bài nộp')
+    @admin.display(description='Submission Count')
     def submission_count(self, obj):
         return obj.submissions.count()
 

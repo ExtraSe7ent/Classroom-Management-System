@@ -13,11 +13,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='user',
             name='phone_number',
-            field=models.CharField(blank=True, max_length=15, null=True, verbose_name='Số điện thoại'),
+            field=models.CharField(blank=True, max_length=15, null=True, verbose_name='Phone number'),
         ),
         migrations.AlterField(
             model_name='user',
             name='role',
-            field=models.CharField(choices=[('admin', 'Giáo viên/Quản trị'), ('student', 'Học sinh/Phụ huynh')], default='student', max_length=10),
+            field=models.CharField(choices=[('admin', 'Teacher/Admin'), ('student', 'Student / Parent')], default='student', max_length=10),
         ),
     ]

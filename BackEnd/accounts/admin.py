@@ -6,14 +6,14 @@ from .models import User, UserProfile, Student
 class UserProfileInline(admin.StackedInline):
     model = UserProfile
     can_delete = False
-    verbose_name_plural = "Thông tin mở rộng"
+    verbose_name_plural = "Extended Profiles"
     fields = ('address', 'date_of_birth')
 
 
 class StudentInline(admin.StackedInline):
     model = Student
     can_delete = False
-    verbose_name_plural = "Hồ sơ học sinh"
+    verbose_name_plural = "Student Profiles"
     fields = ('student_code',)
 
 
@@ -25,10 +25,10 @@ class CustomUserAdmin(UserAdmin):
     search_fields = ('username', 'first_name', 'last_name', 'email', 'phone_number')
     ordering      = ('-date_joined',)
     fieldsets = UserAdmin.fieldsets + (
-        ('Phân quyền hệ thống', {'fields': ('role', 'phone_number', 'avatar')}),
+        ('System Permissions', {'fields': ('role', 'phone_number', 'avatar')}),
     )
 
-    @admin.display(description='Họ và tên')
+    @admin.display(description='Full Name')
     def get_full_name(self, obj):
         return obj.get_full_name() or '—'
 
@@ -45,6 +45,6 @@ class StudentAdmin(admin.ModelAdmin):
     search_fields = ('student_code', 'user__username', 'user__first_name', 'user__last_name')
     ordering      = ('student_code',)
 
-    @admin.display(description='Họ và tên')
+    @admin.display(description='Full Name')
     def get_full_name(self, obj):
         return obj.user.get_full_name() or obj.user.username

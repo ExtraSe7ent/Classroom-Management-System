@@ -1,8 +1,8 @@
 """
-Views của app accounts — viết theo Class-based Views (CBV).
+Views for accounts app — written using Class-based Views (CBV).
 
-Bao gồm: đăng nhập/đăng xuất, điều hướng dashboard theo role,
-dashboard admin/giáo viên & học sinh, CRUD học sinh, hồ sơ cá nhân.
+Includes: login/logout, dashboard routing by role,
+admin/teacher & student dashboard, student CRUD, and user profile management.
 """
 import random
 import re
@@ -34,38 +34,38 @@ from .permissions import AdminRequiredMixin, StaffRequiredMixin, StudentRequired
 
 
 # ===================================================================
-# XÁC THỰC (UC01)
+# AUTHENTICATION (UC01)
 # ===================================================================
 class AppLoginView(LoginView):
-    """Đăng nhập — dùng LoginView built-in của Django."""
+    """Login — uses Django's built-in LoginView."""
     template_name = 'accounts/login.html'
     form_class = LoginForm
-    redirect_authenticated_user = True  # đã đăng nhập thì khỏi vào lại trang login
+    redirect_authenticated_user = True  # if already authenticated, redirect away from login page
 
     def form_valid(self, form):
         user = form.get_user()
         full_name = user.get_full_name() or user.username
-        messages.success(self.request, f"Xin chào {full_name}, hệ thống đã sẵn sàng!")
+        messages.success(self.request, f"Welcome {full_name}, system is ready!")
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, "Tên đăng nhập hoặc mật khẩu không chính xác.")
+        messages.error(self.request, "Incorrect username or password.")
         return super().form_invalid(form)
 
 
 class AppLogoutView(RedirectView):
-    """Đăng xuất — chấp nhận GET (vì menu dùng link) rồi hủy session."""
+    """Logout — accepts GET then destroys session."""
     pattern_name = 'login'
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             logout(request)
-            messages.info(request, "Bạn đã đăng xuất thành công.")
+            messages.info(request, "You have logged out successfully.")
         return super().get(request, *args, **kwargs)
 
 
 class DashboardRedirectView(LoginRequiredMixin, RedirectView):
-    """Điều hướng người dùng về trang chủ tương ứng với vai trò."""
+    """Redirect users to their respective dashboard based on their role."""
     def get_redirect_url(self, *args, **kwargs):
         user = self.request.user
         if user.is_admin or user.is_teacher:
@@ -74,7 +74,7 @@ class DashboardRedirectView(LoginRequiredMixin, RedirectView):
 
 
 class ForgotPasswordView(View):
-    """UC01-C — Quên mật khẩu qua SĐT + OTP (OTP mô phỏng cho bản demo)."""
+    """UC01-C — Forgot password via phone + OTP (simulated OTP for demo)."""
     template_name = 'accounts/forgot_password.html'
 
     def get(self, request):
@@ -86,31 +86,31 @@ class ForgotPasswordView(View):
             return render(request, self.template_name, {'form': form, 'otp_sent': 'send_otp' not in request.POST})
         phone = form.cleaned_data['phone']
 
-        # Bước 1: "Gửi mã OTP"
+        # Step 1: "Send OTP"
         if 'send_otp' in request.POST:
             if not User.objects.filter(phone_number=phone).exists():
-                messages.error(request, "Số điện thoại này chưa được đăng ký trong hệ thống.")
+                messages.error(request, "This phone number is not registered in the system.")
                 return render(request, self.template_name, {'form': form})
             otp = f"{random.randint(0, 999999):06d}"
             request.session['reset_phone'] = phone
             request.session['reset_otp'] = otp
-            messages.info(request, f"[DEMO] Mã OTP gửi tới {phone} là: {otp}")
+            messages.info(request, f"[DEMO] OTP code sent to {phone} is: {otp}")
             return render(request, self.template_name, {'form': form, 'otp_sent': True})
 
-        # Bước 2: "Đổi mật khẩu"
+        # Step 2: "Change Password"
         otp = (form.cleaned_data.get('otp') or '').strip()
         new_pw = form.cleaned_data.get('new_password') or ''
         confirm = form.cleaned_data.get('confirm_password') or ''
         ctx = {'form': form, 'otp_sent': True}
 
         if not re.fullmatch(r'\d{6}', otp):
-            messages.error(request, "Mã OTP phải gồm đúng 6 chữ số.")
+            messages.error(request, "OTP code must be exactly 6 digits.")
             return render(request, self.template_name, ctx)
         if request.session.get('reset_phone') != phone or request.session.get('reset_otp') != otp:
-            messages.error(request, "Mã OTP không đúng hoặc đã hết hạn. Vui lòng lấy lại mã.")
+            messages.error(request, "Invalid or expired OTP. Please try again.")
             return render(request, self.template_name, ctx)
         if new_pw != confirm:
-            messages.error(request, "Xác nhận mật khẩu mới không trùng khớp.")
+            messages.error(request, "Confirm password does not match.")
             return render(request, self.template_name, ctx)
         try:
             validate_strong_password(new_pw)
@@ -123,7 +123,7 @@ class ForgotPasswordView(View):
         user.save()
         request.session.pop('reset_phone', None)
         request.session.pop('reset_otp', None)
-        messages.success(request, "Đổi mật khẩu thành công! Vui lòng đăng nhập lại.")
+        messages.success(request, "Password changed successfully! Please log in again.")
         return redirect('login')
 
 
@@ -132,9 +132,9 @@ class ForgotPasswordView(View):
 # ===================================================================
 class AdminDashboardView(StaffRequiredMixin, TemplateView):
     """
-    Bảng điều khiển cho Admin & Giáo viên.
-    - Admin: thống kê toàn trung tâm.
-    - Giáo viên: thống kê thu hẹp trong các lớp mình phụ trách.
+    Dashboard for Admin & Teacher.
+    - Admin: center-wide statistics.
+    - Teacher: restricted statistics for classrooms they are assigned to.
     """
     template_name = 'accounts/admin_dashboard.html'
 
@@ -162,7 +162,7 @@ class AdminDashboardView(StaffRequiredMixin, TemplateView):
 
 
 class UserDashboardView(StudentRequiredMixin, TemplateView):
-    """Trang chủ học sinh/phụ huynh: nhắc bài tập, tỉ lệ chuyên cần, lịch hôm nay."""
+    """Student/parent homepage: assignment reminders, attendance rate, today's schedule."""
     template_name = 'accounts/user_dashboard.html'
 
     def get_context_data(self, **kwargs):
@@ -197,7 +197,7 @@ class UserDashboardView(StudentRequiredMixin, TemplateView):
 
 
 # ===================================================================
-# QUẢN LÝ HỌC SINH (UC03) — chỉ Admin
+# STUDENT MANAGEMENT (UC03) — Admin only
 # ===================================================================
 class StudentListView(AdminRequiredMixin, ListView):
     template_name = 'accounts/student_list.html'
@@ -228,16 +228,16 @@ class StudentCreateView(AdminRequiredMixin, SuccessMessageMixin, CreateView):
     form_class = StudentManageForm
     template_name = 'accounts/student_form.html'
     success_url = reverse_lazy('student_list')
-    success_message = "Thêm học sinh mới thành công!"
-    extra_context = {'title': 'Thêm học sinh'}
+    success_message = "New student added successfully!"
+    extra_context = {'title': 'Add Student'}
 
 
 class StudentUpdateView(AdminRequiredMixin, SuccessMessageMixin, UpdateView):
     form_class = StudentManageForm
     template_name = 'accounts/student_form.html'
     success_url = reverse_lazy('student_list')
-    success_message = "Cập nhật thông tin học sinh thành công!"
-    extra_context = {'title': 'Sửa thông tin học sinh'}
+    success_message = "Student information updated successfully!"
+    extra_context = {'title': 'Edit Student Info'}
 
     def get_queryset(self):
         return User.objects.filter(role=User.ROLE_STUDENT)
@@ -251,13 +251,13 @@ class StudentUpdateView(AdminRequiredMixin, SuccessMessageMixin, UpdateView):
 
 
 class StudentDeleteView(AdminRequiredMixin, View):
-    """Xóa học sinh (Cascade Delete). POST mới xóa, GET thì quay về danh sách."""
+    """Delete student (Cascade Delete). Deletes on POST, redirects to list on GET."""
     def post(self, request, pk):
         student = get_object_or_404(User, pk=pk, role=User.ROLE_STUDENT)
         username = student.username
         student.delete()
         messages.success(
-            request, f"Đã xóa học sinh {username} và toàn bộ dữ liệu liên quan."
+            request, f"Successfully deleted student {username} and all related data."
         )
         return redirect('student_list')
 
@@ -266,11 +266,11 @@ class StudentDeleteView(AdminRequiredMixin, View):
 
 
 # ===================================================================
-# HỒ SƠ CÁ NHÂN (UC02) — mọi vai trò
+# PERSONAL PROFILE (UC02) — all roles
 # ===================================================================
 class ProfileView(LoginRequiredMixin, View):
     """
-    Xem & cập nhật hồ sơ. Một trang có 3 thao tác phân biệt bằng tên nút submit:
+    View & update profile. Handles 3 distinct operations determined by the submit button name:
     update_profile / reset_avatar / change_password.
     """
     template_name = 'accounts/profile.html'
@@ -293,28 +293,28 @@ class ProfileView(LoginRequiredMixin, View):
         user = request.user
         user_profile, _ = UserProfile.objects.get_or_create(user=user)
 
-        # 1) Cập nhật thông tin cá nhân
+        # 1) Update personal info
         if 'update_profile' in request.POST:
             profile_form = UserProfileForm(request.POST, request.FILES, instance=user)
             extra_form = UserExtraInfoForm(request.POST, instance=user_profile)
             if profile_form.is_valid() and extra_form.is_valid():
                 profile_form.save()
                 extra_form.save()
-                messages.success(request, "Cập nhật thành công!")
+                messages.success(request, "Profile updated successfully!")
                 return redirect('profile')
             return render(request, self.template_name, self._context(
                 request, profile_form=profile_form, extra_form=extra_form))
 
-        # 2) Xóa ảnh đại diện, về mặc định
+        # 2) Reset avatar to default
         if 'reset_avatar' in request.POST:
             if user.avatar:
                 user.avatar.delete(save=False)
                 user.avatar = None
                 user.save()
-                messages.success(request, "Đã xóa ảnh đại diện, hệ thống dùng biểu tượng mặc định.")
+                messages.success(request, "Avatar deleted successfully. Default icon will be used.")
             return redirect('profile')
 
-        # 3) Đổi mật khẩu (BR_PASSWORD_CHANGE: phải đúng mật khẩu cũ)
+        # 3) Change password (BR_PASSWORD_CHANGE: must match old password)
         if 'change_password' in request.POST:
             password_form = PasswordUpdateForm(request.POST)
             if password_form.is_valid():
@@ -323,10 +323,10 @@ class ProfileView(LoginRequiredMixin, View):
                 if user.check_password(old_password):
                     user.set_password(new_password)
                     user.save()
-                    update_session_auth_hash(request, user)  # không bị đăng xuất
-                    messages.success(request, "Đổi mật khẩu thành công!")
+                    update_session_auth_hash(request, user)  # don't logout
+                    messages.success(request, "Password changed successfully!")
                     return redirect('profile')
-                messages.error(request, "Mật khẩu cũ không chính xác, vui lòng thử lại.")
+                messages.error(request, "Incorrect old password. Please try again.")
             return render(request, self.template_name, self._context(
                 request, password_form=password_form))
 

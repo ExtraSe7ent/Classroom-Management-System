@@ -1,40 +1,40 @@
 {% extends 'base.html' %}
-{% block title %}Chi tiết lớp: {{ classroom.name }}{% endblock %}
+{% block title %}Class Details: {{ classroom.name }}{% endblock %}
 {% block header %}
     <a href="{% url 'classroom_list' %}" class="btn btn-sm btn-light me-3"><i class="fas fa-arrow-left"></i></a>
-    <i class="fas fa-chalkboard-teacher me-2"></i><span class="text-muted">Quản lý lớp:</span> {{ classroom.name }}
+    <i class="fas fa-chalkboard-teacher me-2"></i><span class="text-muted">Manage Class:</span> {{ classroom.name }}
 {% endblock %}
 
 {% block header_actions %}
 <a href="{% url 'classroom_edit' classroom.id %}" class="btn btn-outline-secondary me-2 shadow-sm">
-    <i class="fas fa-edit me-1"></i>Sửa lớp
+    <i class="fas fa-edit me-1"></i>Edit Class
 </a>
 <button class="btn btn-success shadow-sm" data-bs-toggle="modal" data-bs-target="#enrollModal">
-    <i class="fas fa-user-plus me-1"></i>Thêm học sinh vào lớp
+    <i class="fas fa-user-plus me-1"></i>Add Student to Class
 </button>
 {% endblock %}
 
 {% block content %}
 <div class="row">
-    <!-- Cột bên trái: Thông tin & Lịch học -->
+    <!-- Left Column: Classroom Info & Schedule -->
     <div class="col-md-4">
         <div class="card mb-4 border-0 shadow-sm">
-            <div class="card-header bg-white fw-bold"><i class="fas fa-info-circle me-2 text-primary"></i>Thông tin lớp học</div>
+            <div class="card-header bg-white fw-bold"><i class="fas fa-info-circle me-2 text-primary"></i>Classroom Info</div>
             <div class="card-body">
-                <p class="mb-1 text-muted small uppercase fw-bold">Trạng thái</p>
+                <p class="mb-1 text-muted small uppercase fw-bold">Status</p>
                 <span class="badge {% if classroom.is_active %}bg-success{% else %}bg-secondary{% endif %} mb-3">
                     {{ classroom.get_is_active_display }}
                 </span>
-                <p class="mb-1 text-muted small uppercase fw-bold">Học phí</p>
-                <h6 class="text-primary fw-bold mb-3">{{ classroom.tuition }}đ</h6>
-                <p class="mb-1 text-muted small uppercase fw-bold">Mô tả lớp học</p>
-                <div class="small text-dark bg-light p-2 rounded" style="white-space: pre-wrap;">{{ classroom.description|default:"Chưa có mô tả." }}</div>
+                <p class="mb-1 text-muted small uppercase fw-bold">Tuition</p>
+                <h6 class="text-primary fw-bold mb-3">{{ classroom.tuition }} VND</h6>
+                <p class="mb-1 text-muted small uppercase fw-bold">Description</p>
+                <div class="small text-dark bg-light p-2 rounded" style="white-space: pre-wrap;">{{ classroom.description|default:"No description provided." }}</div>
             </div>
         </div>
 
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                <span class="fw-bold"><i class="fas fa-calendar-alt me-2 text-primary"></i>Lịch học</span>
+                <span class="fw-bold"><i class="fas fa-calendar-alt me-2 text-primary"></i>Schedule</span>
                 <a href="{% url 'schedule_create' classroom.id %}" class="btn btn-sm btn-outline-primary border-0"><i class="fas fa-plus"></i></a>
             </div>
             <div class="card-body p-0">
@@ -45,9 +45,9 @@
                             <span class="fw-bold">
                                 {{ s.get_day_of_week_display }}
                                 {% now "w" as current_day %}
-                                {# Django now 'w' trả về 0 cho CN, 1 cho T2... khớp với DAY_CHOICES của chúng ta #}
+                                {# Django now 'w' returns 0 for Sunday, 1 for Monday... matching our DAY_CHOICES #}
                                 {% if s.day_of_week|stringformat:"i" == current_day or s.day_of_week == 6 and current_day == "0" %}
-                                    <span class="badge bg-danger ms-1 small" style="font-size: 0.6rem;">HÔM NAY</span>
+                                    <span class="badge bg-danger ms-1 small" style="font-size: 0.6rem;">TODAY</span>
                                 {% endif %}
                             </span><br>
                             <small class="text-muted">{{ s.start_time|time:"H:i" }} - {{ s.end_time|time:"H:i" }}</small>
@@ -59,33 +59,33 @@
                                class="btn btn-sm btn-outline-{% if s.id in attended_schedule_ids %}warning{% else %}success{% endif %} py-0 px-2 shadow-sm mb-1" 
                                style="font-size: 0.75rem;">
                                 <i class="fas {% if s.id in attended_schedule_ids %}fa-edit{% else %}fa-check-circle{% endif %} me-1"></i>
-                                {% if s.id in attended_schedule_ids %}Sửa điểm danh{% else %}Điểm danh{% endif %}
+                                {% if s.id in attended_schedule_ids %}Edit Attendance{% else %}Take Attendance{% endif %}
                             </a>
-                            <form action="{% url 'schedule_delete' s.id %}" method="POST" onsubmit="return confirm('Xóa lịch này?')">
+                            <form action="{% url 'schedule_delete' s.id %}" method="POST" onsubmit="return confirm('Delete this schedule?')">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-link text-danger p-0 small" style="text-decoration: none;">Xóa</button>
+                                <button type="submit" class="btn btn-link text-danger p-0 small" style="text-decoration: none;">Delete</button>
                             </form>
                         </div>
                     </li>
                     {% empty %}
-                    <li class="list-group-item text-center py-4 text-muted">Chưa có lịch học</li>
+                    <li class="list-group-item text-center py-4 text-muted">No schedules scheduled</li>
                     {% endfor %}
                 </ul>
             </div>
         </div>
     </div>
 
-    <!-- Cột bên phải: Danh sách sinh viên -->
+    <!-- Right Column: Student list -->
     <div class="col-md-8">
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white py-3">
                 <div class="row align-items-center">
                     <div class="col-md-6">
-                        <h6 class="mb-0 fw-bold"><i class="fas fa-user-graduate me-2 text-primary"></i>Học viên trong lớp ({{ enrollments.count }})</h6>
+                        <h6 class="mb-0 fw-bold"><i class="fas fa-user-graduate me-2 text-primary"></i>Students in Class ({{ enrollments.count }})</h6>
                     </div>
                     <div class="col-md-6">
                         <form method="GET" class="input-group input-group-sm">
-                            <input type="text" name="q_enrolled" class="form-control" placeholder="Tìm tên học viên..." value="{{ q_enrolled }}">
+                            <input type="text" name="q_enrolled" class="form-control" placeholder="Search student name..." value="{{ q_enrolled }}">
                             <button class="btn btn-outline-secondary" type="submit"><i class="fas fa-search"></i></button>
                         </form>
                     </div>
@@ -101,9 +101,9 @@
                                 <th class="ps-4" style="width: 50px;">
                                     <input type="checkbox" class="form-check-input" id="selectAllEnrolled">
                                 </th>
-                                <th>Họ và tên</th>
-                                <th>Ngày ghi danh</th>
-                                <th class="text-end pe-4">Hành động</th>
+                                <th>Full Name</th>
+                                <th>Enrollment Date</th>
+                                <th class="text-end pe-4">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -123,9 +123,9 @@
                     </table>
                 </div>
                 <div class="p-3 bg-light border-top d-flex justify-content-between align-items-center">
-                    <small class="text-muted" id="selectedCount">Đã chọn 0 học sinh</small>
-                    <button type="submit" name="bulk_remove" value="1" class="btn btn-outline-danger btn-sm shadow-sm" id="btnBulkDelete" disabled onclick="return confirm('Bạn có chắc chắn muốn xóa những học sinh đã chọn khỏi lớp?')">
-                        <i class="fas fa-trash-alt me-1"></i> Xóa mục đã chọn
+                    <small class="text-muted" id="selectedCount">0 student(s) selected</small>
+                    <button type="submit" name="bulk_remove" value="1" class="btn btn-outline-danger btn-sm shadow-sm" id="btnBulkDelete" disabled onclick="return confirm('Are you sure you want to remove the selected student(s) from class?')">
+                        <i class="fas fa-trash-alt me-1"></i> Remove Selected
                     </button>
                 </div>
                 </form>
@@ -134,18 +134,18 @@
     </div>
 </div>
 
-<!-- Modal Thêm học sinh -->
+<!-- Add Student Modal -->
 <div class="modal fade" id="enrollModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <form method="POST" class="modal-content border-0 shadow" id="enrollForm">
             {% csrf_token %}
-            <div class="modal-header bg-light"><h5><i class="fas fa-search me-2"></i>Tìm & Thêm học sinh</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-header bg-light"><h5><i class="fas fa-search me-2"></i>Search & Add Students</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label class="form-label small fw-bold text-muted text-uppercase">Tìm kiếm học sinh (Chưa có lớp)</label>
+                    <label class="form-label small fw-bold text-muted text-uppercase">Search Students (Not enrolled in any class)</label>
                     <div class="input-group mb-2">
-                        <input type="text" id="potentialSearchInput" class="form-control form-control-sm" placeholder="Nhập tên, mã HS hoặc username..." value="{{ q_potential }}">
-                        <button class="btn btn-sm btn-dark" type="button" onclick="searchPotential()"><i class="fas fa-filter me-1"></i>Lọc</button>
+                        <input type="text" id="potentialSearchInput" class="form-control form-control-sm" placeholder="Enter name, student code or username..." value="{{ q_potential }}">
+                        <button class="btn btn-sm btn-dark" type="button" onclick="searchPotential()"><i class="fas fa-filter me-1"></i>Filter</button>
                     </div>
                     <div class="list-group overflow-auto border rounded" style="max-height: 250px;">
                         {% for s in potential_students %}
@@ -154,22 +154,22 @@
                                 <input class="form-check-input me-3" type="checkbox" name="student" value="{{ s.id }}" id="st{{ s.id }}">
                                 <div>
                                     <div class="fw-bold small text-primary">{{ s.get_full_name|default:s.username }}</div>
-                                    <small class="text-muted">Mã: {{ s.student_profile.student_code|default:"N/A" }}</small>
+                                    <small class="text-muted">Code: {{ s.student_profile.student_code|default:"N/A" }}</small>
                                 </div>
                             </div>
                         </label>
                         {% empty %}
                         <div class="text-center py-4 text-muted small">
                             <i class="fas fa-user-slash d-block mb-2 fa-2x opacity-25"></i>
-                            Không tìm thấy học sinh mới phù hợp.
+                            No suitable new students found.
                         </div>
                         {% endfor %}
                     </div>
                 </div>
             </div>
             <div class="modal-footer bg-light border-0">
-                <button type="button" class="btn btn-link text-muted me-auto" onclick="window.location.href='{% url 'classroom_detail' classroom.id %}'">Làm mới danh sách</button>
-                <button type="submit" name="add_to_class" class="btn btn-primary px-4 shadow-sm">Thêm vào lớp</button>
+                <button type="button" class="btn btn-link text-muted me-auto" onclick="window.location.href='{% url 'classroom_detail' classroom.id %}'">Refresh List</button>
+                <button type="submit" name="add_to_class" class="btn btn-primary px-4 shadow-sm">Add to Class</button>
             </div>
         </form>
     </div>
@@ -181,27 +181,27 @@ function searchPotential() {
     const url = new URL(window.location.href);
     url.searchParams.set('q_potential', q);
     url.searchParams.set('open_modal', '1');
-    // Xóa các tham số phân trang nếu có để bắt đầu tìm kiếm từ trang 1
+    // Clear pagination parameters to start searching from page 1
     url.searchParams.delete('page');
     window.location.href = url.href;
 }
 
-// Cho phép nhấn Enter để tìm kiếm trong modal
+// Allow pressing Enter key to search within the modal
 function handleSearchEnter(event) {
     if (event.key === 'Enter') {
-        event.preventDefault(); // Ngăn chặn submit form chính
+        event.preventDefault(); // Prevent submitting the main form
         searchPotential();
     }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // 1. Tự động mở lại modal nếu có lỗi hoặc đang tìm kiếm
+    // 1. Automatically reopen the modal if there are search filters active
     if ("{{ open_enroll_modal }}" === "True" || new URLSearchParams(window.location.search).get('open_modal') === '1') {
         var myModal = new bootstrap.Modal(document.getElementById('enrollModal'));
         myModal.show();
     }
 
-    // 2. Logic Xử lý Checkbox hàng loạt
+    // 2. Bulk Checkbox processing logic
     const selectAllCb = document.getElementById('selectAllEnrolled');
     const enrolledCbs = document.querySelectorAll('.enrolled-checkbox');
     const btnBulkDelete = document.getElementById('btnBulkDelete');
@@ -213,10 +213,10 @@ document.addEventListener('DOMContentLoaded', function() {
             btnBulkDelete.disabled = checkedCount === 0;
         }
         if (selectedCountTxt) {
-            selectedCountTxt.innerText = `Đã chọn ${checkedCount} học sinh`;
+            selectedCountTxt.innerText = `${checkedCount} student(s) selected`;
         }
         
-        // Cập nhật trạng thái của nút "Chọn tất cả"
+        // Update the status of the "Select All" checkbox
         if (selectAllCb && enrolledCbs.length > 0) {
             selectAllCb.checked = (checkedCount === enrolledCbs.length);
         }
@@ -234,11 +234,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Hàm xóa nhanh 1 người dùng chung logic bulk
+// Function to remove a single student using bulk submit form logic
 function removeSingle(id) {
-    if(confirm('Bạn có chắc chắn muốn xóa học sinh này khỏi lớp?')) {
+    if(confirm('Are you sure you want to remove this student from class?')) {
         const form = document.getElementById('bulkDeleteForm');
-        // Bỏ chọn tất cả và chỉ chọn đúng người cần xóa
+        // Uncheck all checkboxes and only select the target student to remove
         document.querySelectorAll('.enrolled-checkbox').forEach(cb => cb.checked = false);
         
         const input = document.createElement('input');

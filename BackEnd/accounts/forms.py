@@ -5,44 +5,43 @@ from .models import User, UserProfile, Student
 
 
 # =====================================================================
-# QUY TẮC DÙNG CHUNG (theo PTYC)
+# COMMON RULES (according to PTYC)
 # =====================================================================
 def validate_strong_password(password):
     """
-    Mật khẩu hợp lệ theo PTYC: dài 8–50, ít nhất 1 chữ hoa, 1 chữ số, 1 ký tự đặc biệt.
-    Dùng chung cho cả ForgotPasswordView và PasswordUpdateForm.
+    Validate password strength according to constraints.
     """
     if not (8 <= len(password) <= 50):
-        raise forms.ValidationError("Mật khẩu phải dài từ 8 đến 50 ký tự.")
+        raise forms.ValidationError("Password must be between 8 and 50 characters long.")
     if not re.search(r'[A-Z]', password):
-        raise forms.ValidationError("Mật khẩu phải có ít nhất 1 chữ in hoa.")
+        raise forms.ValidationError("Password must contain at least one uppercase letter.")
     if not re.search(r'\d', password):
-        raise forms.ValidationError("Mật khẩu phải có ít nhất 1 chữ số.")
+        raise forms.ValidationError("Password must contain at least one digit.")
     if not re.search(r'[^A-Za-z0-9]', password):
-        raise forms.ValidationError("Mật khẩu phải có ít nhất 1 ký tự đặc biệt (@, #, !, ...).")
+        raise forms.ValidationError("Password must contain at least one special character (@, #, !, ...).")
 
 
 def validate_phone_number(phone):
-    """Số điện thoại hợp lệ theo PTYC: đúng 10 số, bắt đầu bằng 0."""
+    """Validate phone number constraint."""
     if not re.fullmatch(r'0\d{9}', phone):
-        raise forms.ValidationError("Số điện thoại phải gồm đúng 10 chữ số và bắt đầu bằng số 0.")
+        raise forms.ValidationError("Phone number must contain exactly 10 digits and start with 0.")
 
 
 # =====================================================================
-# ĐĂNG NHẬP
+# LOGIN
 # =====================================================================
 class LoginForm(AuthenticationForm):
-    """Form đăng nhập tùy chỉnh với style Bootstrap 5."""
+    """Custom login form with Bootstrap 5 styling."""
     username = forms.CharField(
         max_length=30,
         widget=forms.TextInput(attrs={
-            'class': 'form-control', 'placeholder': 'Tên đăng nhập', 'autofocus': True,
+            'class': 'form-control', 'placeholder': 'Username', 'autofocus': True,
             'minlength': '3', 'maxlength': '30',
         }),
     )
     password = forms.CharField(
         widget=forms.PasswordInput(attrs={
-            'class': 'form-control', 'placeholder': 'Mật khẩu',
+            'class': 'form-control', 'placeholder': 'Password',
             'minlength': '8',
         }),
     )
@@ -51,16 +50,16 @@ class LoginForm(AuthenticationForm):
         username = self.cleaned_data.get('username', '')
         if not re.match(r'^[A-Za-z0-9_]+$', username):
             raise forms.ValidationError(
-                "Tên đăng nhập chỉ được chứa chữ cái, chữ số và dấu gạch dưới (không dấu tiếng Việt, không ký tự đặc biệt)."
+                "Username can only contain letters, numbers, and underscores (no spaces or special characters)."
             )
         return username
 
 
 # =====================================================================
-# HỒ SƠ CÁ NHÂN
+# PERSONAL PROFILE
 # =====================================================================
 class UserProfileForm(forms.ModelForm):
-    """Form cập nhật thông tin cá nhân cơ bản (User model)."""
+    """Form to update basic personal info (User model)."""
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'email', 'phone_number', 'avatar']
@@ -74,20 +73,20 @@ class UserProfileForm(forms.ModelForm):
 
     def clean_phone_number(self):
         phone = (self.cleaned_data.get('phone_number') or '').strip()
-        if phone:  # SĐT không bắt buộc khi cập nhật profile, nhưng nếu nhập phải đúng định dạng
+        if phone:  # Phone number is not required for profile updates, but if entered it must match the format
             validate_phone_number(phone)
         return phone
 
 
 class UserExtraInfoForm(forms.ModelForm):
-    """Form cập nhật thông tin bổ sung (Nơi ở, Ngày sinh) từ bảng UserProfile."""
+    """Form for extra profile info from UserProfile."""
     class Meta:
         model = UserProfile
         fields = ['address', 'date_of_birth']
         widgets = {
             'address':       forms.Textarea(attrs={
                 'class': 'form-control', 'rows': 2,
-                'placeholder': 'Số nhà, đường, quận/huyện, tỉnh/thành phố',
+                'placeholder': 'House number, street, district, city',
                 'maxlength': '200',  # PTYC: MaxLength=200
             }),
             'date_of_birth': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
@@ -95,31 +94,30 @@ class UserExtraInfoForm(forms.ModelForm):
 
 
 # =====================================================================
-# ĐỔI MẬT KHẨU
+# CHANGE PASSWORD
 # =====================================================================
 class PasswordUpdateForm(forms.Form):
-    """Form đổi mật khẩu — áp dụng đúng quy tắc mật khẩu mạnh theo PTYC."""
+    """Form for updating password."""
     old_password = forms.CharField(
-        label="Mật khẩu cũ",
+        label="Old password",
         widget=forms.PasswordInput(attrs={
-            'class': 'form-control', 'placeholder': 'Nhập mật khẩu hiện tại',
+            'class': 'form-control', 'placeholder': 'Enter current password',
         }),
     )
     new_password = forms.CharField(
-        label="Mật khẩu mới",
+        label="New password",
         widget=forms.PasswordInput(attrs={
-            'class': 'form-control', 'placeholder': 'Ít nhất 8 ký tự, 1 hoa, 1 số, 1 ký tự đặc biệt',
+            'class': 'form-control', 'placeholder': 'At least 8 chars, 1 uppercase, 1 digit, 1 special',
         }),
     )
     confirm_password = forms.CharField(
-        label="Xác nhận mật khẩu mới",
+        label="Confirm new password",
         widget=forms.PasswordInput(attrs={
-            'class': 'form-control', 'placeholder': 'Nhập lại mật khẩu mới',
+            'class': 'form-control', 'placeholder': 'Confirm new password',
         }),
     )
 
     def clean_new_password(self):
-        """Áp dụng đúng quy tắc mật khẩu mạnh (8–50 ký tự, 1 hoa, 1 số, 1 ký tự đặc biệt)."""
         new_password = self.cleaned_data.get('new_password', '')
         validate_strong_password(new_password)
         return new_password
@@ -129,18 +127,18 @@ class PasswordUpdateForm(forms.Form):
         new_password    = cleaned_data.get('new_password')
         confirm_password = cleaned_data.get('confirm_password')
         if new_password and confirm_password and new_password != confirm_password:
-            raise forms.ValidationError("Mật khẩu mới và xác nhận mật khẩu không khớp.")
+            raise forms.ValidationError("New password and confirmation password do not match.")
         return cleaned_data
 
 
 # =====================================================================
-# QUẢN LÝ HỌC SINH (Admin)
+# STUDENT MANAGEMENT (Admin)
 # =====================================================================
 class StudentAddForm(forms.ModelForm):
-    """Form để Admin thêm học sinh mới (deprecated — dùng StudentManageForm)."""
+    """Form for Admin to add new student (deprecated — use StudentManageForm instead)."""
     password = forms.CharField(
         widget=forms.PasswordInput(attrs={'class': 'form-control'}),
-        label="Mật khẩu",
+        label="Password",
     )
 
     class Meta:
@@ -168,17 +166,17 @@ class StudentAddForm(forms.ModelForm):
 
 
 class StudentManageForm(forms.ModelForm):
-    """Form quản lý học sinh — dùng cho cả thêm (Create) và sửa (Update)."""
+    """Form to manage students."""
     student_code = forms.CharField(
-        label="Mã định danh học sinh",
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ví dụ: HS2024-001'}),
+        label="Student code",
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. HS2026-001'}),
     )
     password = forms.CharField(
-        label="Mật khẩu truy cập",
+        label="Password",
         required=False,
         widget=forms.PasswordInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Để trống nếu không đổi mật khẩu',
+            'placeholder': 'Leave blank to keep current password',
         }),
     )
 
@@ -193,6 +191,16 @@ class StudentManageForm(forms.ModelForm):
             'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '0xxxxxxxxx', 'maxlength': '10'}),
         }
 
+    def clean_username(self):
+        username = self.cleaned_data.get('username', '')
+        if not (3 <= len(username) <= 30):
+            raise forms.ValidationError("Username must be between 3 and 30 characters long.")
+        if not re.match(r'^[A-Za-z0-9_]+$', username):
+            raise forms.ValidationError(
+                "Username can only contain letters, numbers, and underscores (no spaces or special characters)."
+            )
+        return username
+
     def clean_phone_number(self):
         phone = (self.cleaned_data.get('phone_number') or '').strip()
         if phone:
@@ -201,7 +209,7 @@ class StudentManageForm(forms.ModelForm):
 
     def clean_password(self):
         password = self.cleaned_data.get('password', '')
-        if password:  # Chỉ validate nếu có nhập mật khẩu mới
+        if password:  # Only validate if a new password is provided
             validate_strong_password(password)
         return password
 
@@ -211,7 +219,7 @@ class StudentManageForm(forms.ModelForm):
         if self.instance.pk:
             qs = qs.exclude(user=self.instance)
         if qs.exists():
-            raise forms.ValidationError("Mã học sinh đã tồn tại trong hệ thống.")
+            raise forms.ValidationError("Student code already exists in the system.")
         return code
 
     def save(self, commit=True):
@@ -230,34 +238,34 @@ class StudentManageForm(forms.ModelForm):
 
 
 # =====================================================================
-# QUÊN MẬT KHẨU (OTP)
+# FORGOT PASSWORD (OTP)
 # =====================================================================
 class ForgotPasswordForm(forms.Form):
-    """UC01-C: Quên mật khẩu bằng SĐT + mã OTP (OTP mô phỏng cho bản demo local)."""
+    """UC01-C: Forgot password with phone + simulated OTP."""
     phone = forms.CharField(
-        label="Số điện thoại",
+        label="Phone number",
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'SĐT đã đăng ký (10 số, bắt đầu bằng 0)',
+            'placeholder': 'Registered phone number (10 digits, starts with 0)',
             'maxlength': '10',
         }),
     )
     otp = forms.CharField(
-        label="Mã OTP", required=False,
+        label="OTP Code", required=False,
         widget=forms.TextInput(attrs={
-            'class': 'form-control', 'placeholder': 'Nhập 6 chữ số',
+            'class': 'form-control', 'placeholder': 'Enter 6 digits',
             'maxlength': '6',
         }),
     )
     new_password = forms.CharField(
-        label="Mật khẩu mới", required=False,
+        label="New password", required=False,
         widget=forms.PasswordInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Ít nhất 8 ký tự, 1 hoa, 1 số, 1 ký tự đặc biệt',
+            'placeholder': 'At least 8 chars, 1 uppercase, 1 digit, 1 special',
         }),
     )
     confirm_password = forms.CharField(
-        label="Nhập lại mật khẩu mới", required=False,
+        label="Confirm new password", required=False,
         widget=forms.PasswordInput(attrs={'class': 'form-control'}),
     )
 

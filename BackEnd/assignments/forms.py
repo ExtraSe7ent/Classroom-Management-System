@@ -5,7 +5,7 @@ from .models import Assignment, Submission
 
 
 class AssignmentForm(forms.ModelForm):
-    """Form giao bài tập — validate đầy đủ theo PTYC."""
+    """Form to post assignment — validates all constraints from PTYC."""
     class Meta:
         model = Assignment
         fields = ['classroom', 'title', 'description', 'due_date', 'file_attachment']
@@ -13,12 +13,12 @@ class AssignmentForm(forms.ModelForm):
             'classroom': forms.Select(attrs={'class': 'form-select'}),
             'title': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Tiêu đề bài tập (5–255 ký tự)...',
+                'placeholder': 'Assignment title (5–255 characters)...',
                 'minlength': '5', 'maxlength': '255',
             }),
             'description': forms.Textarea(attrs={
                 'class': 'form-control', 'rows': 4,
-                'placeholder': 'Mô tả chi tiết yêu cầu bài tập...',
+                'placeholder': 'Detailed assignment requirements...',
                 'maxlength': '20000',   # PTYC: InstructionText MaxLength = 20000
             }),
             'due_date': forms.DateTimeInput(attrs={
@@ -28,90 +28,80 @@ class AssignmentForm(forms.ModelForm):
         }
 
     def clean_title(self):
-        """PTYC: title dài 5–255 ký tự."""
         title = (self.cleaned_data.get('title') or '').strip()
         if len(title) < 5:
-            raise forms.ValidationError("Tiêu đề bài tập phải có ít nhất 5 ký tự.")
+            raise forms.ValidationError("Assignment title must have at least 5 characters.")
         if len(title) > 255:
-            raise forms.ValidationError("Tiêu đề bài tập không được vượt quá 255 ký tự.")
+            raise forms.ValidationError("Assignment title cannot exceed 255 characters.")
         return title
 
     def clean_description(self):
-        """PTYC: description maxlength = 20000."""
         desc = self.cleaned_data.get('description') or ''
         if len(desc) > 20000:
-            raise forms.ValidationError("Nội dung yêu cầu không được vượt quá 20.000 ký tự.")
+            raise forms.ValidationError("Requirement details cannot exceed 20,000 characters.")
         return desc
 
     def clean_due_date(self):
-        """EX_PAST_DUE_DATE: Hạn nộp phải lớn hơn thời gian hiện tại."""
         due_date = self.cleaned_data.get('due_date')
         if due_date and due_date <= timezone.now():
-            raise forms.ValidationError("Hạn nộp bài tập phải lớn hơn thời gian hiện tại!")
+            raise forms.ValidationError("Due date must be in the future!")
         return due_date
 
     def clean_file_attachment(self):
-        """EX_INVALID_FILE: Kiểm tra định dạng và kích thước file."""
         file = self.cleaned_data.get('file_attachment')
         if file:
             ext = os.path.splitext(file.name)[1].lower()
-            # PTYC: chỉ chấp nhận .pdf, .doc, .docx, .png, .jpg
             allowed = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png', '.zip', '.rar']
             blocked  = ['.exe', '.bat', '.sh', '.msi', '.cmd', '.ps1']
             if ext in blocked:
                 raise forms.ValidationError(
-                    "Vì lý do bảo mật, hệ thống không chấp nhận tệp thực thi (.exe, .bat,...)."
+                    "For security reasons, executable files (.exe, .bat, etc.) are blocked."
                 )
             if ext not in allowed:
                 raise forms.ValidationError(
-                    f"Định dạng {ext} không được hỗ trợ. Hãy đính kèm PDF, Word, Ảnh hoặc Zip."
+                    f"File format {ext} is not supported. Please attach PDF, Word, Image, or Zip/Rar."
                 )
-            # PTYC: dung lượng < 10MB
             if file.size > 10 * 1024 * 1024:
-                raise forms.ValidationError("Dung lượng file quá lớn. Vui lòng upload file nhỏ hơn 10MB.")
+                raise forms.ValidationError("File size too large. Please upload files smaller than 10MB.")
         return file
 
 
 class SubmissionForm(forms.ModelForm):
-    """Form nộp bài tập dành cho học sinh."""
+    """Form for student to submit homework."""
     class Meta:
         model = Submission
         fields = ['content', 'submitted_file']
         widgets = {
             'content': forms.Textarea(attrs={
                 'class': 'form-control', 'rows': 4,
-                'placeholder': 'Nhập lời nhắn hoặc nội dung bài làm (tối đa 500 ký tự)...',
+                'placeholder': 'Enter a message or submission content (max 500 characters)...',
                 'maxlength': '500',   # PTYC: Student Message MaxLength = 500
             }),
             'submitted_file': forms.FileInput(attrs={'class': 'form-control'}),
         }
 
     def clean_content(self):
-        """PTYC: Student Message maxlength = 500."""
         content = self.cleaned_data.get('content') or ''
         if len(content) > 500:
-            raise forms.ValidationError("Lời nhắn không được vượt quá 500 ký tự.")
+            raise forms.ValidationError("Message cannot exceed 500 characters.")
         return content
 
     def clean_submitted_file(self):
-        """EX_INVALID_SUBMISSION_FILE: Kiểm tra file bài nộp."""
         file = self.cleaned_data.get('submitted_file')
         if file:
             ext = os.path.splitext(file.name)[1].lower()
-            # PTYC: .pdf, .doc, .docx, .png, .jpg
             allowed = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png', '.zip', '.rar']
             if ext not in allowed:
                 raise forms.ValidationError(
-                    f"Định dạng {ext} không được phép. Vui lòng nộp file tài liệu hoặc ảnh."
+                    f"File format {ext} is not allowed. Please submit a document or image file."
                 )
-            # PTYC: dung lượng < 10MB
             if file.size > 10 * 1024 * 1024:
-                raise forms.ValidationError("Dung lượng bài nộp không được vượt quá 10MB.")
+                raise forms.ValidationError("Submission file size cannot exceed 10MB.")
         return file
 
 
 class GradeForm(forms.ModelForm):
-    """Form chấm điểm và nhận xét cho giáo viên (UC08)."""
+    """Form for teacher to grade and comment on submissions (UC08)."""
     class Meta:
         model = Submission
         fields = ['grade', 'teacher_comment']
@@ -123,24 +113,22 @@ class GradeForm(forms.ModelForm):
             }),
             'teacher_comment': forms.Textarea(attrs={
                 'class': 'form-control', 'rows': 3,
-                'placeholder': 'Nhận xét bài làm của học sinh (tối đa 1000 ký tự)...',
+                'placeholder': 'Feedback on student work (max 1000 characters)...',
                 'maxlength': '1000',   # PTYC: Teacher feedback MaxLength = 1000
             }),
         }
 
     def clean_grade(self):
-        """EX_INVALID_GRADE: Điểm phải là float trong khoảng 0.0 đến 10.0."""
         grade = self.cleaned_data.get('grade')
         if grade is not None:
             if grade < 0 or grade > 10:
                 raise forms.ValidationError(
-                    "Điểm số không hợp lệ! Vui lòng nhập trong thang điểm từ 0.0 đến 10.0."
+                    "Invalid grade! Please input a score from 0.0 to 10.0."
                 )
         return grade
 
     def clean_teacher_comment(self):
-        """PTYC: Teacher feedback MaxLength = 1000."""
         comment = self.cleaned_data.get('teacher_comment') or ''
         if len(comment) > 1000:
-            raise forms.ValidationError("Nhận xét không được vượt quá 1000 ký tự.")
+            raise forms.ValidationError("Feedback cannot exceed 1000 characters.")
         return comment

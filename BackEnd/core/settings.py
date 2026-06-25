@@ -19,7 +19,7 @@ from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Đọc biến môi trường từ file .env (nếu có) ngay cạnh manage.py
+# Load environment variables from .env file adjacent to manage.py
 load_dotenv(BASE_DIR / '.env')
 
 
@@ -122,7 +122,7 @@ AUTH_USER_MODEL = 'accounts.User'
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'vi'
+LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'Asia/Ho_Chi_Minh'
 
@@ -136,10 +136,10 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-# Thư mục chứa static dùng chung (CSS/JS port từ FrontEnd)
+# Directory for shared static files (CSS/JS ported from FrontEnd)
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
-# Nơi gom static khi deploy (collectstatic)
+# Directory where collectstatic will collect static files for deployment
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Media files (Uploads)
@@ -157,9 +157,9 @@ LOGIN_REDIRECT_URL = 'dashboard_redirect'
 LOGOUT_REDIRECT_URL = 'login'
 
 # =============================================================
-# SESSION / SECURITY — Tự đăng xuất khi không hoạt động (PTYC)
+# SESSION / SECURITY — Auto Logout on Inactivity
 # =============================================================
-# Tự đăng xuất sau 2 giờ (7200 giây) không tương tác
+# Auto logout after 2 hours (7200 seconds) of inactivity
 SESSION_COOKIE_AGE = 7200           # 2 hours in seconds
 SESSION_SAVE_EVERY_REQUEST = True   # Reset timer after every request (sliding session)
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
@@ -167,6 +167,6 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 # =============================================================
 # FILE UPLOAD
 # =============================================================
-# Giới hạn kích thước upload: 15MB (có buffer cho overhead multipart)
+# Upload size limit: 15MB (with buffer for multipart overhead)
 DATA_UPLOAD_MAX_MEMORY_SIZE = 15 * 1024 * 1024  # 15 MB
 FILE_UPLOAD_MAX_MEMORY_SIZE = 15 * 1024 * 1024  # 15 MB

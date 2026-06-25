@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% load custom_filters %}
-{% block title %}Điểm danh: {{ classroom.name }} - {{ target_date|date:"d/m/Y" }}{% endblock %}
+{% block title %}Attendance: {{ classroom.name }} - {{ target_date|date:"d/m/Y" }}{% endblock %}
 {% block header %}
     <a href="{% url 'classroom_detail' classroom.id %}" class="btn btn-sm btn-light me-3"><i class="fas fa-arrow-left"></i></a>
-    <i class="fas fa-user-check me-2"></i>Điểm danh: {{ classroom.name }}
+    <i class="fas fa-user-check me-2"></i>Attendance: {{ classroom.name }}
 {% endblock %}
 
 {% block content %}
@@ -12,11 +12,11 @@
         <div class="d-flex justify-content-between align-items-center">
             <h6 class="mb-0">
                 <i class="fas fa-calendar-check me-2"></i>
-                Buổi học: {{ schedule.get_day_of_week_display }} ({{ schedule.start_time|time:"H:i" }}) | Ngày: {{ target_date|date:"d/m/Y" }}
+                Session: {{ schedule.get_day_of_week_display }} ({{ schedule.start_time|time:"H:i" }}) | Date: {{ target_date|date:"d/m/Y" }}
             </h6>
             <div>
-                <a href="{% url 'daily_review_manage' classroom.id schedule.id target_date|date:'Y-m-d' %}" class="btn btn-sm btn-light text-primary me-2"><i class="fas fa-edit me-1"></i>Viết nhận xét</a>
-                <span class="badge bg-primary px-3">Sĩ số: {{ enrollments.count }}</span>
+                <a href="{% url 'daily_review_manage' classroom.id schedule.id target_date|date:'Y-m-d' %}" class="btn btn-sm btn-light text-primary me-2"><i class="fas fa-edit me-1"></i>Write Review</a>
+                <span class="badge bg-primary px-3">Students: {{ enrollments.count }}</span>
             </div>
         </div>
     </div>
@@ -27,10 +27,10 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th class="ps-4" style="width: 50px;">STT</th>
-                            <th>Học sinh</th>
-                            <th class="text-center">Trạng thái điểm danh</th>
-                            <th class="pe-4">Ghi chú nhanh</th>
+                            <th class="ps-4" style="width: 50px;">No.</th>
+                            <th>Student</th>
+                            <th class="text-center">Attendance Status</th>
+                            <th class="pe-4">Quick Note</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -42,7 +42,7 @@
                                 <div class="fw-bold">{{ enrollment.student.get_full_name|default:enrollment.student.username }}</div>
                                 <small class="text-muted">
                                     {% if enrollment.student.student_profile %}
-                                        Mã HS: {{ enrollment.student.student_profile.student_code }}
+                                        Student Code: {{ enrollment.student.student_profile.student_code }}
                                     {% endif %}
                                 </small>
                             </td>
@@ -60,7 +60,7 @@
                             </td>
                             <td class="pe-4">
                                 <input type="text" name="remark_{{ enrollment.student.id }}" class="form-control form-control-sm" 
-                                       placeholder="Lý do vắng, đi muộn..." value="{{ attendance.remark|default:'' }}">
+                                       placeholder="Reason for absence, lateness..." value="{{ attendance.remark|default:'' }}">
                             </td>
                         </tr>
                         {% endwith %}
@@ -69,9 +69,9 @@
                 </table>
             </div>
             <div class="card-footer bg-white border-top p-4 text-end">
-                <a href="{% url 'classroom_detail' classroom.id %}" class="btn btn-light px-4 me-2">Hủy bỏ</a>
+                <a href="{% url 'classroom_detail' classroom.id %}" class="btn btn-light px-4 me-2">Cancel</a>
                 <button type="submit" class="btn btn-primary px-5 shadow">
-                    <i class="fas fa-save me-2"></i>Lưu bảng điểm danh
+                    <i class="fas fa-save me-2"></i>Save Attendance
                 </button>
             </div>
         </form>
@@ -80,6 +80,6 @@
 {% endblock %}
 
 {% comment %} 
-    Lưu ý: Bạn cần đăng ký một filter 'dict_get' trong templatetags hoặc 
-    sử dụng logic check trực tiếp nếu đã cấu hình sẵn. 
+    Note: You need to register a 'dict_get' filter in templatetags or 
+    use direct lookup logic if already configured. 
 {% endcomment %}

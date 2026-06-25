@@ -1,16 +1,16 @@
 # Web framework
 Django>=5.2,<6.1
 
-# PostgreSQL driver (psycopg 3 - hỗ trợ Python 3.14)
+# PostgreSQL driver (psycopg 3 - supports Python 3.14)
 psycopg[binary]>=3.2
 
-# Xử lý ảnh cho ImageField (avatar)
+# Image processing for ImageField (avatar)
 Pillow>=11.0
 
-# Render field form kèm class Bootstrap trong template gọn gàng
+# Render form fields with Bootstrap classes neatly in templates
 django-widget-tweaks>=1.5
 
-# Đọc biến môi trường từ file .env
+# Read environment variables from .env file
 python-dotenv>=1.0
 
 # --- Dependencies for Production (Render/Cloud) ---

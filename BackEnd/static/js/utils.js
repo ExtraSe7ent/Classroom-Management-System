@@ -11,7 +11,7 @@ function showToast(message, type = 'success') {
   setTimeout(() => toast.remove(), 3500);
 }
 
-// ===== MODAL XÁC NHẬN =====
+// ===== CONFIRMATION MODAL =====
 function openModal(title, body, onConfirm) {
   document.getElementById('modalTitle').textContent = title;
   document.getElementById('modalBody').textContent = body;
@@ -26,7 +26,7 @@ function closeModal() {
   document.getElementById('modalConfirm').classList.remove('open');
 }
 
-// Đóng modal khi click ra ngoài
+// Close modal when clicking outside
 document.getElementById('modalConfirm')?.addEventListener('click', function(e) {
   if (e.target === this) closeModal();
 });
@@ -36,11 +36,11 @@ function validateFile(file, maxMB = 10) {
   const allowed = ['.pdf', '.doc', '.docx', '.png', '.jpg'];
   const ext = '.' + file.name.split('.').pop().toLowerCase();
   if (!allowed.includes(ext)) {
-    showToast(`Định dạng không hợp lệ. Chỉ chấp nhận: ${allowed.join(', ')}`, 'danger');
+    showToast(`Invalid format. Only accepted: ${allowed.join(', ')}`, 'danger');
     return false;
   }
   if (file.size > maxMB * 1024 * 1024) {
-    showToast(`File quá lớn. Tối đa ${maxMB}MB`, 'danger');
+    showToast(`File too large. Maximum size is ${maxMB}MB`, 'danger');
     return false;
   }
   return true;
@@ -49,10 +49,10 @@ function validateFile(file, maxMB = 10) {
 // ===== FORMAT DATE =====
 function formatDate(dateStr) {
   const d = new Date(dateStr);
-  return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  return d.toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
-// ===== CSRF TOKEN (cho fetch/AJAX) =====
+// ===== CSRF TOKEN (for fetch/AJAX) =====
 function getCookie(name) {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);

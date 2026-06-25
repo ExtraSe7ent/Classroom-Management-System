@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='submission',
             name='status',
-            field=models.CharField(choices=[('pending', 'Đang chờ chấm'), ('graded', 'Đã có điểm')], default='pending', max_length=10, verbose_name='Trạng thái'),
+            field=models.CharField(choices=[('pending', 'Pending grading'), ('graded', 'Graded')], default='pending', max_length=10, verbose_name='Status'),
         ),
     ]

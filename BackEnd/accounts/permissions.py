@@ -1,13 +1,13 @@
 """
-Tầng phân quyền dùng chung cho 3 role: admin / teacher / student.
+Common permission layers for the three roles: admin / teacher / student.
 
-- Mixin: dùng cho Class-based Views (kế thừa cùng các generic view).
-- Decorator: dùng cho function-based view nếu còn (ví dụ view trả JsonResponse).
+- Mixin: used for Class-based Views.
+- Decorator: used for function-based views.
 
-Cách dùng (CBV):
+Usage (CBV):
     class ClassroomListView(StaffRequiredMixin, ListView): ...
 
-Cách dùng (decorator):
+Usage (decorator):
     @role_required('admin')
     def my_view(request): ...
 """
@@ -20,15 +20,15 @@ from django.shortcuts import redirect
 
 
 # ===================================================================
-# MIXINS cho Class-based Views
+# MIXINS for Class-based Views
 # ===================================================================
 class RoleRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
     """
-    Mixin nền: chỉ cho phép user có role nằm trong `allowed_roles` truy cập.
-    Superuser luôn được phép (tiện cho tài khoản quản trị gốc).
+    Base Mixin: only allows access for users whose role is in `allowed_roles`.
+    Superuser is always allowed.
     """
     allowed_roles = ()
-    permission_denied_message = "Bạn không có quyền truy cập chức năng này."
+    permission_denied_message = "You do not have permission to access this feature."
 
     def test_func(self):
         user = self.request.user
@@ -37,39 +37,39 @@ class RoleRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
         return getattr(user, 'role', None) in self.allowed_roles
 
     def handle_no_permission(self):
-        # Chưa đăng nhập -> để LoginRequiredMixin đưa về trang login.
+        # Not logged in -> let LoginRequiredMixin handle redirect to login.
         if not self.request.user.is_authenticated:
             return super().handle_no_permission()
-        # Đã đăng nhập nhưng sai quyền -> báo lỗi, đưa về dashboard phù hợp.
+        # Logged in but insufficient permissions -> error message and redirect to dashboard.
         messages.error(self.request, self.permission_denied_message)
         return redirect('dashboard_redirect')
 
 
 class AdminRequiredMixin(RoleRequiredMixin):
-    """Chỉ Quản trị/Hiệu trưởng."""
+    """Only Administrator/Principal."""
     allowed_roles = ('admin',)
 
 
 class TeacherRequiredMixin(RoleRequiredMixin):
-    """Chỉ Giáo viên."""
+    """Only Teacher."""
     allowed_roles = ('teacher',)
 
 
 class StaffRequiredMixin(RoleRequiredMixin):
-    """Admin hoặc Giáo viên — nhóm có quyền vận hành nghiệp vụ (lớp, điểm danh, bài tập)."""
+    """Admin or Teacher — group authorized to operate business logic (classes, attendance, assignments)."""
     allowed_roles = ('admin', 'teacher')
 
 
 class StudentRequiredMixin(RoleRequiredMixin):
-    """Chỉ Học sinh/Phụ huynh."""
+    """Only Student/Parent."""
     allowed_roles = ('student',)
 
 
 # ===================================================================
-# DECORATORS cho function-based views (dự phòng)
+# DECORATORS for function-based views
 # ===================================================================
 def role_required(*roles):
-    """Chặn truy cập nếu user không thuộc một trong các role cho trước."""
+    """Blocks access if user does not belong to one of the specified roles."""
     def decorator(view_func):
         @wraps(view_func)
         def _wrapped(request, *args, **kwargs):
@@ -77,7 +77,7 @@ def role_required(*roles):
                 return redirect('login')
             if request.user.is_superuser or getattr(request.user, 'role', None) in roles:
                 return view_func(request, *args, **kwargs)
-            messages.error(request, "Bạn không có quyền truy cập chức năng này.")
+            messages.error(request, "You do not have permission to access this feature.")
             return redirect('dashboard_redirect')
         return _wrapped
     return decorator

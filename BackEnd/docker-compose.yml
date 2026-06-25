@@ -1,7 +1,7 @@
-# PostgreSQL chạy trong Docker — DB server thật, dễ bật/tắt cho demo local.
-# Bật:  docker compose up -d
-# Tắt:  docker compose down
-# Xoá sạch dữ liệu: docker compose down -v
+# PostgreSQL runs in Docker — real DB server, easy to start/stop for local development.
+# Start:  docker compose up -d
+# Stop:   docker compose down
+# Purge database data: docker compose down -v
 name: classroom-management
 
 services:

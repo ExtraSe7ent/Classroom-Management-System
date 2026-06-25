@@ -9,7 +9,7 @@ class ClassroomAdmin(admin.ModelAdmin):
     search_fields = ('name', 'teacher__first_name', 'teacher__last_name', 'teacher__username')
     ordering      = ('-id',)
 
-    @admin.display(description='Số học sinh')
+    @admin.display(description='Student Count')
     def enrolled_count(self, obj):
         return obj.enrollments.count()
 
@@ -46,6 +46,6 @@ class DailyCommentAdmin(admin.ModelAdmin):
     ordering      = ('-date', '-created_at')
     date_hierarchy = 'date'
 
-    @admin.display(description='Nội dung')
+    @admin.display(description='Content')
     def short_content(self, obj):
         return obj.content[:60] + '…' if len(obj.content) > 60 else obj.content

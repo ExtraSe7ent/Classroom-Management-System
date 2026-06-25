@@ -98,7 +98,7 @@
   padding: var(--space-6);
 }
 
-/* Stat card (dùng cho dashboard) */
+/* Stat card (used for dashboard) */
 .stat-card {
   background-color: #fff;
   border-radius: var(--radius-lg);

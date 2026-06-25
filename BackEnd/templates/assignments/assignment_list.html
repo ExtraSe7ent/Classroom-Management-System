@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
-{% block title %}Quản lý Bài tập | EduManager{% endblock %}
-{% block header %}<i class="fas fa-book-reader me-2"></i>Quản lý Bài tập{% endblock %}
+{% block title %}Manage Assignments | EduManager{% endblock %}
+{% block header %}<i class="fas fa-book-reader me-2"></i>Manage Assignments{% endblock %}
 
 {% block header_actions %}
 <a href="{% url 'assignment_create' %}" class="btn btn-primary shadow-sm">
-    <i class="fas fa-plus-circle me-1"></i>Giao bài tập mới
+    <i class="fas fa-plus-circle me-1"></i>Assign New Homework
 </a>
 {% endblock %}
 
@@ -15,11 +15,11 @@
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th class="ps-4">Tên bài tập</th>
-                        <th>Lớp học</th>
-                        <th>Tệp đính kèm</th>
-                        <th>Hạn nộp</th>
-                        <th class="text-end pe-4">Thao tác</th>
+                        <th class="ps-4">Assignment Title</th>
+                        <th>Classroom</th>
+                        <th>Attached File</th>
+                        <th>Deadline</th>
+                        <th class="text-end pe-4">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -27,14 +27,14 @@
                     <tr>
                         <td class="ps-4">
                             <a href="{% url 'assignment_detail' a.id %}" class="fw-bold text-primary text-decoration-none">{{ a.title }}</a>
-                            <small class="text-muted">Tạo lúc: {{ a.created_at|date:"d/m H:i" }}</small>
+                            <small class="text-muted">Created at: {{ a.created_at|date:"d/m H:i" }}</small>
                         </td>
                         <td><span class="badge bg-indigo-100 text-indigo-700" style="background: #eef2ff; color: #4f46e5;">{{ a.classroom.name }}</span></td>
                         <td>
                             {% if a.file_attachment %}
-                                <a href="{{ a.file_attachment.url }}" class="btn btn-sm btn-light" target="_blank"><i class="fas fa-download me-1"></i>Tải đề</a>
+                                <a href="{{ a.file_attachment.url }}" class="btn btn-sm btn-light" target="_blank"><i class="fas fa-download me-1"></i>Download</a>
                             {% else %}
-                                <span class="text-muted small">Không có tệp</span>
+                                <span class="text-muted small">No file</span>
                             {% endif %}
                         </td>
                         <td><span class="text-danger small fw-bold"><i class="far fa-clock me-1"></i>{{ a.due_date|date:"d/m/Y H:i" }}</span></td>
@@ -47,18 +47,18 @@
                                 <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content border-0 shadow">
                                         <div class="modal-header bg-light">
-                                            <h5 class="modal-title fw-bold text-danger">Xác nhận xóa bài tập</h5>
+                                            <h5 class="modal-title fw-bold text-danger">Confirm Delete Assignment</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                         </div>
                                         <div class="modal-body text-start">
-                                            Bạn có chắc chắn muốn xóa bài tập <strong>{{ a.title }}</strong>? <br>
-                                            <small class="text-muted">Lưu ý: Tất cả bài nộp của học sinh cho bài tập này cũng sẽ bị xóa sạch.</small>
+                                            Are you sure you want to delete assignment <strong>{{ a.title }}</strong>? <br>
+                                            <small class="text-muted">Note: All student submissions for this assignment will also be permanently deleted.</small>
                                         </div>
                                         <div class="modal-footer bg-light">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                                             <form action="{% url 'assignment_delete' a.id %}" method="POST" class="d-inline">
                                                 {% csrf_token %}
-                                                <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+                                                <button type="submit" class="btn btn-danger">Delete</button>
                                             </form>
                                         </div>
                                     </div>
@@ -67,7 +67,7 @@
                         </td>
                     </tr>
                     {% empty %}
-                    <tr><td colspan="5" class="text-center py-5 text-muted">Chưa có bài tập nào được giao.</td></tr>
+                    <tr><td colspan="5" class="text-center py-5 text-muted">No assignments have been assigned yet.</td></tr>
                     {% endfor %}
                 </tbody>
             </table>

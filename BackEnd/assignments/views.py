@@ -1,9 +1,9 @@
 """
-Views của app assignments — Class-based Views.
+Views for assignments app — written using Class-based Views (CBV).
 
-Phân quyền:
-- Giao/sửa/xóa/chấm bài: Admin + Giáo viên (giáo viên chỉ thao tác lớp mình phụ trách).
-- Xem & nộp bài, xem điểm: Học sinh (chỉ với lớp mình đã ghi danh).
+Permissions:
+- Create/edit/delete/grade assignments: Admin + Teachers (teachers can only manage their assigned classes).
+- View, submit assignments, view grades: Students (only for classrooms they are enrolled in).
 """
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
@@ -20,12 +20,12 @@ from .models import Assignment, Submission
 
 
 def _can_manage_assignment(user, assignment):
-    """Admin quản lý mọi bài; giáo viên chỉ bài thuộc lớp mình phụ trách."""
+    """Admin can manage all assignments; teacher can only manage assignments for classrooms they manage."""
     return user.is_admin or (user.is_teacher and assignment.classroom.teacher_id == user.id)
 
 
 class _AssignmentFormMixin:
-    """Giới hạn danh sách lớp trong form: giáo viên chỉ chọn được lớp mình phụ trách."""
+    """Restricts classroom dropdown options: teacher can only select classrooms they manage."""
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
         if self.request.user.is_teacher:
@@ -34,7 +34,7 @@ class _AssignmentFormMixin:
 
 
 # ===================================================================
-# QUẢN LÝ BÀI TẬP (UC07) — Admin + Giáo viên
+# ASSIGNMENT MANAGEMENT (UC07) — Admin + Teacher
 # ===================================================================
 class AssignmentListView(StaffRequiredMixin, ListView):
     template_name = 'assignments/assignment_list.html'
@@ -52,10 +52,10 @@ class AssignmentCreateView(StaffRequiredMixin, _AssignmentFormMixin, CreateView)
     form_class = AssignmentForm
     template_name = 'assignments/assignment_form.html'
     success_url = reverse_lazy('assignment_list')
-    extra_context = {'title': 'Giao bài tập về nhà'}
+    extra_context = {'title': 'Post Homework'}
 
     def form_valid(self, form):
-        messages.success(self.request, "Hệ thống đã gửi thông báo bài tập mới đến học sinh!")
+        messages.success(self.request, "New assignment notification sent to students successfully!")
         return super().form_valid(form)
 
 
@@ -73,11 +73,11 @@ class AssignmentUpdateView(StaffRequiredMixin, _AssignmentFormMixin, UpdateView)
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        ctx['title'] = f'Sửa bài tập: {self.object.title}'
+        ctx['title'] = f'Edit Assignment: {self.object.title}'
         return ctx
 
     def form_valid(self, form):
-        messages.success(self.request, f"Đã cập nhật bài tập: {form.instance.title}")
+        messages.success(self.request, f"Assignment updated successfully: {form.instance.title}")
         return super().form_valid(form)
 
 
@@ -85,11 +85,11 @@ class AssignmentDeleteView(StaffRequiredMixin, View):
     def post(self, request, pk):
         assignment = get_object_or_404(Assignment, pk=pk)
         if not _can_manage_assignment(request.user, assignment):
-            messages.error(request, "Bạn không có quyền xóa bài tập này.")
+            messages.error(request, "You are not authorized to delete this assignment.")
             return redirect('assignment_list')
         title = assignment.title
         assignment.delete()
-        messages.success(request, f"Đã xóa bài tập '{title}' thành công.")
+        messages.success(request, f"Successfully deleted assignment '{title}'.")
         return redirect('assignment_list')
 
     def get(self, request, pk):
@@ -102,7 +102,7 @@ class AssignmentDetailView(StaffRequiredMixin, View):
     def get(self, request, pk):
         assignment = get_object_or_404(Assignment.objects.select_related('classroom'), pk=pk)
         if not _can_manage_assignment(request.user, assignment):
-            messages.error(request, "Bạn không có quyền xem bài tập này.")
+            messages.error(request, "You are not authorized to view this assignment.")
             return redirect('assignment_list')
         submissions = assignment.submissions.select_related('student')
         return render(request, self.template_name,
@@ -110,7 +110,7 @@ class AssignmentDetailView(StaffRequiredMixin, View):
 
 
 # ===================================================================
-# CHẤM ĐIỂM (UC08) — Admin + Giáo viên
+# GRADING (UC08) — Admin + Teacher
 # ===================================================================
 class GradeAssignmentListView(StaffRequiredMixin, View):
     template_name = 'assignments/grade_form.html'
@@ -118,7 +118,7 @@ class GradeAssignmentListView(StaffRequiredMixin, View):
     def get(self, request, pk):
         assignment = get_object_or_404(Assignment, pk=pk)
         if not _can_manage_assignment(request.user, assignment):
-            messages.error(request, "Bạn không có quyền chấm bài tập này.")
+            messages.error(request, "You are not authorized to grade this assignment.")
             return redirect('assignment_list')
         enrollments = ClassEnrollment.objects.filter(
             classroom=assignment.classroom
@@ -136,19 +136,19 @@ class SubmitGradeView(StaffRequiredMixin, View):
     def post(self, request, submission_id):
         submission = get_object_or_404(Submission, id=submission_id)
         if not _can_manage_assignment(request.user, submission.assignment):
-            messages.error(request, "Bạn không có quyền chấm bài này.")
+            messages.error(request, "You are not authorized to grade this submission.")
             return redirect('assignment_list')
         form = GradeForm(request.POST, instance=submission)
         if form.is_valid():
             graded_sub = form.save(commit=False)
-            graded_sub.status = Submission.STATUS_GRADED  # đánh dấu đã chấm xong
+            graded_sub.status = Submission.STATUS_GRADED  # mark graded
             graded_sub.save()
             messages.success(
                 request,
-                f"Đã lưu điểm cho học sinh {submission.student.get_full_name() or submission.student.username}.",
+                f"Successfully saved grade for student {submission.student.get_full_name() or submission.student.username}.",
             )
         else:
-            messages.error(request, form.errors.get('grade', ["Dữ liệu không hợp lệ"])[0])
+            messages.error(request, form.errors.get('grade', ["Invalid data"])[0])
         return redirect('grade_assignment_list', pk=submission.assignment_id)
 
     def get(self, request, submission_id):
@@ -157,10 +157,10 @@ class SubmitGradeView(StaffRequiredMixin, View):
 
 
 # ===================================================================
-# PHÍA HỌC SINH (UC11, UC12)
+# STUDENT VIEWS (UC11, UC12)
 # ===================================================================
 class StudentAssignmentListView(StudentRequiredMixin, View):
-    """Danh sách bài tập theo tab trạng thái: Chưa làm / Đang chấm / Đã có điểm."""
+    """List assignments filtered by tabs: To Do / Grading / Graded."""
     template_name = 'assignments/student_assignment_list.html'
 
     def get(self, request):
@@ -189,7 +189,7 @@ class StudentAssignmentListView(StudentRequiredMixin, View):
 
 
 class StudentSubmitAssignmentView(StudentRequiredMixin, View):
-    """Xem chi tiết + nộp bài (UC11) và xem điểm (UC12)."""
+    """View details + submit assignment (UC11) and view grades (UC12)."""
     template_name = 'assignments/student_assignment_detail.html'
 
     def _get_assignment(self, request, pk):
@@ -202,7 +202,7 @@ class StudentSubmitAssignmentView(StudentRequiredMixin, View):
     def get(self, request, pk):
         assignment, enrolled = self._get_assignment(request, pk)
         if not enrolled:
-            messages.error(request, "Bạn không thuộc lớp của bài tập này.")
+            messages.error(request, "You do not belong to the class of this assignment.")
             return redirect('student_assignment_list')
         submission = Submission.objects.filter(assignment=assignment, student=request.user).first()
         return render(request, self.template_name, {
@@ -214,12 +214,12 @@ class StudentSubmitAssignmentView(StudentRequiredMixin, View):
     def post(self, request, pk):
         assignment, enrolled = self._get_assignment(request, pk)
         if not enrolled:
-            messages.error(request, "Bạn không thuộc lớp của bài tập này.")
+            messages.error(request, "You do not belong to the class of this assignment.")
             return redirect('student_assignment_list')
 
-        # BR_DUE_DATE_LOCK: chặn nộp khi đã quá hạn (bảo vệ tầng backend)
+        # BR_DUE_DATE_LOCK: block submissions after deadline
         if timezone.now() > assignment.due_date:
-            messages.error(request, "Hệ thống đã khóa tính năng nộp bài do quá hạn.")
+            messages.error(request, "The submission window is closed because the deadline has passed.")
             return redirect('student_submit_assignment', pk=pk)
 
         submission = Submission.objects.filter(assignment=assignment, student=request.user).first()
@@ -229,7 +229,7 @@ class StudentSubmitAssignmentView(StudentRequiredMixin, View):
             new_sub.assignment = assignment
             new_sub.student = request.user
             new_sub.save()
-            messages.success(request, "Nộp bài làm thành công!")
+            messages.success(request, "Assignment submitted successfully!")
             return redirect('student_assignment_list')
 
         return render(request, self.template_name, {

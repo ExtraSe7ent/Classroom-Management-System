@@ -4,27 +4,27 @@ from classrooms.models import Classroom
 
 
 class Assignment(models.Model):
-    """Bài tập được giáo viên giao cho một lớp học."""
+    """Assignment given to a classroom by the teacher."""
     classroom       = models.ForeignKey(
         Classroom, on_delete=models.CASCADE,
-        related_name='assignments', verbose_name="Lớp học",
+        related_name='assignments', verbose_name="Classroom",
     )
     title           = models.CharField(
-        max_length=255, verbose_name="Tiêu đề bài tập", db_index=True,
+        max_length=255, verbose_name="Assignment title", db_index=True,
     )
     description     = models.TextField(
-        verbose_name="Nội dung yêu cầu", max_length=20000,
+        verbose_name="Requirement details", max_length=20000,
     )
     file_attachment = models.FileField(
         upload_to='assignments/', blank=True, null=True,
-        verbose_name="Tệp đính kèm hướng dẫn",
+        verbose_name="Attached guide file",
     )
-    due_date        = models.DateTimeField(verbose_name="Hạn nộp", db_index=True)
-    created_at      = models.DateTimeField(auto_now_add=True, verbose_name="Ngày tạo")
+    due_date        = models.DateTimeField(verbose_name="Due date", db_index=True)
+    created_at      = models.DateTimeField(auto_now_add=True, verbose_name="Created date")
 
     class Meta:
-        verbose_name        = "Bài tập"
-        verbose_name_plural = "Danh sách bài tập"
+        verbose_name        = "Assignment"
+        verbose_name_plural = "Assignments"
         ordering            = ['-created_at']
 
     def __str__(self):
@@ -32,45 +32,45 @@ class Assignment(models.Model):
 
 
 class Submission(models.Model):
-    """Bài làm của học sinh nộp lên cho một bài tập."""
+    """Submission of homework uploaded by a student."""
     STATUS_PENDING = 'pending'
     STATUS_GRADED  = 'graded'
     STATUS_CHOICES = [
-        (STATUS_PENDING, 'Đang chờ chấm'),
-        (STATUS_GRADED,  'Đã có điểm'),
+        (STATUS_PENDING, 'Pending grading'),
+        (STATUS_GRADED,  'Graded'),
     ]
 
     assignment      = models.ForeignKey(
         Assignment, on_delete=models.CASCADE,
-        related_name='submissions', verbose_name="Bài tập",
+        related_name='submissions', verbose_name="Assignment",
     )
     student         = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
-        verbose_name="Học sinh",
+        verbose_name="Student",
     )
     content         = models.TextField(
-        blank=True, verbose_name="Lời nhắn / Nội dung bài làm",
+        blank=True, verbose_name="Submission content / Student message",
         max_length=500,   # PTYC: Student Message MaxLength = 500
     )
     submitted_file  = models.FileField(
         upload_to='submissions/', blank=True, null=True,
-        verbose_name="Tệp bài làm",
+        verbose_name="Submission file",
     )
-    submitted_at    = models.DateTimeField(auto_now_add=True, verbose_name="Thời gian nộp", db_index=True)
+    submitted_at    = models.DateTimeField(auto_now_add=True, verbose_name="Submission time", db_index=True)
     status          = models.CharField(
         max_length=10, choices=STATUS_CHOICES, default=STATUS_PENDING,
-        verbose_name="Trạng thái", db_index=True,
+        verbose_name="Status", db_index=True,
     )
-    grade           = models.FloatField(null=True, blank=True, verbose_name="Điểm số")
+    grade           = models.FloatField(null=True, blank=True, verbose_name="Grade")
     teacher_comment = models.TextField(
-        blank=True, verbose_name="Nhận xét của giáo viên",
+        blank=True, verbose_name="Teacher feedback",
         max_length=1000,  # PTYC: Teacher feedback MaxLength = 1000
     )
 
     class Meta:
-        unique_together     = ('assignment', 'student')  # Mỗi học sinh nộp 1 lần / 1 bài tập
-        verbose_name        = "Bài nộp"
-        verbose_name_plural = "Bài nộp của học sinh"
+        unique_together     = ('assignment', 'student')  # Each student submits only once per assignment
+        verbose_name        = "Submission"
+        verbose_name_plural = "Submissions"
         ordering            = ['-submitted_at']
 
     def __str__(self):

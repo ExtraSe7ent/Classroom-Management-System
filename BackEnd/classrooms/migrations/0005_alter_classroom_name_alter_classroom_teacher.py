@@ -16,11 +16,11 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='classroom',
             name='name',
-            field=models.CharField(max_length=255, verbose_name='Tên lớp'),
+            field=models.CharField(max_length=255, verbose_name='Class name'),
         ),
         migrations.AlterField(
             model_name='classroom',
             name='teacher',
-            field=models.ForeignKey(blank=True, limit_choices_to={'role__in': ['teacher', 'admin']}, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='managed_classes', to=settings.AUTH_USER_MODEL, verbose_name='Giáo viên phụ trách'),
+            field=models.ForeignKey(blank=True, limit_choices_to={'role__in': ['teacher', 'admin']}, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='managed_classes', to=settings.AUTH_USER_MODEL, verbose_name='Teacher in charge'),
         ),
     ]

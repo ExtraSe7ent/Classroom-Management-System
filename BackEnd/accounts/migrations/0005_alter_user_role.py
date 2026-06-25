@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='user',
             name='role',
-            field=models.CharField(choices=[('admin', 'Quản trị/Hiệu trưởng'), ('teacher', 'Giáo viên'), ('student', 'Học sinh/Phụ huynh')], default='student', max_length=10),
+            field=models.CharField(choices=[('admin', 'Administrator / Principal'), ('teacher', 'Teacher'), ('student', 'Student / Parent')], default='student', max_length=10),
         ),
     ]
