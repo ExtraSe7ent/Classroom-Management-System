@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             name='Student',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('student_code', models.CharField(max_length=20, unique=True, verbose_name='Student code')),
+                ('student_code', models.CharField(max_length=20, unique=True, verbose_name='Mã học sinh')),
                 ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='student_profile', to=settings.AUTH_USER_MODEL)),
             ],
         ),

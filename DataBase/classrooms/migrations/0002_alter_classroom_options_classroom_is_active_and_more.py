@@ -12,21 +12,21 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='classroom',
-            options={'verbose_name': 'Classroom'},
+            options={'verbose_name': 'Lớp học'},
         ),
         migrations.AddField(
             model_name='classroom',
             name='is_active',
-            field=models.BooleanField(choices=[(True, 'Active'), (False, 'It's over')], default=True, verbose_name='Status'),
+            field=models.BooleanField(choices=[(True, 'Đang hoạt động'), (False, 'Đã kết thúc')], default=True, verbose_name='Trạng thái'),
         ),
         migrations.AddField(
             model_name='classroom',
             name='tuition',
-            field=models.DecimalField(decimal_places=0, default=0, max_digits=12, verbose_name='Tuition (VND)'),
+            field=models.DecimalField(decimal_places=0, default=0, max_digits=12, verbose_name='Học phí (VNĐ)'),
         ),
         migrations.AlterField(
             model_name='classroom',
             name='description',
-            field=models.TextField(blank=True, verbose_name='Class description'),
+            field=models.TextField(blank=True, verbose_name='Mô tả lớp học'),
         ),
     ]

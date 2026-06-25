@@ -13,16 +13,16 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='assignment',
             name='file_attachment',
-            field=models.FileField(blank=True, null=True, upload_to='assignments/', verbose_name='Attachments'),
+            field=models.FileField(blank=True, null=True, upload_to='assignments/', verbose_name='Tệp đính kèm'),
         ),
         migrations.AlterField(
             model_name='assignment',
             name='description',
-            field=models.TextField(verbose_name='Request content'),
+            field=models.TextField(verbose_name='Nội dung yêu cầu'),
         ),
         migrations.AlterField(
             model_name='assignment',
             name='due_date',
-            field=models.DateTimeField(verbose_name='Submission deadline'),
+            field=models.DateTimeField(verbose_name='Hạn nộp'),
         ),
     ]

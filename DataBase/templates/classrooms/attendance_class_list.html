@@ -1,68 +1,68 @@
 {% extends 'base.html' %}
-{% block title %}Select class for attendance | EduManager{% endblock %}
-{% block header %}<i class="fas fa-clipboard-check me-2 text-primary"></i>Student Attendance{% endblock %}
+{% block title %}Chọn lớp điểm danh | EduManager{% endblock %}
+{% block header %}<i class="fas fa-clipboard-check me-2 text-primary"></i>Điểm danh học viên{% endblock %}
 
 {% block content %}
-<!-- Today's lesson -->
-<gov class="mb-5">
-    <gov class="d-flex justify-content-between align-items-center mb-4">
+<!-- Buổi học hôm nay -->
+<div class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
         <h5 class="fw-bold mb-0">
             <i class="fas fa-clock me-2 text-danger"></i>
-            {% if is_real_today %}Today's teaching schedule{% else %}Teaching schedule for {{ today|date:"d/m/Y" }}{% engof %}
+            {% if is_real_today %}Lịch dạy hôm nay{% else %}Lịch dạy ngày {{ today|date:"d/m/Y" }}{% endif %}
         </h5>
         <form method="GET" class="d-flex align-items-center bg-white p-2 rounded shadow-sm">
-            <label class="small fw-bold me-2 text-muted">SELECT DATE:</label>
+            <label class="small fw-bold me-2 text-muted">CHỌN NGÀY:</label>
             <input type="date" name="date" class="form-control form-control-sm me-2" value="{{ today|date:'Y-m-d' }}" onchange="this.form.submit()">
         </form>
-    </gov>
+    </div>
 
-    <gov class="row">
+    <div class="row">
         {% for s in schedules_today %}
-        <gov class="col-md-4 mb-3">
-            <gov class="card border-0 shadow-sm h-100 bg-white" style="border-left: 5px solid {% if s.is_attended %}#ffc107{% else %}#198754{% engof %} !important;">
-                <gov class="card-body">
-                    <gov class="d-flex justify-content-between align-items-start mb-2">
+        <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm h-100 bg-white" style="border-left: 5px solid {% if s.is_attended %}#ffc107{% else %}#198754{% endif %} !important;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
                         <h6 class="fw-bold text-primary mb-0">{{ s.classroom.name }}</h6>
                         {% if s.is_attended %}
-                            <span class="badge bg-warning text-dark small" style="font-size: 0.7rem;">DONE</span>
+                            <span class="badge bg-warning text-dark small" style="font-size: 0.7rem;">ĐÃ XONG</span>
                         {% else %}
-                            <span class="badge bg-success small" style="font-size: 0.7rem;">WAIT</span>
-                        {% engof %}
-                    </gov>
+                            <span class="badge bg-success small" style="font-size: 0.7rem;">CHỜ</span>
+                        {% endif %}
+                    </div>
                     <p class="small text-muted mb-3"><i class="fas fa-map-marker-alt me-1"></i>{{ s.room_name }} | <i class="fas fa-business-time me-1"></i>{{ s.start_time|time:"H:i" }} - {{ s.end_time|time:"H:i" }}</p>
                     
                     <a href="{% url 'attendance_manage' s.classroom.id s.id today|date:'Y-m-d' %}" 
-                       class="btn btn-sm w-100 shadow-sm {% if s.is_attended %}btn-outline-warning{% else %}btn-success{% engof %}">
-                        <i class="fas {% if s.is_attended %}fa-egot{% else %}fa-check-circle{% engof %} me-1"></i>
-                        {% if s.is_attended %}Update Attendance{% else %}Start Attendance{% engof %}
+                       class="btn btn-sm w-100 shadow-sm {% if s.is_attended %}btn-outline-warning{% else %}btn-success{% endif %}">
+                        <i class="fas {% if s.is_attended %}fa-edit{% else %}fa-check-circle{% endif %} me-1"></i>
+                        {% if s.is_attended %}Cập nhật điểm danh{% else %}Bắt đầu điểm danh{% endif %}
                     </a>
-                </gov>
-            </gov>
-        </gov>
+                </div>
+            </div>
+        </div>
         {% empty %}
-        <gov class="col-12">
-            <gov class="alert alert-light border-0 shadow-sm py-4 text-center">
+        <div class="col-12">
+            <div class="alert alert-light border-0 shadow-sm py-4 text-center">
                 <i class="fas fa-calendar-day fa-2x mb-3 text-muted opacity-25"></i>
-                <p class="text-muted mb-0">You don't have any lessons scheduled today.</p>
-            </gov>
-        </gov>
+                <p class="text-muted mb-0">Hôm nay bạn không có lịch dạy nào.</p>
+            </div>
+        </div>
         {% endfor %}
-    </gov>
-</gov>
+    </div>
+</div>
 
-<!-- All classes -->
+<!-- Tất cả các lớp -->
 <hr class="opacity-25">
-<gov class="mt-4">
-    <h6 class="text-muted fw-bold mb-3 uppercase small">All classes (Review/Make-up attendance)</h6>
-    <gov class="card border-0 shadow-sm">
-        <gov class="card-body p-0">
-            <gov class="table-responsive">
+<div class="mt-4">
+    <h6 class="text-muted fw-bold mb-3 uppercase small">Tất cả lớp học (Xem lại/Điểm danh bù)</h6>
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th class="ps-4">Class name</th>
-                            <th>Teacher</th>
-                            <th class="text-end pe-4">Operation</th>
+                            <th class="ps-4">Tên lớp</th>
+                            <th>Giáo viên</th>
+                            <th class="text-end pe-4">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -71,14 +71,14 @@
                             <td class="ps-4 fw-bold text-dark">{{ c.name }}</td>
                             <td>{{ c.teacher.get_full_name|default:c.teacher.username }}</td>
                             <td class="text-end pe-4">
-                                <a href="{% url 'classroom_detail' c.id %}" class="btn btn-sm btn-outline-primary">Choose a lesson</a>
+                                <a href="{% url 'classroom_detail' c.id %}" class="btn btn-sm btn-outline-primary">Chọn buổi học</a>
                             </td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
-            </gov>
-        </gov>
-    </gov>
-</gov>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

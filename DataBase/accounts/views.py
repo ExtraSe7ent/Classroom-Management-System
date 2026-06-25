@@ -10,7 +10,7 @@ from .models import User, UserProfile, Student
 from classrooms.models import Classroom
 
 def login_view(request):
-    # If you are already logged in and try to access the login page again, navigate straight to the dashboard
+    # Nếu đã đăng nhập rồi mà cố truy cập lại trang login, điều hướng thẳng về dashboard
     if request.user.is_authenticated:
         return redirect('dashboard_redirect')
 
@@ -25,14 +25,14 @@ def login_view(request):
                 if user.is_active:
                     login(request, user)
                     full_name = user.get_full_name() or user.username
-                    messages.success(request, f"Hello {full_name}, the system is ready!")
+                    messages.success(request, f"Xin chào {full_name}, hệ thống đã sẵn sàng!")
                     return redirect('dashboard_redirect')
                 else:
-                    messages.error(request, "Your account has been disabled.")
+                    messages.error(request, "Tài khoản của bạn đã bị vô hiệu hóa.")
             else:
-                messages.error(request, "Username or password is incorrect.")
+                messages.error(request, "Tên đăng nhập hoặc mật khẩu không chính xác.")
         else:
-            messages.error(request, "Username or password is incorrect.")
+            messages.error(request, "Tên đăng nhập hoặc mật khẩu không chính xác.")
     else:
         form = LoginForm()
     
@@ -40,27 +40,27 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    messages.info(request, "You have successfully logged out.")
+    messages.info(request, "Bạn đã đăng xuất thành công.")
     return redirect('login')
 
 @login_required
 def dashboard_redirect(request):
-    """Navigate users to the home page corresponding to their role."""
+    """Điều hướng người dùng về trang chủ tương ứng với vai trò của họ."""
     if request.user.role == 'admin' or request.user.is_superuser:
         return redirect('admin_dashboard')
     
-    # By default, or student, it returns to the student page
+    # Mặc định hoặc là student thì về trang học sinh
     return redirect('student_timeline')
 
 @login_required
 def admin_dashboard(request):
     if not (request.user.role == 'admin' or request.user.is_superuser):
         return redirect('user_dashboard')
-    # Get actual quantity from Database
+    # Lấy số lượng thực tế từ Database
     student_count = User.objects.filter(role='student').count()
     class_count = Classroom.objects.count()
     
-    # Get the latest data
+    # Lấy dữ liệu mới nhất
     recent_students = User.objects.filter(role='student').order_by('-date_joined')[:5]
     recent_classes = Classroom.objects.all().order_by('-id')[:5]
 
@@ -77,9 +77,9 @@ def user_dashboard(request): return render(request, 'accounts/user_dashboard.htm
 
 @login_required
 def student_list(request):
-    """Display student list - Only for Admin"""
+    """Hiển thị danh sách học sinh - Chỉ dành cho Admin"""
     if not (request.user.role == 'admin' or request.user.is_superuser):
-        messages.error(request, "You do not have permission to access this page.")
+        messages.error(request, "Bạn không có quyền truy cập trang này.")
         return redirect('user_dashboard')
         
     query = request.GET.get('q', '')
@@ -93,7 +93,7 @@ def student_list(request):
             Q(student_profile__student_code__icontains=query)
         )
 
-    paginator = Paginator(student_list, 10) # 10 students per page
+    paginator = Paginator(student_list, 10) # 10 học sinh mỗi trang
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -109,11 +109,11 @@ def student_create(request):
         form = StudentManageForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, "Successfully adding new students!")
+            messages.success(request, "Thêm học sinh mới thành công!")
             return redirect('student_list')
     else:
         form = StudentManageForm()
-    return render(request, 'accounts/student_form.html', {'form': form, 'title': 'Add students'})
+    return render(request, 'accounts/student_form.html', {'form': form, 'title': 'Thêm học sinh'})
 
 @login_required
 @transaction.atomic
@@ -129,40 +129,40 @@ def student_update(request, pk):
         form = StudentManageForm(request.POST, instance=student_user)
         if form.is_valid():
             form.save()
-            messages.success(request, "Successfully updated student information!")
+            messages.success(request, "Cập nhật thông tin học sinh thành công!")
             return redirect('student_list')
     else:
         form = StudentManageForm(instance=student_user, initial=initial_data)
-    return render(request, 'accounts/student_form.html', {'form': form, 'title': 'Edit student information'})
+    return render(request, 'accounts/student_form.html', {'form': form, 'title': 'Sửa thông tin học sinh'})
 
 @login_required
 @transaction.atomic
 def student_delete(request, pk):
     if not (request.user.role == 'admin' or request.user.is_superuser):
-        messages.error(request, "You do not have permission to perform this action.")
+        messages.error(request, "Bạn không có quyền thực hiện hành động này.")
         return redirect('user_dashboard')
     
-    # Use QuerySet for faster deletion (Bulk delete at DB level)
+    # Sử dụng QuerySet để xóa nhanh hơn (Bulk delete ở mức DB)
     student_qs = User.objects.filter(id=pk, role='student')
     student_user = student_qs.first()
     
     if not student_user:
-        messages.error(request, "Previously deleted students or objects were not found.")
+        messages.error(request, "Không tìm thấy học sinh hoặc đối tượng đã bị xóa trước đó.")
         return redirect('student_list')
 
     if request.method == 'POST':
         username = student_user.username
-        # Deleting directly from the QuerySet helps SQL Server process the Cascade much faster than deleting the instance
+        # Xóa trực tiếp từ QuerySet giúp SQL Server xử lý Cascade nhanh hơn nhiều so với xóa instance
         student_qs.delete()
-        messages.success(request, f"Student {username} and all related data have been deleted.")
+        messages.success(request, f"Đã xóa học sinh {username} và toàn bộ dữ liệu liên quan.")
     
     return redirect('student_list')
 
 @login_required
 def profile_view(request):
-    """Handle viewing and updating personal records UC02"""
+    """Xử lý xem và cập nhật hồ sơ cá nhân UC02"""
     user = request.user
-    # Get or create additional profiles if you don't already have them
+    # Lấy hoặc tạo hồ sơ bổ sung nếu chưa có
     user_profile, created = UserProfile.objects.get_or_create(user=user)
     
     profile_form = UserProfileForm(instance=user)
@@ -170,42 +170,42 @@ def profile_view(request):
     password_form = PasswordUpdateForm()
 
     if request.method == 'POST':
-        # In case the user presses the button to update information
+        # Trường hợp người dùng nhấn nút cập nhật thông tin
         if 'update_profile' in request.POST:
             profile_form = UserProfileForm(request.POST, request.FILES, instance=user)
             extra_form = UserExtraInfoForm(request.POST, instance=user_profile)
             if profile_form.is_valid() and extra_form.is_valid():
                 profile_form.save()
                 extra_form.save()
-                messages.success(request, "Updated successfully!")
+                messages.success(request, "Cập nhật thành công!")
                 return redirect('profile')
 
-        # New feature: Delete image and use default
+        # Tính năng mới: Xóa ảnh và dùng mặc định
         elif 'reset_avatar' in request.POST:
             if user.avatar:
-                user.avatar.delete(save=False) # Delete physical files from the media folder
+                user.avatar.delete(save=False) # Xóa file vật lý khỏi thư mục media
                 user.avatar = None
                 user.save()
-                messages.success(request, "Deleted avatar, the system will use the default icon.")
+                messages.success(request, "Đã xóa ảnh đại diện, hệ thống sẽ sử dụng biểu tượng mặc định.")
                 return redirect('profile')
         
-        # In case the user presses the password change button
+        # Trường hợp người dùng nhấn nút đổi mật khẩu
         elif 'change_password' in request.POST:
             password_form = PasswordUpdateForm(request.POST)
             if password_form.is_valid():
                 old_password = password_form.cleaned_data['old_password']
                 new_password = password_form.cleaned_data['new_password']
                 
-                # Check old password (BR_PASSWORD_CHANGE)
+                # Kiểm tra mật khẩu cũ (BR_PASSWORD_CHANGE)
                 if user.check_password(old_password):
                     user.set_password(new_password)
                     user.save()
-                    # Keep users from being logged out after changing their password
+                    # Giữ cho người dùng không bị đăng xuất sau khi đổi mật khẩu
                     update_session_auth_hash(request, user)
-                    messages.success(request, "Password changed successfully!")
+                    messages.success(request, "Đổi mật khẩu thành công!")
                     return redirect('profile')
                 else:
-                    messages.error(request, "The old password is incorrect, please try again.")
+                    messages.error(request, "Mật khẩu cũ không chính xác, vui lòng thử lại.")
 
     context = {
         'profile_form': profile_form,

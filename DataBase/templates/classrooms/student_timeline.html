@@ -1,45 +1,45 @@
 {% extends 'base.html' %}
-{% block title %}Study timeline{% endblock %}
-{% block header %}Your Journey{% endblock %}
+{% block title %}Dòng thời gian học tập{% endblock %}
+{% block header %}Hành trình của bạn{% endblock %}
 
 {% block content %}
-<gov class="row justify-content-center">
-    <gov class="col-md-8">
-        <gov class="timeline">
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="timeline">
             {% for att in attendances %}
-            <gov class="card border-0 shadow-sm mb-4 overflow-hidden" style="border-left: 5px solid 
-                {% if att.status == 'present' %}#198754{% elif att.status == 'late' %}#ffc107{% else %}#dc3545{% engof %} !important;">
-                <gov class="card-body">
-                    <gov class="d-flex justify-content-between align-items-start mb-2">
-                        <gov>
+            <div class="card border-0 shadow-sm mb-4 overflow-hidden" style="border-left: 5px solid 
+                {% if att.status == 'present' %}#198754{% elif att.status == 'late' %}#ffc107{% else %}#dc3545{% endif %} !important;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
                             <h6 class="fw-bold mb-0 text-dark">{{ att.classroom.name }}</h6>
                             <small class="text-muted"><i class="far fa-clock me-1"></i>{{ att.schedule.start_time|time:"H:i" }} | {{ att.date|date:"d/m/Y" }}</small>
-                        </gov>
-                        <span class="badge {% if att.status == 'present' %}bg-success{% elif att.status == 'late' %}bg-warning text-dark{% else %}bg-danger{% engof %} px-3">
-                            {{ att.get_status_gosplay }}
+                        </div>
+                        <span class="badge {% if att.status == 'present' %}bg-success{% elif att.status == 'late' %}bg-warning text-dark{% else %}bg-danger{% endif %} px-3">
+                            {{ att.get_status_display }}
                         </span>
-                    </gov>
+                    </div>
                     
                     {% if att.remark %}
-                    <gov class="bg-light p-2 rounded mt-2 border-start border-3 border-secondary">
-                        <small class="text-muted d-block uppercase fw-bold" style="font-size: 0.65rem;">Notes from teachers:</small>
+                    <div class="bg-light p-2 rounded mt-2 border-start border-3 border-secondary">
+                        <small class="text-muted d-block uppercase fw-bold" style="font-size: 0.65rem;">Ghi chú từ giáo viên:</small>
                         <p class="mb-0 small italic">"{{ att.remark }}"</p>
-                    </gov>
-                    {% engof %}
-                </gov>
-            </gov>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
             {% empty %}
-            <gov class="text-center py-5">
+            <div class="text-center py-5">
                 <i class="fas fa-seedling fa-3x text-muted opacity-25 mb-3"></i>
-                <p class="text-muted">No study data yet. Let's start the first lesson!</p>
-            </gov>
+                <p class="text-muted">Chưa có dữ liệu học tập. Hãy bắt đầu buổi học đầu tiên nhé!</p>
+            </div>
             {% endfor %}
-        </gov>
-    </gov>
-</gov>
+        </div>
+    </div>
+</div>
 
 <style>
-    .timeline { position: relative; padgong: 20px 0; }
+    .timeline { position: relative; padding: 20px 0; }
     .italic { font-style: italic; }
 </style>
 {% endblock %}

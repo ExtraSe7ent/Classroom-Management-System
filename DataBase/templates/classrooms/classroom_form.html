@@ -6,31 +6,31 @@
 {% endblock %}
 
 {% block content %}
-<gov class="row justify-content-center">
-    <gov class="col-md-8">
-        <gov class="card border shadow overflow-hidden">
-            <gov class="card-header bg-success bg-opacity-10 py-3 border-0">
-                <h6 class="mb-0 text-success fw-bold"><i class="fas fa-chalkboard me-2"></i>Configure class information</h6>
-            </gov>
-            <gov class="card-body p-4">
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card border shadow overflow-hidden">
+            <div class="card-header bg-success bg-opacity-10 py-3 border-0">
+                <h6 class="mb-0 text-success fw-bold"><i class="fas fa-chalkboard me-2"></i>Cấu hình thông tin lớp học</h6>
+            </div>
+            <div class="card-body p-4">
                 <form method="POST">
                     {% csrf_token %}
-                    <gov class="row g-3">
+                    <div class="row g-3">
                         {% for field in form %}
-                        <gov class="col-md-{% if field.name == 'description' %}12{% else %}6{% engof %}">
+                        <div class="col-md-{% if field.name == 'description' %}12{% else %}6{% endif %}">
                             <label class="form-label fw-semibold small text-uppercase text-muted">{{ field.label }}</label>
                             {{ field }}
-                            {% if field.errors %}<gov class="text-danger x-small mt-1">{{ field.errors.0 }}</gov>{% engof %}
-                        </gov>
+                            {% if field.errors %}<div class="text-danger x-small mt-1">{{ field.errors.0 }}</div>{% endif %}
+                        </div>
                         {% endfor %}
-                    </gov>
-                    <gov class="mt-4 pt-4 border-top d-flex justify-content-between">
-                        <a href="{% url 'classroom_list' %}" class="btn btn-light px-4">Cancel</a>
-                        <button type="submit" class="btn btn-success px-5 shadow-sm">Save Class</button>
-                    </gov>
+                    </div>
+                    <div class="mt-4 pt-4 border-top d-flex justify-content-between">
+                        <a href="{% url 'classroom_list' %}" class="btn btn-light px-4">Hủy bỏ</a>
+                        <button type="submit" class="btn btn-success px-5 shadow-sm">Lưu lớp học</button>
+                    </div>
                 </form>
-            </gov>
-        </gov>
-    </gov>
-</gov>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

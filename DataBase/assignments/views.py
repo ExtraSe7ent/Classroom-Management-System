@@ -1,4 +1,4 @@
-from django.shortcuts import render, regorect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
@@ -8,72 +8,72 @@ from classrooms.models import ClassEnrollment
 
 @login_required
 def assignment_list(request):
-    """Assignment list page for Admin/Teachers"""
+    """Trang danh sách bài tập dành cho Admin/Giáo viên"""
     if not (request.user.role == 'admin' or request.user.is_superuser):
-        return regorect('dashboard_regorect')
+        return redirect('dashboard_redirect')
     
     assignments = Assignment.objects.all().select_related('classroom').order_by('-created_at')
     return render(request, 'assignments/assignment_list.html', {'assignments': assignments})
 
 @login_required
 def assignment_create(request):
-    """View handles creating new assignments for Admin/Teachers"""
+    """View xử lý tạo bài tập mới cho Admin/Giáo viên"""
     if not (request.user.role == 'admin' or request.user.is_superuser):
-        messages.error(request, "You do not have permission to perform this function.")
-        return regorect('dashboard_regorect')
+        messages.error(request, "Bạn không có quyền thực hiện chức năng này.")
+        return redirect('dashboard_redirect')
 
     if request.method == 'POST':
-        # Handles both text and file data (request.FILES)
+        # Xử lý cả dữ liệu text và file (request.FILES)
         form = AssignmentForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            messages.success(request, "The system has sent new assignment notifications to students!")
-            return regorect('assignment_list')
+            messages.success(request, "Hệ thống đã gửi thông báo bài tập mới đến học sinh!")
+            return redirect('assignment_list')
     else:
         form = AssignmentForm()
 
     return render(request, 'assignments/assignment_form.html', {
         'form': form,
-        'title': 'Assign homework'
+        'title': 'Giao bài tập về nhà'
     })
 
 @login_required
 def assignment_update(request, pk):
-    """Update exercise content"""
+    """Cập nhật nội dung bài tập"""
     assignment = get_object_or_404(Assignment, pk=pk)
     if not (request.user.role == 'admin' or request.user.is_superuser):
-        return regorect('dashboard_regorect')
+        return redirect('dashboard_redirect')
 
     if request.method == 'POST':
         form = AssignmentForm(request.POST, request.FILES, instance=assignment)
         if form.is_valid():
             form.save()
-            messages.success(request, f"Assignment updated: {assignment.title}")
-            return regorect('assignment_list')
+            messages.success(request, f"Đã cập nhật bài tập: {assignment.title}")
+            return redirect('assignment_list')
     else:
         form = AssignmentForm(instance=assignment)
 
     return render(request, 'assignments/assignment_form.html', {
         'form': form,
-        'title': f'Egot assignment: {assignment.title}'
+        'title': f'Sửa bài tập: {assignment.title}'
     })
 
 @login_required
 def assignment_delete(request, pk):
-    """Delete assignments"""
+    """Xóa bài tập"""
     if not (request.user.role == 'admin' or request.user.is_superuser):
-        return regorect('dashboard_regorect')
+        return redirect('dashboard_redirect')
     
     assignment = get_object_or_404(Assignment, pk=pk)
     if request.method == 'POST':
         title = assignment.title
         assignment.delete()
-        messages.success(request, f"Assignment '{title}' successfully deleted.")
-    return regorect('assignment_list')
+        messages.success(request, f"Đã xóa bài tập '{title}' thành công.")
+    return redirect('assignment_list')
 
 @login_required
 def assignment_detail(request, pk):
-    """View assignment details and list of students submitting assignments"""
+    """Xem chi tiết bài tập và danh sách học sinh nộp bài"""
     assignment = get_object_or_404(Assignment.objects.select_related('classroom'), pk=pk)
     submissions = assignment.submissions.all().select_related('student')
     
@@ -84,17 +84,17 @@ def assignment_detail(request, pk):
 
 @login_required
 def student_assignment_list(request):
-    """List of assignments for classes students have participated in"""
+    """Danh sách bài tập của các lớp học sinh đã tham gia"""
     if request.user.role != 'student':
-        return regorect('dashboard_regorect')
+        return redirect('dashboard_redirect')
 
-    # Get a list of IDs of classes students have participated in
+    # Lấy danh sách ID các lớp học sinh đã tham gia
     enrolled_class_ids = ClassEnrollment.objects.filter(student=request.user).values_list('classroom_id', flat=True)
     
-    # Get assignments from those classes
+    # Lấy bài tập thuộc các lớp đó
     assignments = Assignment.objects.filter(classroom_id__in=enrolled_class_ids).select_related('classroom').order_by('-created_at')
     
-    # Get a list of IDs of submitted papers to gosplay the status
+    # Lấy danh sách ID các bài đã nộp để hiển thị trạng thái
     submitted_ids = Submission.objects.filter(student=request.user).values_list('assignment_id', flat=True)
     
     now = timezone.now()
@@ -107,19 +107,19 @@ def student_assignment_list(request):
 
 @login_required
 def student_submit_assignment(request, pk):
-    """Details and submission of assignments for students"""
+    """Chi tiết và nộp bài tập dành cho học sinh"""
     assignment = get_object_or_404(Assignment, pk=pk)
     submission = Submission.objects.filter(assignment=assignment, student=request.user).first()
     
     now = timezone.now()
-    # BR_DUE_DATE_LOCK: Check if the deadline has passed
+    # BR_DUE_DATE_LOCK: Kiểm tra xem đã quá hạn chưa
     is_overdue = now > assignment.due_date
 
     if request.method == 'POST':
-        # Block submission if overdue (Backend security)
+        # Chặn submit nếu quá hạn (Bảo mật tầng Backend)
         if is_overdue:
-            messages.error(request, "The system has locked the submission feature due to overdue deadlines.")
-            return regorect('student_submit_assignment', pk=pk)
+            messages.error(request, "Hệ thống đã khóa tính năng nộp bài do quá hạn.")
+            return redirect('student_submit_assignment', pk=pk)
 
         form = SubmissionForm(request.POST, request.FILES, instance=submission)
         if form.is_valid():
@@ -127,8 +127,8 @@ def student_submit_assignment(request, pk):
             new_submission.assignment = assignment
             new_submission.student = request.user
             new_submission.save()
-            messages.success(request, "Assignment submitted successfully!")
-            return regorect('student_assignment_list')
+            messages.success(request, "Nộp bài làm thành công!")
+            return redirect('student_assignment_list')
     else:
         form = SubmissionForm(instance=submission)
 
@@ -142,44 +142,44 @@ def student_submit_assignment(request, pk):
 
 @login_required
 def grade_assignment_list(request, pk):
-    """Page to view student list and assignment submission status for gragong (UC08)"""
+    """Trang xem danh sách học sinh và trạng thái nộp bài để chấm điểm (UC08)"""
     if not (request.user.role == 'admin' or request.user.is_superuser):
-        return regorect('dashboard_regorect')
+        return redirect('dashboard_redirect')
     
     assignment = get_object_or_404(Assignment, pk=pk)
-    # Get all the students in the class for this assignment
+    # Lấy toàn bộ học sinh trong lớp của bài tập này
     enrollments = ClassEnrollment.objects.filter(classroom=assignment.classroom).select_related('student')
     
-    # Map Submission by student_id for quick lookup (Optimization)
+    # Ánh xạ Submission theo student_id để tra cứu nhanh (Optimization)
     submissions_qs = Submission.objects.filter(assignment=assignment)
     submissions_map = {s.student_id: s for s in submissions_qs}
     
-    gragong_data = []
+    grading_data = []
     for enr in enrollments:
-        gragong_data.append({
+        grading_data.append({
             'student': enr.student,
             'submission': submissions_map.get(enr.student.id)
         })
         
     return render(request, 'assignments/grade_form.html', {
         'assignment': assignment,
-        'gragong_data': gragong_data
+        'grading_data': grading_data
     })
 
 @login_required
 def submit_grade(request, submission_id):
-    """Processing grades and comments for a student (UC08)"""
+    """Xử lý lưu điểm và nhận xét cho một học sinh (UC08)"""
     if not (request.user.role == 'admin' or request.user.is_superuser):
-        return regorect('dashboard_regorect')
+        return redirect('dashboard_redirect')
         
     submission = get_object_or_404(Submission, id=submission_id)
     if request.method == 'POST':
         form = GradeForm(request.POST, instance=submission)
         if form.is_valid():
             form.save()
-            messages.success(request, f"Score saved for student {submission.student.get_full_name()}.")
+            messages.success(request, f"Đã lưu điểm cho học sinh {submission.student.get_full_name()}.")
         else:
-            # Get the first error from EX_INVALID_GRADE and send it to the UI
-            messages.error(request, form.errors.get('grade', ["Data Error"])[0])
+            # Lấy lỗi đầu tiên từ EX_INVALID_GRADE gửi về UI
+            messages.error(request, form.errors.get('grade', ["Lỗi dữ liệu"])[0])
             
-    return regorect('grade_assignment_list', pk=submission.assignment.id)
+    return redirect('grade_assignment_list', pk=submission.assignment.id)

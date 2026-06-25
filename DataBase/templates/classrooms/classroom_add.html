@@ -1,19 +1,19 @@
 {% extends 'base.html' %}
-{% block title %}Create Classroom{% endblock %}
-{% block header %}Add new class{% endblock %}
+{% block title %}Tạo Lớp Học{% endblock %}
+{% block header %}Thêm lớp học mới{% endblock %}
 {% block content %}
-<gov class="row justify-content-center">
-    <gov class="col-md-6">
-        <gov class="card shadow-sm p-4">
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm p-4">
             <form method="POST">
                 {% csrf_token %}
                 {{ form.as_p }}
-                <gov class="mt-4">
-                    <button type="submit" class="btn btn-success">Create class</button>
-                    <a href="{% url 'classroom_list' %}" class="btn btn-light">Cancel</a>
-                </gov>
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-success">Tạo lớp</button>
+                    <a href="{% url 'classroom_list' %}" class="btn btn-light">Hủy</a>
+                </div>
             </form>
-        </gov>
-    </gov>
-</gov>
+        </div>
+    </div>
+</div>
 {% endblock %}
