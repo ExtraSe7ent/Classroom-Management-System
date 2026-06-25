@@ -1,0 +1,279 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Nhận xét & Chuyên cần của tôi | EduManager{% endblock %}
+
+{% block page_title %}Nhật ký chuyên cần & Nhận xét{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Attendance split layout */
+  .attendance-layout {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: var(--space-6);
+    align-items: start;
+  }
+  
+  @media (max-width: 1024px) {
+    .attendance-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Circular Progress Chart styling */
+  .progress-card {
+    background-color: #fff;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-6);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .circular-chart-wrapper {
+    position: relative;
+    width: 180px;
+    height: 180px;
+  }
+
+  .circular-chart {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .circle-bg {
+    fill: none;
+    stroke: var(--gray-100);
+    stroke-width: 2.8;
+  }
+
+  .circle-fill {
+    fill: none;
+    stroke: var(--success);
+    stroke-width: 2.8;
+    stroke-linecap: round;
+    transition: stroke-dasharray 0.6s ease;
+  }
+
+  .chart-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .chart-percentage {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--gray-900);
+  }
+
+  .chart-label {
+    font-size: var(--text-2xs);
+    color: var(--gray-500);
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  .attendance-details-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: var(--text-xs);
+    padding: var(--space-2) var(--space-3);
+    background-color: var(--gray-50);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--gray-100);
+  }
+
+  .detail-label {
+    color: var(--gray-600);
+    font-weight: 500;
+  }
+
+  .detail-value {
+    font-weight: 700;
+    color: var(--gray-800);
+  }
+
+  /* Timeline Styles */
+  .timeline-card {
+    background-color: #fff;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .timeline-container {
+    position: relative;
+    padding-left: var(--space-6);
+    margin-left: var(--space-3);
+    border-left: 2px solid var(--gray-200);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .timeline-item {
+    position: relative;
+  }
+
+  .timeline-badge {
+    position: absolute;
+    left: calc(-1 * var(--space-6) - 9px); /* Center dot on border line */
+    top: 4px;
+    width: 16px;
+    height: 16px;
+    border-radius: var(--radius-full);
+    background-color: #fff;
+    border: 3px solid var(--gray-300);
+    z-index: 2;
+  }
+
+  .timeline-badge.present { border-color: var(--success); background-color: var(--success-light); }
+  .timeline-badge.excused { border-color: var(--warning); background-color: var(--warning-light); }
+  .timeline-badge.absent  { border-color: var(--danger);  background-color: var(--danger-light);  }
+
+  .timeline-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+  }
+
+  .timeline-date {
+    font-weight: 700;
+    font-size: var(--text-sm);
+    color: var(--gray-900);
+  }
+
+  .timeline-comment {
+    background-color: var(--gray-50);
+    border: 1px solid var(--gray-100);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--gray-700);
+    line-height: 1.5;
+    font-style: italic;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="attendance-layout">
+  
+  <!-- Cột 1: Biểu đồ chuyên cần -->
+  <div class="progress-card">
+    <h3 style="font-size: var(--text-sm); font-weight: 700; color: var(--gray-800); text-align: center; margin: 0; width: 100%;">
+      Thống kê tỷ lệ đi học
+    </h3>
+    
+    <div class="circular-chart-wrapper">
+      <svg viewBox="0 0 36 36" class="circular-chart">
+        <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+        <path class="circle-fill" id="circleFill" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+      </svg>
+      <div class="chart-text">
+        <span class="chart-percentage" id="chartPercentageVal">0%</span>
+        <span class="chart-label">Chuyên cần</span>
+      </div>
+    </div>
+
+    <!-- Thông tin chi tiết -->
+    <div class="attendance-details-list">
+      <div class="detail-row">
+        <span class="detail-label">Tổng số buổi điểm danh:</span>
+        <span class="detail-value">{{ stats.total_sessions }} buổi</span>
+      </div>
+      <div class="detail-row" style="border-left: 3px solid var(--success);">
+        <span class="detail-label" style="color: var(--success);">Đi học đầy đủ:</span>
+        <span class="detail-value" style="color: var(--success);">{{ stats.present_sessions }} buổi</span>
+      </div>
+      <div class="detail-row" style="border-left: 3px solid var(--warning);">
+        <span class="detail-label" style="color: var(--warning);">Nghỉ học có phép:</span>
+        <span class="detail-value" style="color: var(--warning);">{{ stats.excused_sessions }} buổi</span>
+      </div>
+      <div class="detail-row" style="border-left: 3px solid var(--danger);">
+        <span class="detail-label" style="color: var(--danger);">Nghỉ vắng không phép:</span>
+        <span class="detail-value" style="color: var(--danger);">{{ stats.absent_sessions }} buổi</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cột 2: Timeline nhận xét -->
+  <div class="timeline-card">
+    <h3 style="font-size: var(--text-base); font-weight: 700; color: var(--gray-800); margin-bottom: var(--space-6);">
+      Nhật ký học tập & Lời phê của thầy cô
+    </h3>
+    
+    <div class="timeline-container">
+      {% for log in logs %}
+      <div class="timeline-item">
+        <div class="timeline-badge {{ log.status }}"></div>
+        
+        <div class="timeline-header">
+          <div style="display: flex; align-items: center; gap: var(--space-2);">
+            <span class="timeline-date">{{ log.date }}</span>
+            <span class="badge badge-gray">{{ log.class_name }}</span>
+          </div>
+          
+          {% if log.status == 'present' %}
+            <span class="badge badge-success">{{ log.status_name }}</span>
+          {% elif log.status == 'excused' %}
+            <span class="badge badge-warning">{{ log.status_name }}</span>
+          {% else %}
+            <span class="badge badge-danger">{{ log.status_name }}</span>
+          {% endif %}
+        </div>
+        
+        <div class="timeline-comment">
+          {% if log.feedback %}
+            "{{ log.feedback }}"
+          {% else %}
+            <span style="color: var(--gray-400); font-style: normal;">Thầy cô chưa viết nhận xét cho buổi học này.</span>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const percentage = parseInt("{{ stats.attendance_percentage }}", 10);
+  
+  setTimeout(() => {
+    document.getElementById('circleFill').setAttribute('stroke-dasharray', `${percentage}, 100`);
+    
+    let currentPct = 0;
+    const interval = setInterval(() => {
+      if (currentPct >= percentage) {
+        clearInterval(interval);
+      } else {
+        currentPct++;
+        document.getElementById('chartPercentageVal').textContent = `${currentPct}%`;
+      }
+    }, 8);
+  }, 150);
+</script>
+{% endblock %}

@@ -1,0 +1,13 @@
+<header class="topbar">
+  <div class="topbar-title">{% block page_title %}{% endblock %}</div>
+  <div class="topbar-actions">
+    <a href="{% url 'profile' %}" class="topbar-avatar"
+       title="Hồ sơ cá nhân">
+      {{ request.user.first_name|first|upper }}{{ request.user.last_name|first|upper }}
+    </a>
+    <form method="post" action="{% url 'logout' %}" style="margin:0">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-secondary btn-sm">Đăng xuất</button>
+    </form>
+  </div>
+</header>
