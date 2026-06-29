@@ -1,0 +1,410 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Chi tiết bài tập | EduManager{% endblock %}
+
+{% block page_title %}Nhiệm vụ & Bài tập chi tiết{% endblock %}
+
+{% block extra_css %}
+<style>
+  .detail-layout {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: var(--space-6);
+    align-items: start;
+  }
+  
+  @media (max-width: 992px) {
+    .detail-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .info-item {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--gray-100);
+    font-size: var(--text-sm);
+  }
+
+  .info-item:last-child {
+    border-bottom: none;
+  }
+
+  .info-label {
+    color: var(--gray-500);
+    font-weight: 500;
+  }
+
+  .info-val {
+    color: var(--gray-800);
+    font-weight: 600;
+  }
+
+  /* Score Banner for Graded HW */
+  .score-banner {
+    background: linear-gradient(135deg, var(--success) 0%, #16A34A 100%);
+    color: #fff;
+    border-radius: var(--radius-lg);
+    padding: var(--space-5) var(--space-6);
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+    margin-bottom: var(--space-6);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .score-circle {
+    width: 64px;
+    height: 64px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 2px solid #fff;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-xl);
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  /* Banner general states */
+  .status-banner {
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-6);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .status-banner.pending {
+    background-color: var(--warning-light);
+    border: 1px solid var(--warning);
+    color: #92400E;
+  }
+
+  .status-banner.missed {
+    background-color: var(--danger-light);
+    border: 1px solid var(--danger);
+    color: #991B1B;
+  }
+
+  /* File item in submission details */
+  .uploaded-file-card {
+    background-color: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-4);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Back link -->
+<div style="margin-bottom: var(--space-6);">
+  <a href="{% url 'student_assignment_list' %}" class="btn btn-secondary" style="width: fit-content; gap: var(--space-2);">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+    </svg>
+    <span>Quay lại danh sách bài tập</span>
+  </a>
+</div>
+
+<div class="detail-layout">
+  
+  <!-- Cột 1: Thông tin đề bài -->
+  <div class="card">
+    <div class="card-header" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+      <span class="badge badge-indigo" style="font-size: var(--text-2xs); text-transform: uppercase;">{{ assignment.class_name }}</span>
+      <h1 style="font-size: var(--text-lg); font-weight: 700; color: var(--gray-900); margin: var(--space-1) 0;">
+        {{ assignment.title }}
+      </h1>
+    </div>
+    
+    <div class="card-body">
+      <!-- Mô tả đề bài -->
+      <div style="margin-bottom: var(--space-6);">
+        <h4 style="font-size: var(--text-xs); font-weight: 700; text-transform: uppercase; color: var(--gray-400); margin-bottom: var(--space-2);">
+          Yêu cầu & Mô tả bài tập
+        </h4>
+        <p style="font-size: var(--text-sm); color: var(--gray-700); line-height: 1.6; white-space: pre-line; margin: 0;">
+          {{ assignment.description }}
+        </p>
+      </div>
+
+      <!-- File đính kèm đề bài từ giáo viên -->
+      {% if assignment.file_name %}
+      <div style="border-top: 1px solid var(--gray-100); padding-top: var(--space-5);">
+        <h4 style="font-size: var(--text-xs); font-weight: 700; text-transform: uppercase; color: var(--gray-400); margin-bottom: var(--space-3);">
+          Tài liệu đính kèm đề bài
+        </h4>
+        
+        <div class="uploaded-file-card" style="margin-bottom: 0;">
+          <div style="display: flex; align-items: center; gap: var(--space-3);">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color: var(--primary);">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12v3m0 0l3-3m-3 3l-3-3M3.75 21h16.5M4.5 19.5h15" />
+            </svg>
+            <div>
+              <span style="font-weight: 600; font-size: var(--text-sm); color: var(--gray-800);">{{ assignment.file_name }}</span>
+              <span style="font-size: var(--text-2xs); color: var(--gray-400); margin-left: var(--space-2);">({{ assignment.file_size }})</span>
+            </div>
+          </div>
+          
+          <button class="btn btn-secondary btn-sm" onclick="showToast('Đang tải file đề bài tập...', 'info')">
+            Tải đề bài
+          </button>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Cột 2: Trạng thái & Nộp bài -->
+  <div style="display: flex; flex-direction: column; gap: var(--space-6);">
+    
+    <!-- Hộp thông số chung -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Thông tin chung</h3>
+      </div>
+      <div class="card-body" style="padding: var(--space-4) var(--space-6);">
+        <div class="info-item">
+          <span class="info-label">Giáo viên phụ trách:</span>
+          <span class="info-val">{{ assignment.teacher }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Ngày giao bài:</span>
+          <span class="info-val">{{ assignment.created_at }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Hạn nộp chót:</span>
+          <span class="info-val" id="textDueDate" data-due-iso="{{ assignment.due_date }}">{{ assignment.due_date }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- HỘP TRẠNG THÁI BÀI LÀM CỦA HỌC SINH -->
+    <div class="card" id="submissionContainer">
+      <div class="card-header">
+        <h3 class="card-title">Bài làm của tôi</h3>
+      </div>
+      <div class="card-body">
+        
+        <!-- TRẠNG THÁI 1: ĐÃ CÓ ĐIỂM -->
+        {% if assignment.status == 'graded' %}
+          <!-- Banner điểm số -->
+          <div class="score-banner">
+            <div class="score-circle">
+              {{ assignment.grade|floatformat:1 }}
+            </div>
+            <div>
+              <h4 style="font-weight: 700; font-size: var(--text-sm); margin-bottom: 2px;">Đã hoàn thành & Đã chấm điểm!</h4>
+              <p style="font-size: var(--text-2xs); opacity: 0.95; margin: 0;">Chúc mừng bạn đã nhận kết quả đánh giá từ thầy cô giáo.</p>
+            </div>
+          </div>
+          
+          <!-- Lời phê -->
+          <div style="margin-bottom: var(--space-5);">
+            <label class="form-label" style="font-weight: 700; color: var(--gray-700);">Lời phê của thầy cô:</label>
+            <div style="background-color: var(--success-light); border: 1px solid var(--success); padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); font-size: var(--text-sm); color: var(--success); font-weight: 500; font-style: italic; line-height: 1.5;">
+              "{{ assignment.feedback }}"
+            </div>
+          </div>
+
+          <!-- Chi tiết bài giải đã nộp -->
+          <div>
+            <label class="form-label" style="font-weight: 700; color: var(--gray-400); font-size: var(--text-2xs); text-transform: uppercase;">Bài giải đã nộp:</label>
+            <div class="uploaded-file-card" style="margin-top: var(--space-2);">
+              <div style="display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-xs);">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color: var(--success);">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                </svg>
+                <strong style="color: var(--gray-800);">{{ assignment.submitted_file }}</strong>
+              </div>
+              <span style="font-size: var(--text-2xs); color: var(--gray-400);">{{ assignment.submitted_file_size }}</span>
+            </div>
+          </div>
+
+        <!-- TRẠNG THÁI 2: ĐÃ NỘP CHỜ CHẤM -->
+        {% elif assignment.status == 'pending' %}
+          <!-- Banner pending -->
+          <div class="status-banner pending">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Bài giải đã được nộp thành công! Đang chờ chấm điểm.</span>
+          </div>
+
+          <!-- Bài giải đã nộp -->
+          <div style="margin-bottom: var(--space-4);">
+            <label class="form-label" style="font-weight: 700; color: var(--gray-500); font-size: var(--text-xs);">Bài giải đính kèm:</label>
+            <div class="uploaded-file-card" style="margin-top: var(--space-2);">
+              <div style="display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-sm);">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color: var(--primary);">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                </svg>
+                <strong style="color: var(--gray-800);">{{ assignment.submitted_file }}</strong>
+              </div>
+              <span style="font-size: var(--text-2xs); color: var(--gray-400);">{{ assignment.submitted_file_size }}</span>
+            </div>
+            
+            <div style="font-size: var(--text-xs); color: var(--gray-400);">Nộp lúc: <strong>{{ assignment.submitted_at }}</strong></div>
+          </div>
+
+          <!-- Ghi chú học sinh -->
+          {% if assignment.student_note %}
+          <div>
+            <label class="form-label" style="font-weight: 700; color: var(--gray-500); font-size: var(--text-xs);">Ghi chú của bạn:</label>
+            <div style="margin-top: var(--space-1); background-color: var(--gray-50); border: 1px solid var(--gray-100); padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); font-size: var(--text-xs); color: var(--gray-600); font-style: italic;">
+              "${{ assignment.student_note }}"
+            </div>
+          </div>
+          {% endif %}
+
+        <!-- TRẠNG THÁI 3: QUÁ HẠN KHÔNG NỘP -->
+        {% elif assignment.status == 'missed' %}
+          <div class="status-banner missed">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+            </svg>
+            <div style="display: flex; flex-direction: column;">
+              <strong style="font-weight: 700;">Quá hạn nộp bài giải!</strong>
+              <span style="font-size: var(--text-2xs); opacity: 0.9;">Hệ thống đã khóa cổng nộp tự động. Bạn nhận điểm phạt: 0 điểm.</span>
+            </div>
+          </div>
+          
+          <div style="text-align: center; color: var(--gray-400); font-size: var(--text-xs); padding: var(--space-4) 0;">
+            Không thể tải lời giải hoặc chỉnh sửa bài tập này nữa.
+          </div>
+
+        <!-- TRẠNG THÁI 4: CHƯA NỘP (CÓ THỂ NỘP) -->
+        {% else %}
+          <form id="submissionForm" novalidate>
+            <!-- Chọn file -->
+            <div class="form-group">
+              <label class="form-label" for="formFile">Tải lên bài giải bài tập <span class="required">*</span></label>
+              <input type="file" id="formFile" class="form-control" required>
+              <span class="form-hint">Định dạng hợp lệ: .pdf, .doc, .docx, .png, .jpg (Tối đa 10MB)</span>
+            </div>
+
+            <!-- Ghi chú cho giáo viên -->
+            <div class="form-group" style="margin-bottom: var(--space-5);">
+              <label class="form-label" for="formNote">Lời nhắn hoặc Ghi chú của học sinh</label>
+              <textarea id="formNote" class="form-control" rows="3" placeholder="Nhập lời nhắn gửi thầy cô khi xem bài..." maxlength="500"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-full btn-lg">
+              Xác nhận nộp bài
+            </button>
+          </form>
+        {% endif %}
+
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  // Format due date in information box
+  const textDueDate = document.getElementById('textDueDate');
+  if (textDueDate) {
+    const isoStr = textDueDate.getAttribute('data-due-iso');
+    const dueDate = new Date(isoStr);
+    
+    const day = String(dueDate.getDate()).padStart(2, '0');
+    const month = String(dueDate.getMonth() + 1).padStart(2, '0');
+    const year = dueDate.getFullYear();
+    const hrs = String(dueDate.getHours()).padStart(2, '0');
+    const mins = String(dueDate.getMinutes()).padStart(2, '0');
+    
+    textDueDate.textContent = `${hrs}:${mins} - ${day}/${month}/${year}`;
+  }
+
+  const submissionForm = document.getElementById('submissionForm');
+  if (submissionForm) {
+    submissionForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const fileInput = document.getElementById('formFile');
+      const noteInput = document.getElementById('formNote');
+
+      if (fileInput.files.length === 0) {
+        showToast('Vui lòng chọn tệp tin lời giải trước khi bấm nộp bài.', 'danger');
+        return;
+      }
+
+      const file = fileInput.files[0];
+      if (!validateFile(file, 10)) return;
+
+      const formData = new FormData();
+      formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+      formData.append('file', file);
+      formData.append('note', noteInput.value.trim());
+
+      try {
+        const res = await fetch('{% url "student_assignment_detail" assignment.id %}', { method: 'POST', body: formData });
+        const data = await res.json();
+
+        if (!res.ok) {
+          const firstError = Object.values(data.errors || {})[0];
+          showToast(firstError ? firstError[0] : 'Nộp bài thất bại. Vui lòng thử lại.', 'danger');
+          return;
+        }
+
+        const noteVal = noteInput.value.trim();
+        const sizeMB = file.size / (1024 * 1024);
+        const sizeText = sizeMB < 1 ? Math.round(file.size / 1024) + ' KB' : sizeMB.toFixed(1) + ' MB';
+
+        const container = document.getElementById('submissionContainer');
+        const cardBody = container.querySelector('.card-body');
+        cardBody.innerHTML = `
+          <div class="status-banner pending">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Bài giải đã được nộp thành công! Đang chờ chấm điểm.</span>
+          </div>
+
+          <div style="margin-bottom: var(--space-4);">
+            <label class="form-label" style="font-weight: 700; color: var(--gray-500); font-size: var(--text-xs);">Bài giải đính kèm:</label>
+            <div class="uploaded-file-card" style="margin-top: var(--space-2);">
+              <div style="display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-sm);">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color: var(--primary);">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                </svg>
+                <strong style="color: var(--gray-800);">${data.file_name || file.name}</strong>
+              </div>
+              <span style="font-size: var(--text-2xs); color: var(--gray-400);">${sizeText}</span>
+            </div>
+            <div style="font-size: var(--text-xs); color: var(--gray-400);">Nộp lúc: <strong>${data.submitted_at}</strong></div>
+          </div>
+
+          ${noteVal ? `
+          <div>
+            <label class="form-label" style="font-weight: 700; color: var(--gray-500); font-size: var(--text-xs);">Ghi chú của bạn:</label>
+            <div style="margin-top: var(--space-1); background-color: var(--gray-50); border: 1px solid var(--gray-100); padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); font-size: var(--text-xs); color: var(--gray-600); font-style: italic;">
+              "${noteVal}"
+            </div>
+          </div>
+          ` : ''}
+        `;
+
+        showToast('Nộp bài thành công', 'success');
+
+      } catch (err) {
+        showToast('Lỗi kết nối. Vui lòng thử lại.', 'danger');
+      }
+    });
+  }
+</script>
+{% endblock %}

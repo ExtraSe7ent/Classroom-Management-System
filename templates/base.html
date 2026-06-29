@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Quản lý lớp học thêm{% endblock %}</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'css/layout.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components.css' %}">
+  {% block extra_css %}{% endblock %}
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+{% if user.is_authenticated %}
+<div class="app-layout">
+
+  <!-- SIDEBAR -->
+  {% include 'components/_sidebar.html' %}
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-title">{% block page_title %}{% endblock %}</div>
+      <div class="topbar-actions">
+        <a href="{% url 'profile' %}" class="topbar-avatar" title="Hồ sơ cá nhân">
+          {{ request.user.first_name|first|upper }}{{ request.user.last_name|first|upper }}
+        </a>
+        <form method="post" action="{% url 'logout' %}" style="margin:0">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-secondary btn-sm">Đăng xuất</button>
+        </form>
+      </div>
+    </header>
+
+    <!-- PAGE CONTENT -->
+    <main class="page-content">
+      {% block content %}{% endblock %}
+    </main>
+
+  </div>
+</div>
+
+{% else %}
+  <!-- Trang không cần layout (login) -->
+  {% block auth_content %}{% endblock %}
+{% endif %}
+
+<!-- TOAST CONTAINER -->
+{% include 'components/_toast.html' %}
+
+<!-- MODAL XÁC NHẬN -->
+{% include 'components/_modal_confirm.html' %}
+
+<!-- JS -->
+<script src="{% static 'js/utils.js' %}"></script>
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>

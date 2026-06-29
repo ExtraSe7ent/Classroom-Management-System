@@ -1,0 +1,23 @@
+name: edumanager  
+
+services:
+  db:
+    image: postgres:16
+    container_name: edumanager_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-edumanager_db}
+      POSTGRES_USER: ${DB_USER:-edumanager}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-edumanager_pass}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-edumanager} -d ${DB_NAME:-edumanager_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:

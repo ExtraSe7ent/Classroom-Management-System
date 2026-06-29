@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Tạo tài khoản | EduManager{% endblock %}
+
+{% block auth_content %}
+<div style="min-height:100vh; display:flex; align-items:center; justify-content:center; background:var(--gray-50); padding: var(--space-6) var(--space-4);">
+  <div style="width:100%; max-width:560px;">
+
+    <!-- Logo -->
+    <div style="text-align:center; margin-bottom:var(--space-8);">
+      <svg width="48" height="48" viewBox="0 0 28 28" fill="none" style="margin:0 auto var(--space-3);">
+        <rect width="28" height="28" rx="8" fill="#4F46E5"/>
+        <path d="M7 14h14M14 7v14" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      <h1 style="font-size:var(--text-2xl); margin-bottom:var(--space-1);">EduManager</h1>
+      <p class="text-muted text-sm">Tạo tài khoản học viên mới</p>
+    </div>
+
+    <!-- Card -->
+    <div class="card">
+      <div class="card-body">
+
+        <form method="post" id="registerForm" novalidate>
+          {% csrf_token %}
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:var(--space-4);">
+            <div class="form-group">
+              <label class="form-label">Họ <span class="required">*</span></label>
+              {{ form.last_name }}
+              {% if form.last_name.errors %}
+                <div class="form-error">{{ form.last_name.errors.0 }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tên <span class="required">*</span></label>
+              {{ form.first_name }}
+              {% if form.first_name.errors %}
+                <div class="form-error">{{ form.first_name.errors.0 }}</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Tên đăng nhập <span class="required">*</span></label>
+            {{ form.username }}
+            {% if form.username.errors %}
+              <div class="form-error">{{ form.username.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:var(--space-4);">
+            <div class="form-group">
+              <label class="form-label">Số điện thoại <span class="required">*</span></label>
+              {{ form.phone }}
+              {% if form.phone.errors %}
+                <div class="form-error">{{ form.phone.errors.0 }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              {{ form.email }}
+              {% if form.email.errors %}
+                <div class="form-error">{{ form.email.errors.0 }}</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Mật khẩu <span class="required">*</span></label>
+            <div style="position:relative;">
+              {{ form.password }}
+              <button type="button" class="pwd-toggle" onclick="togglePassword(this)" tabindex="-1" title="Hiện mật khẩu">
+                <svg class="eye-open" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                <svg class="eye-slash" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" style="display:none">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"/>
+                </svg>
+              </button>
+            </div>
+            <div class="form-hint">Từ 8–50 ký tự, có ít nhất 1 chữ hoa, 1 số và 1 ký tự đặc biệt.</div>
+            {% if form.password.errors %}
+              <div class="form-error">{{ form.password.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Nhập lại mật khẩu <span class="required">*</span></label>
+            <div style="position:relative;">
+              {{ form.confirm_password }}
+              <button type="button" class="pwd-toggle" onclick="togglePassword(this)" tabindex="-1" title="Hiện mật khẩu">
+                <svg class="eye-open" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                <svg class="eye-slash" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" style="display:none">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"/>
+                </svg>
+              </button>
+            </div>
+            {% if form.confirm_password.errors %}
+              <div class="form-error">{{ form.confirm_password.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          {% if form.non_field_errors %}
+            <div style="background:var(--danger-light); color:var(--danger); padding:var(--space-3); border-radius:var(--radius-md); font-size:var(--text-sm); margin-bottom:var(--space-4);">
+              {{ form.non_field_errors.0 }}
+            </div>
+          {% endif %}
+
+          <button type="submit" class="btn btn-primary w-full btn-lg" style="margin-top:var(--space-2);">
+            Tạo tài khoản
+          </button>
+        </form>
+
+      </div>
+    </div>
+
+    <!-- Link đăng nhập -->
+    <div style="text-align:center; margin-top:var(--space-4);">
+      <span class="text-muted text-sm">Đã có tài khoản? </span>
+      <a href="{% url 'login' %}" style="text-decoration:none; color:var(--primary); font-size:var(--text-sm); font-weight:500;">
+        Đăng nhập ngay
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const registerForm = document.getElementById('registerForm');
+  registerForm.addEventListener('submit', function(e) {
+    const pw = registerForm.querySelector('[name="password"]').value;
+    const cpw = registerForm.querySelector('[name="confirm_password"]').value;
+    if (pw && cpw && pw !== cpw) {
+      e.preventDefault();
+      registerForm.querySelector('[name="confirm_password"]').closest('.form-group')
+        .querySelector('.form-error, .form-hint')?.remove();
+      const err = document.createElement('div');
+      err.className = 'form-error';
+      err.textContent = 'Xác nhận mật khẩu không trùng khớp.';
+      registerForm.querySelector('[name="confirm_password"]').closest('.form-group').appendChild(err);
+    }
+  });
+</script>
+{% endblock %}

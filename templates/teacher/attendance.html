@@ -1,0 +1,446 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Điểm danh & Nhận xét | EduManager{% endblock %}
+
+{% block page_title %}Điểm danh & Nhận xét học sinh{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Custom segment radio options for attendance */
+  .attendance-group {
+    display: flex;
+    gap: var(--space-2);
+  }
+  
+  .attendance-option {
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .attendance-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .attendance-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--gray-300);
+    background-color: #fff;
+    color: var(--gray-600);
+    transition: all 0.2s ease;
+    user-select: none;
+  }
+  
+  /* Present states */
+  .attendance-option.present input[type="radio"]:checked + .attendance-label {
+    background-color: var(--success-light);
+    border-color: var(--success);
+    color: var(--success);
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+  }
+  
+  .attendance-option.present:hover .attendance-label {
+    border-color: var(--success);
+    color: var(--success);
+  }
+
+  /* Excused states */
+  .attendance-option.excused input[type="radio"]:checked + .attendance-label {
+    background-color: var(--warning-light);
+    border-color: var(--warning);
+    color: var(--warning);
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+  }
+  
+  .attendance-option.excused:hover .attendance-label {
+    border-color: var(--warning);
+    color: var(--warning);
+  }
+
+  /* Unexcused states */
+  .attendance-option.absent input[type="radio"]:checked + .attendance-label {
+    background-color: var(--danger-light);
+    border-color: var(--danger);
+    color: var(--danger);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+  }
+  
+  .attendance-option.absent:hover .attendance-label {
+    border-color: var(--danger);
+    color: var(--danger);
+  }
+
+  /* Filters styling */
+  .filter-panel {
+    background-color: #fff;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--gray-200);
+    padding: var(--space-4) var(--space-6);
+    margin-bottom: var(--space-6);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+  
+  .filter-group {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  
+  .filter-group label {
+    font-weight: 600;
+    font-size: var(--text-sm);
+    color: var(--gray-700);
+    white-space: nowrap;
+  }
+  
+  .filter-group select, .filter-group input {
+    min-width: 200px;
+  }
+  
+  /* Quick statistics board */
+  .stat-banner {
+    display: flex;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+  
+  .stat-mini-card {
+    flex: 1;
+    background-color: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .stat-mini-label {
+    font-size: var(--text-xs);
+    color: var(--gray-500);
+    font-weight: 500;
+  }
+  
+  .stat-mini-val {
+    font-size: var(--text-sm);
+    font-weight: 700;
+    color: var(--gray-800);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="filter-panel">
+  <div style="display: flex; gap: var(--space-4); flex-wrap: wrap; flex: 1;">
+    <!-- Lớp học -->
+    <div class="filter-group">
+      <label for="selectClass">Lớp học:</label>
+      <select id="selectClass" class="form-control">
+        {% for cls in classes %}
+          <option value="{{ cls.id }}">{{ cls.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    
+    <!-- Ngày học -->
+    <div class="filter-group">
+      <label for="inputDate">Ngày điểm danh:</label>
+      <input type="date" id="inputDate" class="form-control">
+    </div>
+  </div>
+
+  <div class="attendance-actions">
+    <button class="btn btn-secondary" onclick="resetToPresent()" style="gap: var(--space-1.5);">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      Đặt tất cả đi học
+    </button>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header" style="flex-direction: column; align-items: stretch; gap: var(--space-3);">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+      <h2 class="card-title" id="classTitleText">Danh sách học sinh lớp</h2>
+      <div id="attendanceTimeText" style="font-size: var(--text-xs); color: var(--gray-500); font-weight: 500;">
+        Học sinh ghi nhận ngày: <span id="currentSelectedDateLabel" style="font-weight: 600; color: var(--gray-800);">21/05/2026</span>
+      </div>
+    </div>
+    
+    <!-- Thống kê nhanh sỹ số của lớp trong ngày -->
+    <div class="stat-banner">
+      <div class="stat-mini-card">
+        <span class="stat-mini-label">Sĩ số lớp:</span>
+        <span class="stat-mini-val" id="statTotal">3 học sinh</span>
+      </div>
+      <div class="stat-mini-card" style="border-left: 3px solid var(--success);">
+        <span class="stat-mini-label" style="color: var(--success);">Đi học:</span>
+        <span class="stat-mini-val" id="statPresent" style="color: var(--success);">0</span>
+      </div>
+      <div class="stat-mini-card" style="border-left: 3px solid var(--warning);">
+        <span class="stat-mini-label" style="color: var(--warning);">Vắng phép:</span>
+        <span class="stat-mini-val" id="statExcused" style="color: var(--warning);">0</span>
+      </div>
+      <div class="stat-mini-card" style="border-left: 3px solid var(--danger);">
+        <span class="stat-mini-label" style="color: var(--danger);">Vắng không phép:</span>
+        <span class="stat-mini-val" id="statAbsent" style="color: var(--danger);">0</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-body" style="padding: 0;">
+    <form id="attendanceForm" novalidate>
+      <div class="table-wrapper" style="border: none; border-radius: 0;">
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width: 120px;">Mã học sinh</th>
+              <th>Họ và tên</th>
+              <th style="width: 320px; text-align: center;">Trạng thái chuyên cần</th>
+              <th>Nhận xét của giáo viên</th>
+            </tr>
+          </thead>
+          <tbody id="attendanceTableBody">
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Hộp điều khiển lưu -->
+      <div style="padding: var(--space-6); border-top: 1px solid var(--gray-100); display: flex; justify-content: flex-end;">
+        <button type="submit" class="btn btn-primary btn-lg" style="box-shadow: var(--shadow-md);">
+          Lưu kết quả điểm danh
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script id="studentsByClassJson" type="application/json">
+  {{ students_by_class_json|safe }}
+</script>
+
+<script>
+  const studentsByClass = JSON.parse(document.getElementById('studentsByClassJson').textContent);
+  
+  const selectClass = document.getElementById('selectClass');
+  const inputDate = document.getElementById('inputDate');
+  const classTitleText = document.getElementById('classTitleText');
+  const currentSelectedDateLabel = document.getElementById('currentSelectedDateLabel');
+  const attendanceTableBody = document.getElementById('attendanceTableBody');
+  const attendanceForm = document.getElementById('attendanceForm');
+  
+  // Stat elements
+  const statTotal = document.getElementById('statTotal');
+  const statPresent = document.getElementById('statPresent');
+  const statExcused = document.getElementById('statExcused');
+  const statAbsent = document.getElementById('statAbsent');
+
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  inputDate.value = `${yyyy}-${mm}-${dd}`;
+  currentSelectedDateLabel.textContent = `${dd}/${mm}/${yyyy}`;
+
+  // Khi thay đổi ngày học
+  inputDate.addEventListener('change', function() {
+    if (!this.value) return;
+    const parts = this.value.split('-');
+    currentSelectedDateLabel.textContent = `${parts[2]}/${parts[1]}/${parts[0]}`;
+  });
+
+  // Khi thay đổi lớp học
+  selectClass.addEventListener('change', function() {
+    renderAttendanceTable(this.value);
+  });
+
+  // Chạy lần đầu tiên khi tải trang
+  renderAttendanceTable(selectClass.value);
+
+  // ===== RENDER TABLE =====
+  function renderAttendanceTable(classId) {
+    const className = selectClass.options[selectClass.selectedIndex].text;
+    classTitleText.textContent = `Bảng điểm danh & nhận xét: ${className}`;
+    
+    const students = studentsByClass[classId] || [];
+    
+    attendanceTableBody.innerHTML = '';
+    
+    const submitBtn = attendanceForm.querySelector('button[type="submit"]');
+    
+    if (students.length === 0) {
+      attendanceTableBody.innerHTML = `
+        <tr>
+          <td colspan="4">
+            <div class="empty-state" style="padding: var(--space-8) 0;">
+              <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.109A11.386 11.386 0 0110.089 20M3 11.627a1.125 1.125 0 011.083-1.083h2.145c.621 0 1.125.504 1.125 1.125v1.24c0 .621-.504 1.125-1.125 1.125H4.083a1.125 1.125 0 01-1.083-1.083V11.63z" />
+              </svg>
+              <p>Lớp học chưa có học viên</p>
+            </div>
+          </td>
+        </tr>
+      `;
+      updateStats(0, 0, 0, 0);
+      if (submitBtn) submitBtn.disabled = true;
+      return;
+    }
+    
+    if (submitBtn) submitBtn.disabled = false;
+
+    students.forEach((student) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><span class="badge badge-gray" style="font-family: monospace; font-size: var(--text-sm);">${student.student_id}</span></td>
+        <td><strong>${student.name}</strong></td>
+        <td>
+          <div class="attendance-group">
+            <label class="attendance-option present">
+              <input type="radio" name="status_${student.student_id}" value="present" checked onchange="recalculateStats()">
+              <span class="attendance-label">Đi học</span>
+            </label>
+            <label class="attendance-option excused">
+              <input type="radio" name="status_${student.student_id}" value="excused" onchange="recalculateStats()">
+              <span class="attendance-label">Vắng phép</span>
+            </label>
+            <label class="attendance-option absent">
+              <input type="radio" name="status_${student.student_id}" value="absent" onchange="recalculateStats()">
+              <span class="attendance-label">Vắng không phép</span>
+            </label>
+          </div>
+        </td>
+        <td>
+          <input type="text" name="remarks_${student.student_id}" class="form-control" placeholder="Ví dụ: Làm bài tập đầy đủ, hăng hái phát biểu..." maxlength="500">
+        </td>
+      `;
+      attendanceTableBody.appendChild(tr);
+    });
+
+    recalculateStats();
+  }
+
+  // ===== RECALCULATE STATS =====
+  function recalculateStats() {
+    const rows = attendanceTableBody.querySelectorAll('tr');
+    let total = 0;
+    let present = 0;
+    let excused = 0;
+    let absent = 0;
+
+    rows.forEach(row => {
+      const radios = row.querySelectorAll('input[type="radio"]');
+      if (radios.length === 0) return;
+      
+      total++;
+      
+      radios.forEach(radio => {
+        if (radio.checked) {
+          if (radio.value === 'present') present++;
+          if (radio.value === 'excused') excused++;
+          if (radio.value === 'absent') absent++;
+        }
+      });
+    });
+
+    updateStats(total, present, excused, absent);
+  }
+
+  function updateStats(total, present, excused, absent) {
+    statTotal.textContent = `${total} học sinh`;
+    statPresent.textContent = present;
+    statExcused.textContent = excused;
+    statAbsent.textContent = absent;
+  }
+
+  // ===== QUICK ACTIONS: SET ALL PRESENT =====
+  function resetToPresent() {
+    const radios = attendanceTableBody.querySelectorAll('input[type="radio"][value="present"]');
+    radios.forEach(radio => {
+      radio.checked = true;
+    });
+    recalculateStats();
+    showToast('Đã đặt trạng thái đi học cho tất cả.', 'info');
+  }
+
+  // ===== SUBMIT FORM (AJAX POST) =====
+  attendanceForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const classId = selectClass.value;
+    const attendanceDate = inputDate.value;
+    const className = selectClass.options[selectClass.selectedIndex].text;
+    const dateStr = currentSelectedDateLabel.textContent;
+
+    if (!classId || !attendanceDate) {
+      showToast('Vui lòng chọn lớp học và ngày điểm danh.', 'danger');
+      return;
+    }
+
+    const submitBtn = attendanceForm.querySelector('button[type="submit"]');
+    if (submitBtn.disabled) return; // Chống double submit
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Đang lưu...';
+
+    const formData = new FormData();
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+    formData.append('class_id', classId);
+    formData.append('date', attendanceDate);
+
+    // Đọc trực tiếp từ các radio button đã chọn
+    const rows = attendanceTableBody.querySelectorAll('tr');
+    let presents = 0, excused = 0, absents = 0;
+
+    rows.forEach(row => {
+      const checkedRadio = row.querySelector('input[type="radio"]:checked');
+      if (!checkedRadio) return;
+
+      const status = checkedRadio.value;
+      // Lấy student_id từ name attribute của radio (format: "status_HS001")
+      const studentId = checkedRadio.name.replace('status_', '');
+      const remarks = row.querySelector('input[type="text"]')?.value || '';
+
+      formData.append(`status_${studentId}`, status);
+      formData.append(`remarks_${studentId}`, remarks);
+
+      if (status === 'present') presents++;
+      else if (status === 'excused') excused++;
+      else absents++;
+    });
+
+    try {
+      const res = await fetch('{% url "attendance" %}', { method: 'POST', body: formData });
+      const data = await res.json();
+
+      if (!res.ok) {
+        showToast('Lưu điểm danh thất bại. Vui lòng thử lại.', 'danger');
+        return;
+      }
+
+      const vangTotal = excused + absents;
+      showToast(`Điểm danh ${className} thành công (${presents} đi học, ${vangTotal} vắng) ngày ${dateStr}!`, 'success');
+
+    } catch (err) {
+      showToast('Lỗi kết nối. Vui lòng thử lại.', 'danger');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Lưu kết quả điểm danh';
+    }
+  });
+</script>
+{% endblock %}
+
