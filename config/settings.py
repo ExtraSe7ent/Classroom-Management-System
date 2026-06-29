@@ -23,6 +23,17 @@ DEBUG = env_bool('DEBUG', True)
 _allowed_hosts = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,[::1]')
 ALLOWED_HOSTS = [h.strip() for h in _allowed_hosts.split(',')]
 
+_csrf_trusted = os.environ.get('CSRF_TRUSTED_ORIGINS', '')
+if _csrf_trusted:
+    CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in _csrf_trusted.split(',')]
+else:
+    CSRF_TRUSTED_ORIGINS = [
+        'https://*.onrender.com',
+        'https://*.ngrok.app',
+        'https://*.ngrok-free.app',
+    ]
+
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
