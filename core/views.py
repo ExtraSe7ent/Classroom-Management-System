@@ -399,8 +399,10 @@ class StudentListView(LoginRequiredMixin, View):
             'classes': ', '.join([c.name for c in s.classes.filter(teacher=request.user)]),
         } for s in students]
 
-        count = Student.objects.count()
-        next_student_id = f'HS{str(count + 1).zfill(3)}'
+        next_num = Student.objects.count() + 1
+        while Student.objects.filter(student_id=f'HS{str(next_num).zfill(3)}').exists():
+            next_num += 1
+        next_student_id = f'HS{str(next_num).zfill(3)}'
 
         context = {
             'students': students_data,
