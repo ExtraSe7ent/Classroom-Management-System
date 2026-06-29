@@ -184,7 +184,7 @@
   const loginButton = document.getElementById('loginButton');
   const clientError = document.getElementById('clientError');
   const serverError = document.getElementById('serverError');
-  const loginInputs = Array.from(loginForm.querySelectorAll('input'));
+  const loginInputs = Array.from(loginForm.querySelectorAll('input:not([type="hidden"])'));
   const usernameInput = document.querySelector('input[name="username"]');
   const passwordInput = document.querySelector('input[name="password"]');
 
@@ -197,7 +197,7 @@
   const backToLoginLink = document.getElementById('backToLoginLink');
 
   const forgotPasswordForm = document.getElementById('forgotPasswordForm');
-  const forgotInputs = Array.from(forgotPasswordForm.querySelectorAll('input'));
+  const forgotInputs = Array.from(forgotPasswordForm.querySelectorAll('input:not([type="hidden"])'));
   const forgotPhone = document.getElementById('forgotPhone');
   const forgotNewPassword = document.getElementById('forgotNewPassword');
   const forgotConfirmPassword = document.getElementById('forgotConfirmPassword');
