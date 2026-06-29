@@ -275,10 +275,11 @@
   loginInputs.forEach(function(input, idx) {
     input.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') {
-        e.preventDefault();
         const next = loginInputs[idx + 1];
-        if (next) next.focus();
-        else loginButton.focus();
+        if (next) {
+          e.preventDefault();
+          next.focus();
+        }
       }
     });
   });
@@ -286,10 +287,11 @@
   forgotInputs.forEach(function(input, idx) {
     input.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') {
-        e.preventDefault();
         const next = forgotInputs[idx + 1];
-        if (next) next.focus();
-        else saveForgotPasswordBtn.focus();
+        if (next) {
+          e.preventDefault();
+          next.focus();
+        }
       }
     });
   });
