@@ -1,6 +1,6 @@
 # EduManager — Ứng dụng Quản lý Lớp Học Thêm
 
-Đồ án cuối kỳ · CSE3045 — Học theo dự án khoa học và kỹ thuật  
+Đồ án cuối kỳ · CSE3045 - Học theo dự án khoa học và kỹ thuật  
 Khoa Công nghệ và Kỹ thuật tiên tiến · Trường Đại học Việt Nhật, ĐHQGHN
 
 ---
@@ -37,8 +37,6 @@ python manage.py seed_demo
 python manage.py runserver
 ```
 
-Truy cập: **http://127.0.0.1:8000/**
-
 ### Tài khoản demo
 
 #### Giáo viên
@@ -60,7 +58,17 @@ Truy cập: **http://127.0.0.1:8000/**
 
 ---
 
-## 2. Tài liệu Django Models
+## 2. Phân tách FE / BE / DB
+
+| Tầng         | Thư mục / File                                                               |
+| ------------ | ---------------------------------------------------------------------------- |
+| **Frontend** | `templates/` + `static/`                                                     |
+| **Backend**  | `core/views.py`, `core/forms.py`, `core/urls.py`, `core/admin.py`, `config/` |
+| **Database** | `core/models.py`, `core/migrations/`, `docker-compose.yml`                   |
+
+---
+
+## 3. Tài liệu Django Models
 
 Hệ thống gồm **9 model** ánh xạ thành 9 bảng trong PostgreSQL.
 
@@ -110,8 +118,6 @@ Lịch học cố định theo thứ trong tuần.
 | `end_time`    | TimeField          | Giờ kết thúc          |
 | `room`        | CharField          | Phòng học ca này      |
 
-> Ràng buộc: `unique_together (class_obj, day_of_week, start_time)` — không trùng lịch; view kiểm tra thêm xung đột phòng.
-
 ### `Assignment`
 
 Bài tập do giáo viên giao cho lớp.
@@ -139,8 +145,6 @@ Bài nộp của học sinh.
 | `grade`      | DecimalField            | Điểm 0.0–10.0                      |
 | `feedback`   | TextField               | Nhận xét của giáo viên             |
 
-> Ràng buộc: `unique_together (assignment, student)` — mỗi học sinh chỉ nộp một lần.
-
 ### `Attendance`
 
 Điểm danh chuyên cần.
@@ -151,8 +155,6 @@ Bài nộp của học sinh.
 | `class_obj` | ForeignKey → Class   | Lớp học                          |
 | `date`      | DateField            | Ngày điểm danh                   |
 | `status`    | CharField            | `present` / `excused` / `absent` |
-
-> Có DB index trên `(student, date)` để tăng tốc truy vấn lịch sử.
 
 ### `DailyComment`
 
@@ -179,7 +181,7 @@ Mã OTP dùng để khôi phục mật khẩu.
 
 ---
 
-## 3. Hướng dẫn sử dụng
+## 4. Hướng dẫn sử dụng
 
 ### Dành cho Giáo viên
 
@@ -227,3 +229,16 @@ Mã OTP dùng để khôi phục mật khẩu.
 3. Nhập mật khẩu mới + mã OTP → **Lưu thay đổi**.
 
 ---
+
+## 5. Lệnh hữu ích
+
+```bash
+docker compose up -d              # Bật PostgreSQL
+docker compose down               # Tắt (giữ dữ liệu)
+docker compose down -v            # Tắt + xóa sạch dữ liệu
+
+python manage.py migrate          # Áp dụng migration
+python manage.py seed_demo        # Tạo lại dữ liệu mẫu
+python manage.py createsuperuser  # Tạo tài khoản Django Admin
+python manage.py runserver        # Chạy server tại :8000
+```
