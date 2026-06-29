@@ -1,13 +1,12 @@
 import json
 import random
 import re
-from datetime import date, timedelta
+from datetime import timedelta
 
 from django import forms
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
-from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.db.models import Count
@@ -24,7 +23,7 @@ from .forms import (
     UserProfileForm, ChangePasswordForm, RegisterForm,
     ClassForm, StudentForm, StudentEditForm,
     ScheduleForm, AssignmentForm, GradeSubmissionForm, SubmissionForm,
-    validate_password_strength, validate_phone,
+    validate_password_strength,
 )
 
 DAY_NAMES = dict(DAY_CHOICES)
@@ -32,6 +31,11 @@ DAY_NAMES = dict(DAY_CHOICES)
 def get_display_name(user):
     parts = [user.last_name, user.first_name]
     return ' '.join(p for p in parts if p).strip() or user.username
+
+
+# ================================
+# --- KHỐI XÁC THỰC (AUTH) ---
+# ================================
 
 class LoginView(View):
     def get(self, request):
@@ -179,6 +183,11 @@ class ResetPasswordView(View):
         otp_obj.save()
 
         return JsonResponse({'status': 'ok', 'message': 'Đổi mật khẩu thành công!'})
+
+
+# ================================
+# --- KHỐI GIÁO VIÊN (TEACHER) ---
+# ================================
 
 class TeacherDashboardView(LoginRequiredMixin, View):
     def get(self, request):
@@ -561,7 +570,7 @@ class GradingView(LoginRequiredMixin, View):
     def get(self, request, pk):
         assignment = get_object_or_404(Assignment.objects.select_related('class_obj'), pk=pk, class_obj__teacher=request.user)
         students_in_class = assignment.class_obj.students.select_related('user').all()
-        existing_subs = {s.student_id: s for s in Submission.objects.filter(assignment=assignment).select_related('student')}
+        existing_subs = {s.student.id: s for s in Submission.objects.filter(assignment=assignment).select_related('student')}
 
         submissions_data = []
         for student in students_in_class:
@@ -613,6 +622,11 @@ def _get_student_or_none(request):
         return Student.objects.select_related('user').prefetch_related('classes').get(user=request.user)
     except Student.DoesNotExist:
         return None
+
+
+# ================================
+# --- KHỐI HỌC SINH (STUDENT) ---
+# ================================
 
 class StudentDashboardView(LoginRequiredMixin, View):
     def get(self, request):
@@ -855,6 +869,11 @@ class StudentAssignmentDetailView(LoginRequiredMixin, View):
             return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
         return JsonResponse({'status': 'error', 'message': 'Not a student'}, status=403)
 
+
+
+# ================================
+# --- KHỐI CHỨC NĂNG CHUNG ---
+# ================================
 
 class ProfileView(LoginRequiredMixin, View):
     def get(self, request):

@@ -13,6 +13,9 @@ DAY_CHOICES = [
 ]
 
 
+
+# --- CẤU HÌNH TÀI KHOẢN ---
+
 class UserProfile(models.Model):
     ROLE_CHOICES = [
         ('teacher', 'Giáo viên'),
@@ -36,6 +39,9 @@ class UserProfile(models.Model):
     def __str__(self):
         return f"{self.user.get_full_name()} ({self.role})"
 
+
+
+# --- QUẢN LÝ LỚP HỌC & HỌC SINH ---
 
 class Class(models.Model):
     name = models.CharField(max_length=100)
@@ -83,6 +89,9 @@ class Student(models.Model):
     def get_classes_display(self):
         return ', '.join([c.name for c in self.classes.all()]) or 'Chưa xếp lớp'
 
+
+
+# --- LỊCH HỌC & BÀI TẬP ---
 
 class Schedule(models.Model):
     class_obj = models.ForeignKey(Class, on_delete=models.CASCADE, related_name='schedules')
@@ -153,6 +162,9 @@ class Submission(models.Model):
         return f"{self.student} - {self.assignment.title}"
 
 
+
+# --- ĐIỂM DANH & NHẬN XÉT ---
+
 class Attendance(models.Model):
     STATUS_CHOICES = [
         ('present', 'Đi học'),
@@ -200,6 +212,9 @@ class DailyComment(models.Model):
     def __str__(self):
         return f"{self.student} - {self.comment_date}"
 
+
+
+# --- XÁC THỰC OTP ---
 
 class PasswordResetOTP(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='password_otps')

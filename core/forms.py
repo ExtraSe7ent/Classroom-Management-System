@@ -43,6 +43,9 @@ def validate_upload_file(file):
     return file
 
 
+
+# --- FORM TÀI KHOẢN & XÁC THỰC ---
+
 class UserProfileForm(forms.ModelForm):
     first_name = forms.CharField(max_length=150, required=False, label='Tên')
     last_name = forms.CharField(max_length=150, required=False, label='Họ')
@@ -141,6 +144,9 @@ class ChangePasswordForm(forms.Form):
         return cleaned
 
 
+
+# --- FORM QUẢN LÝ (GIÁO VIÊN) ---
+
 class ClassForm(forms.ModelForm):
     class Meta:
         model = Class
@@ -236,6 +242,9 @@ class StudentEditForm(forms.Form):
         return phone
 
 
+
+# --- FORM LỊCH HỌC & BÀI TẬP ---
+
 class ScheduleForm(forms.ModelForm):
     class_obj = forms.ModelChoiceField(queryset=Class.objects.all(), required=False)
 
@@ -322,6 +331,9 @@ class GradeSubmissionForm(forms.ModelForm):
             raise forms.ValidationError('Lời phê/nhận xét không được vượt quá 1000 ký tự.')
         return feedback
 
+
+
+# --- FORM BÀI LÀM (HỌC SINH) ---
 
 class SubmissionForm(forms.ModelForm):
     class Meta:

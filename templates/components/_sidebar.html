@@ -1,7 +1,6 @@
 {% load static %}
 <aside class="sidebar" id="sidebar">
 
-  <!-- Logo -->
   <div class="sidebar-logo">
     <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
       <rect width="28" height="28" rx="8" fill="#4F46E5"/>
@@ -10,11 +9,9 @@
     <span>EduManager</span>
   </div>
 
-  <!-- Nav -->
   <nav class="sidebar-nav">
 
     {% if request.user.is_staff %}
-    <!-- ADMIN MENU -->
     <div class="sidebar-section-label">Tổng quan</div>
     <a href="{% url 'teacher_dashboard' %}"
        class="sidebar-item {% if request.resolver_match.url_name == 'teacher_dashboard' %}active{% endif %}">
@@ -36,7 +33,7 @@
     </a>
 
     <a href="{% url 'student_list' %}"
-       class="sidebar-item {% if 'student' in request.resolver_match.url_name %}active{% endif %}">
+       class="sidebar-item {% if request.resolver_match.url_name == 'student_list' %}active{% endif %}">
       <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/>
@@ -74,7 +71,6 @@
     </a>
 
     {% else %}
-    <!-- USER MENU -->
     <div class="sidebar-section-label">Tổng quan</div>
     <a href="{% url 'student_dashboard' %}"
        class="sidebar-item {% if request.resolver_match.url_name == 'student_dashboard' %}active{% endif %}">
@@ -126,7 +122,6 @@
 
   </nav>
 
-  <!-- Footer: thông tin user + đăng xuất -->
   <div class="sidebar-footer">
     <div class="sidebar-user">
       <div class="sidebar-avatar">

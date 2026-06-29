@@ -3,7 +3,9 @@ from . import views
 
 urlpatterns = [
     # Auth
-    path('', views.LoginView.as_view(), name='login'),
+    # --- XÁC THỰC (AUTH) ---
+    
+path('', views.LoginView.as_view(), name='login'),
     path('logout/', views.LogoutView.as_view(), name='logout'),
 
     path('register/', views.RegisterView.as_view(), name='register'),
@@ -11,7 +13,10 @@ urlpatterns = [
     path('forgot-password/reset/', views.ResetPasswordView.as_view(), name='reset_password'),
 
     # Teacher
-    path('teacher-dashboard/', views.TeacherDashboardView.as_view(), name='teacher_dashboard'),
+    
+    # --- MENU GIÁO VIÊN ---
+    
+path('teacher-dashboard/', views.TeacherDashboardView.as_view(), name='teacher_dashboard'),
     path('classes/', views.ClassListView.as_view(), name='class_list'),
     path('classes/<int:pk>/', views.ClassDetailView.as_view(), name='class_detail'),
     path('classes/<int:pk>/schedule/', views.ScheduleView.as_view(), name='schedule'),
@@ -21,12 +26,18 @@ urlpatterns = [
     path('assignments/<int:pk>/grading/', views.GradingView.as_view(), name='grading'),
 
     # Student
-    path('student-dashboard/', views.StudentDashboardView.as_view(), name='student_dashboard'),
+    
+    # --- MENU HỌC SINH ---
+    
+path('student-dashboard/', views.StudentDashboardView.as_view(), name='student_dashboard'),
     path('my-schedule/', views.StudentScheduleView.as_view(), name='student_schedule'),
     path('my-attendance/', views.StudentAttendanceView.as_view(), name='student_attendance'),
     path('my-assignments/', views.StudentAssignmentListView.as_view(), name='student_assignment_list'),
     path('my-assignments/<int:pk>/', views.StudentAssignmentDetailView.as_view(), name='student_assignment_detail'),
 
     # Chung
-    path('profile/', views.ProfileView.as_view(), name='profile'),
+    
+    # --- CHỨC NĂNG CHUNG ---
+    
+path('profile/', views.ProfileView.as_view(), name='profile'),
 ]
