@@ -374,6 +374,7 @@ class ScheduleView(LoginRequiredMixin, View):
             return JsonResponse({
                 'status': 'ok',
                 'id': sched.id,
+                'day_of_week': day,
                 'day_name': DAY_NAMES.get(day, day),
                 'start_time': start.strftime('%H:%M'),
                 'end_time': end.strftime('%H:%M'),

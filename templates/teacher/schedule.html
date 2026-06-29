@@ -53,8 +53,8 @@
 
         <!-- Phòng học: Để trống nếu học online, MaxLength = 100 -->
         <div class="form-group" style="margin-bottom: var(--space-6);">
-          <label class="form-label">Phòng học chỉ định</label>
-          <input type="text" id="formRoom" class="form-control" placeholder="Ví dụ: Phòng A101, Phòng Lab 2 (để trống nếu học online)" value="{{ class.room }}" maxlength="100">
+          <label class="form-label">Phòng học cố định của lớp</label>
+          <input type="text" id="formRoom" class="form-control" placeholder="Theo cấu hình phòng của lớp (để trống nếu học online)" value="{{ class.room }}" maxlength="100" readonly>
         </div>
 
         <button type="submit" class="btn btn-primary w-full btn-lg">
