@@ -345,25 +345,4 @@ Student
 
 ---
 
-## 10. Lệnh hữu ích
-
-```bash
-# Docker
-docker compose up -d              # Bật PostgreSQL
-docker compose down               # Tắt (giữ dữ liệu)
-docker compose down -v            # Tắt + xóa sạch dữ liệu
-
-# Django
-python manage.py migrate          # Áp dụng migration
-python manage.py seed_demo        # Tạo lại dữ liệu mẫu
-python manage.py createsuperuser  # Tạo tài khoản Django Admin
-python manage.py runserver        # Chạy server tại :8000
-```
-
-> **Trang Django Admin** (quản trị nội bộ): http://127.0.0.1:8000/django-admin/
-
----
-
-<div align="center">
-<sub>EduManager · CSE3045 · Trường Đại học Việt Nhật, ĐHQGHN · 2025–2026</sub>
 </div>
