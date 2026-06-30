@@ -19,16 +19,17 @@ Khoa Công nghệ và Kỹ thuật tiên tiến · Trường Đại học Việt
 git clone <url-repository>
 cd EduManager
 
-# 2. Khởi động PostgreSQL
-docker compose up -d
+# 2. Thiết lập file môi trường (.env) từ file mẫu
+cp .env.example .env            # Windows (Cmd): copy .env.example .env
 
-# 3. Tạo môi trường ảo và cài thư viện
+# 3. Khởi động PostgreSQL
+docker compose up -d
+# Cài đặt extension "Database Client" trên để dễ dàng xem và quản lý dữ liệu trong PostgreSQL Docker.
+
+# 4. Tạo môi trường ảo và cài thư viện
 python3 -m venv venv
 source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-
-# 4. Thiết lập file môi trường (.env) từ file mẫu
-cp .env.example .env            # Windows (Cmd): copy .env.example .env
 
 # 5. Tạo bảng dữ liệu
 python manage.py migrate
