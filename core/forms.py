@@ -122,6 +122,8 @@ class RegisterForm(forms.Form):
             )
             UserProfile.objects.create(user=user, phone=d['phone'], role='student')
             count = Student.objects.count() + 1
+            while Student.objects.filter(student_id=f'HS{count:03d}').exists():
+                count += 1
             Student.objects.create(user=user, student_id=f'HS{count:03d}')
         return user
 
