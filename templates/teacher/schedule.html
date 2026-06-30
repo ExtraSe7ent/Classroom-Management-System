@@ -118,11 +118,42 @@
         </table>
       </div>
     </div>
+    </div>
+  </div>
+
+  <!-- Cột 2.5: Danh sách lịch học của các lớp khác (dùng để tham khảo khi chọn thứ) -->
+  <div class="card mt-6" id="otherSchedulesCard" style="display: none; border: 1px solid var(--warning); margin-top: var(--space-6);">
+    <div class="card-header" style="background-color: var(--warning-light);">
+      <h2 class="card-title" style="color: #92400E; display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-sm);">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+        Lịch dạy các lớp khác trong <strong id="selectedDayText"></strong>
+      </h2>
+    </div>
+    <div class="card-body" style="padding: 0;">
+      <div class="table-wrapper" style="border: none; border-radius: 0;">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Lớp</th>
+              <th>Giờ bắt đầu</th>
+              <th>Giờ kết thúc</th>
+              <th>Phòng học</th>
+            </tr>
+          </thead>
+          <tbody id="otherSchedulesTableBody">
+            <!-- Render via JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
 </div>
 
 <!-- Dữ liệu lịch học hiện tại để kiểm tra trùng lịch -->
+<script id="allSchedulesJson" type="application/json">
+  {{ all_schedules_json|safe }}
+</script>
 <script id="existingSchedulesJson" type="application/json">
   [
     {% for sched in existing_schedules %}
@@ -140,6 +171,7 @@
 
 <script>
   const existingSchedules = JSON.parse(document.getElementById('existingSchedulesJson').textContent);
+  const allSchedules = JSON.parse(document.getElementById('allSchedulesJson').textContent);
   
   const scheduleForm = document.getElementById('scheduleForm');
   const scheduleTableBody = document.getElementById('scheduleTableBody');
@@ -151,6 +183,47 @@
   const formRoom = document.getElementById('formRoom');
 
   updateEmptyState();
+
+  const otherSchedulesCard = document.getElementById('otherSchedulesCard');
+  const otherSchedulesTableBody = document.getElementById('otherSchedulesTableBody');
+  const selectedDayText = document.getElementById('selectedDayText');
+  const currentClassName = "{{ class.name|escapejs }}";
+  
+  function updateOtherSchedules() {
+    const day = formDayOfWeek.value;
+    if (!day) {
+      otherSchedulesCard.style.display = 'none';
+      return;
+    }
+    
+    const dayNameMap = {
+      'Monday': 'Thứ Hai', 'Tuesday': 'Thứ Ba', 'Wednesday': 'Thứ Tư',
+      'Thursday': 'Thứ Năm', 'Friday': 'Thứ Sáu', 'Saturday': 'Thứ Bảy', 'Sunday': 'Chủ Nhật'
+    };
+    selectedDayText.textContent = dayNameMap[day] || day;
+    
+    const otherSchedules = allSchedules.filter(s => s.day_of_week === day && s.class_name !== currentClassName);
+    if (otherSchedules.length === 0) {
+      otherSchedulesCard.style.display = 'none';
+      return;
+    }
+    
+    otherSchedulesTableBody.innerHTML = '';
+    otherSchedules.forEach(s => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><strong>${s.class_name}</strong></td>
+        <td>${s.start_time}</td>
+        <td>${s.end_time}</td>
+        <td><span class="badge badge-gray">${s.room || "Online"}</span></td>
+      `;
+      otherSchedulesTableBody.appendChild(tr);
+    });
+    otherSchedulesCard.style.display = 'block';
+  }
+  
+  formDayOfWeek.addEventListener('change', updateOtherSchedules);
+  updateOtherSchedules();
 
   function timeToMinutes(timeStr) {
     const [h, m] = timeStr.split(':').map(Number);
@@ -181,7 +254,7 @@
     // Kiểm tra trùng lịch client-side trước khi POST
     let isConflict = false;
     let conflictClass = '';
-    const allSchedulesToCheck = existingSchedules;
+    const allSchedulesToCheck = allSchedules;
 
     allSchedulesToCheck.forEach(sched => {
       if (sched.day_of_week !== day) return;
@@ -212,7 +285,7 @@
     }
 
     if (isConflict) {
-      showToast(`Lỗi trùng lịch phòng học. Phòng học đã có [${conflictClass}] đăng ký học ở thời gian này.`, 'danger');
+      showToast(`Lỗi trùng lịch. Đã có [${conflictClass}] đăng ký học ở thời gian này.`, 'danger');
       return;
     }
 

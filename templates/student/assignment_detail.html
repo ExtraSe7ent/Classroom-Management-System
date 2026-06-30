@@ -158,9 +158,9 @@
             </div>
           </div>
           
-          <button class="btn btn-secondary btn-sm" onclick="showToast('Đang tải file đề bài tập...', 'info')">
+          <a href="{{ assignment.file_url }}" target="_blank" download class="btn btn-secondary btn-sm">
             Tải đề bài
-          </button>
+          </a>
         </div>
       </div>
       {% endif %}
@@ -356,8 +356,8 @@
         const data = await res.json();
 
         if (!res.ok) {
-          const firstError = Object.values(data.errors || {})[0];
-          showToast(firstError ? firstError[0] : 'Nộp bài thất bại. Vui lòng thử lại.', 'danger');
+          const firstError = data.errors ? Object.values(data.errors)[0] : null;
+          showToast(firstError ? firstError[0] : (data.message || 'Nộp bài thất bại. Vui lòng thử lại.'), 'danger');
           return;
         }
 
@@ -382,7 +382,7 @@
                 <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color: var(--primary);">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                 </svg>
-                <strong style="color: var(--gray-800);">${data.file_name || file.name}</strong>
+                <a href="${data.file_url}" target="_blank" style="color: var(--gray-800); text-decoration: none;"><strong>${data.file_name || file.name}</strong></a>
               </div>
               <span style="font-size: var(--text-2xs); color: var(--gray-400);">${sizeText}</span>
             </div>

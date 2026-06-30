@@ -549,6 +549,7 @@ class AssignmentListView(LoginRequiredMixin, View):
             'due_date': a.due_date.strftime('%Y-%m-%dT%H:%M'),
             'created_at': a.created_at.strftime('%d/%m/%Y'),
             'file_name': a.file.name.split('/')[-1] if a.file else '',
+            'file_url': a.file.url if a.file else '',
             'file_size': '',
             'submission_count': a.get_submission_count(),
             'total_students': a.get_total_students(),
@@ -579,6 +580,7 @@ class AssignmentListView(LoginRequiredMixin, View):
                 'due_date': assignment.due_date.strftime('%Y-%m-%dT%H:%M'),
                 'created_at': assignment.created_at.strftime('%d/%m/%Y'),
                 'file_name': assignment.file.name.split('/')[-1] if assignment.file else '',
+                'file_url': assignment.file.url if assignment.file else '',
                 'submission_count': 0,
                 'total_students': assignment.class_obj.students.count(),
                 'description': assignment.description or '',
@@ -600,6 +602,7 @@ class GradingView(LoginRequiredMixin, View):
                 'submitted_at': sub.submitted_at.strftime('%d/%m/%Y %H:%M') if sub and sub.status != 'missing' else '-',
                 'student_note': sub.note if sub else '',
                 'file_name': sub.file.name.split('/')[-1] if sub and sub.file else '',
+                'file_url': sub.file.url if sub and sub.file else '',
                 'file_size': '',
                 'grade': sub.grade if sub else None,
                 'feedback': sub.feedback if sub else '',
@@ -790,12 +793,14 @@ class StudentAssignmentListView(LoginRequiredMixin, View):
                         feedback = sub.feedback
                         submitted_at = sub.submitted_at.strftime('%d/%m/%Y %H:%M')
                         file_name = sub.file.name.split('/')[-1] if sub.file else ''
+                        file_url = sub.file.url if sub.file else ''
                     except Submission.DoesNotExist:
                         status = 'not_submitted'
                         grade = None
                         feedback = ''
                         submitted_at = ''
                         file_name = ''
+                        file_url = ''
 
                     assignments_data.append({
                         'id': a.id,
@@ -808,6 +813,7 @@ class StudentAssignmentListView(LoginRequiredMixin, View):
                         'feedback': feedback,
                         'submitted_at': submitted_at,
                         'file_name': file_name,
+                        'file_url': file_url,
                     })
 
         context = {'assignments': assignments_data}
@@ -833,6 +839,7 @@ class StudentAssignmentDetailView(LoginRequiredMixin, View):
             'created_at': assignment.created_at.strftime('%d/%m/%Y %H:%M'),
             'teacher': assignment.class_obj.teacher_name,
             'file_name': assignment.file.name.split('/')[-1] if assignment.file else '',
+            'file_url': assignment.file.url if assignment.file else '',
             'file_size': '',
             'description': assignment.description or '',
             'status': 'not_submitted',
@@ -840,6 +847,7 @@ class StudentAssignmentDetailView(LoginRequiredMixin, View):
             'feedback': '',
             'submitted_at': '',
             'submitted_file': '',
+            'submitted_file_url': '',
             'submitted_file_size': '',
             'student_note': '',
         }
@@ -851,6 +859,7 @@ class StudentAssignmentDetailView(LoginRequiredMixin, View):
                 'feedback': submission.feedback,
                 'submitted_at': submission.submitted_at.strftime('%d/%m/%Y %H:%M'),
                 'submitted_file': submission.file.name.split('/')[-1] if submission.file else '',
+                'submitted_file_url': submission.file.url if submission.file else '',
                 'student_note': submission.note,
             })
 
@@ -883,6 +892,7 @@ class StudentAssignmentDetailView(LoginRequiredMixin, View):
                     'status': 'ok',
                     'submitted_at': sub.submitted_at.strftime('%d/%m/%Y %H:%M'),
                     'file_name': sub.file.name.split('/')[-1] if sub.file else '',
+                    'file_url': sub.file.url if sub.file else '',
                 })
             return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
         return JsonResponse({'status': 'error', 'message': 'Not a student'}, status=403)
