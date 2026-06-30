@@ -1,6 +1,5 @@
-# EduManager — Ứng dụng Quản lý Lớp Học Thêm
+# EduManager - Ứng dụng Quản lý Lớp Học Thêm
 
-> [!IMPORTANT]
 > **🌐 WEBSITE DEMO:** [https://classroom-management-system-qlwq.onrender.com]
 
 ## 1. Công nghệ sử dụng
