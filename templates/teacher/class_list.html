@@ -80,6 +80,12 @@
                   </svg>
                   <span>Lịch học</span>
                 </a>
+                <button class="btn btn-secondary btn-sm" title="Xóa lớp học" style="color: var(--danger);" onclick="triggerDeleteClass({{ class.id }}, '{{ class.name|escapejs }}')">  
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                  <span>Xóa</span>
+                </button>
               </div>
             </td>
           </tr>
@@ -116,14 +122,11 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">Giáo viên phụ trách <span class="required">*</span></label>
-          <select id="formTeacherName" class="form-control" required>
-            <option value="" disabled selected>-- Chọn giáo viên phụ trách --</option>
-            <option value="Thầy Bùi Sỹ Việt Anh">Thầy Bùi Sỹ Việt Anh</option>
-            <option value="Thầy Nguyễn Quang Anh">Thầy Nguyễn Quang Anh</option>
-            <option value="Cô Lê Thảo Vy">Cô Lê Thảo Vy</option>
-            <option value="Thầy Đỗ Xuân Hậu">Thầy Đỗ Xuân Hậu</option>
-          </select>
+          <label class="form-label">Giáo viên phụ trách</label>
+          <div style="padding: var(--space-2) var(--space-3); background-color: var(--gray-50); border: 1px solid var(--gray-200); border-radius: var(--radius-md); font-size: var(--text-sm); color: var(--gray-700);">
+            👤 <strong>{{ teacher_display_name }}</strong>
+            <span style="font-size: var(--text-xs); color: var(--gray-400); margin-left: var(--space-2);">(Tài khoản đang đăng nhập)</span>
+          </div>
         </div>
 
         <div class="form-group">
@@ -137,10 +140,27 @@
         </div>
       </form>
     </div>
-    
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeClassModal()">Hủy</button>
       <button class="btn btn-primary" onclick="submitClassForm()">Lưu</button>
+    </div>
+  </div>
+</div><!-- MODAL XÓA LỚP HỌC -->
+<div class="modal-overlay" id="deleteClassModal">
+  <div class="modal" style="max-width: 440px;">
+    <div class="modal-header">
+      <h3 class="modal-title" style="color: var(--danger);">Xác nhận xóa lớp học</h3>
+      <button class="modal-close" onclick="closeDeleteClassModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p style="margin-bottom: var(--space-3); color: var(--gray-700);">Bạn có chắc chắn muốn xóa lớp <strong id="deleteClassName"></strong> không?</p>
+      <div style="background-color: var(--danger-light, #FEF2F2); border: 1px solid var(--danger); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); font-size: var(--text-sm); color: var(--danger);">
+        <strong>⚠️ Cảnh báo:</strong> Hành động này sẽ xóa vĩnh viễn lớp học cùng toàn bộ lịch học, bài tập và dữ liệu điểm danh liên quan. Không thể hoàn tác!
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeDeleteClassModal()">Hủy bỏ</button>
+      <button class="btn btn-primary" id="confirmDeleteClassBtn" style="background-color: var(--danger); border-color: var(--danger);" onclick="confirmDeleteClass()">Xóa lớp học</button>
     </div>
   </div>
 </div>
@@ -153,11 +173,14 @@
 
   const classModal = document.getElementById('classModal');
   const classForm = document.getElementById('classForm');
+  const deleteClassModal = document.getElementById('deleteClassModal');
 
   const formClassName = document.getElementById('formClassName');
-  const formTeacherName = document.getElementById('formTeacherName');
   const formRoom = document.getElementById('formRoom');
   const formDescription = document.getElementById('formDescription');
+
+  let pendingDeleteId = null;
+  let pendingDeleteRow = null;
 
   // Tìm kiếm trực tiếp
   searchInput.addEventListener('input', function() {
@@ -182,7 +205,7 @@
     noResultsRow.style.display = (matchCount === 0) ? '' : 'none';
   });
 
-  // Quản lý ẩn hiện Modal
+  // Quản lý ẩn hiện Modal thêm lớp
   function openAddClassModal() {
     classForm.reset();
     classModal.classList.add('open');
@@ -197,21 +220,68 @@
     if (e.target === this) closeClassModal();
   });
 
+  // Modal xóa lớp
+  function triggerDeleteClass(classId, className) {
+    pendingDeleteId = classId;
+    pendingDeleteRow = document.querySelector(`tr[data-id="${classId}"]`);
+    document.getElementById('deleteClassName').textContent = className;
+    deleteClassModal.classList.add('open');
+  }
+
+  function closeDeleteClassModal() {
+    deleteClassModal.classList.remove('open');
+    pendingDeleteId = null;
+    pendingDeleteRow = null;
+  }
+
+  deleteClassModal.addEventListener('click', function(e) {
+    if (e.target === this) closeDeleteClassModal();
+  });
+
+  async function confirmDeleteClass() {
+    if (!pendingDeleteId) return;
+    const btn = document.getElementById('confirmDeleteClassBtn');
+    btn.disabled = true;
+    btn.textContent = 'Đang xóa...';
+
+    const formData = new FormData();
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+    formData.append('action', 'delete');
+    formData.append('class_id', pendingDeleteId);
+
+    try {
+      const res = await fetch('{% url "class_list" %}', { method: 'POST', body: formData });
+      const data = await res.json();
+
+      if (!res.ok) {
+        showToast(data.message || 'Có lỗi xảy ra khi xóa lớp học.', 'danger');
+        return;
+      }
+
+      if (pendingDeleteRow) pendingDeleteRow.remove();
+      showToast('Đã xóa lớp học thành công.', 'success');
+      closeDeleteClassModal();
+    } catch (err) {
+      showToast('Lỗi kết nối. Vui lòng thử lại.', 'danger');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Xóa lớp học';
+    }
+  }
+
   // Gửi biểu mẫu thêm lớp học
   async function submitClassForm() {
     const name = formClassName.value.trim();
-    const teacherName = formTeacherName.value;
     const room = formRoom.value.trim();
     const description = formDescription.value.trim();
 
-    if (!name || !teacherName) {
-      showToast('Vui lòng nhập đầy đủ các thông tin bắt buộc (*).', 'danger');
+    if (!name) {
+      showToast('Vui lòng nhập tên lớp học.', 'danger');
       return;
     }
 
     const formData = new FormData();
     formData.append('name', name);
-    formData.append('teacher_name', teacherName);
     formData.append('room', room);
     formData.append('description', description);
     formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
@@ -253,7 +323,7 @@
         <td>${data.created_at}</td>
         <td>
           <div style="display: flex; gap: var(--space-2); justify-content: center;">
-            <a href="${detailUrl}" class="btn btn-secondary btn-sm" title="Chi tiết & Xếp lớp">
+            <a href="${detailUrl}" class="btn btn-secondary btn-sm" title="Chi tiết &amp; Xếp lớp">
               <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -266,12 +336,24 @@
               </svg>
               <span>Lịch học</span>
             </a>
+            <button class="btn btn-secondary btn-sm delete-class-btn" title="Xóa lớp học" style="color: var(--danger);" data-id="${data.id}" data-name="${data.name}">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              <span>Xóa</span>
+            </button>
           </div>
         </td>
       `;
 
       classTableBody.insertBefore(newTr, noResultsRow);
       classRows.push(newTr);
+
+      // Gắn sự kiện xóa cho nút mới
+      const newDeleteBtn = newTr.querySelector('.delete-class-btn');
+      if (newDeleteBtn) {
+        newDeleteBtn.addEventListener('click', () => triggerDeleteClass(newDeleteBtn.dataset.id, newDeleteBtn.dataset.name));
+      }
 
       showToast('Lưu thành công', 'success');
       closeClassModal();

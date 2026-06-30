@@ -152,7 +152,7 @@ class ChangePasswordForm(forms.Form):
 class ClassForm(forms.ModelForm):
     class Meta:
         model = Class
-        fields = ['name', 'teacher_name', 'room', 'description']
+        fields = ['name', 'room', 'description']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 3}),
         }
@@ -162,12 +162,6 @@ class ClassForm(forms.ModelForm):
         if not name:
             raise forms.ValidationError('Tên lớp học không được để trống.')
         return name
-
-    def clean_teacher_name(self):
-        teacher_name = self.cleaned_data.get('teacher_name', '').strip()
-        if not teacher_name:
-            raise forms.ValidationError('Vui lòng chọn giáo viên phụ trách.')
-        return teacher_name
 
 
 class StudentForm(forms.Form):
@@ -197,7 +191,16 @@ class StudentForm(forms.Form):
         phone = self.cleaned_data.get('phone', '').strip()
         if phone:
             validate_phone(phone)
+            if UserProfile.objects.filter(phone=phone).exists():
+                raise forms.ValidationError('Số điện thoại này đã được sử dụng bởi một tài khoản khác.')
         return phone
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email', '').strip()
+        if email:
+            if User.objects.filter(email=email).exists():
+                raise forms.ValidationError('Email này đã được sử dụng bởi một tài khoản khác.')
+        return email
 
     def clean_student_id(self):
         student_id = self.cleaned_data.get('student_id', '').strip()

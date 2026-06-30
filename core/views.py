@@ -211,13 +211,25 @@ class ClassListView(LoginRequiredMixin, View):
                 'created_at': c.created_at.strftime('%d/%m/%Y'),
             })
 
-        return render(request, 'teacher/class_list.html', {'classes': class_list_data})
+        return render(request, 'teacher/class_list.html', {
+            'classes': class_list_data,
+            'teacher_display_name': get_display_name(request.user),
+        })
 
     def post(self, request):
+        action = request.POST.get('action')
+
+        if action == 'delete':
+            class_id = request.POST.get('class_id')
+            cls = get_object_or_404(Class, pk=class_id, teacher=request.user)
+            cls.delete()
+            return JsonResponse({'status': 'ok'})
+
         form = ClassForm(request.POST)
         if form.is_valid():
             cls = form.save(commit=False)
             cls.teacher = request.user
+            cls.teacher_name = get_display_name(request.user)
             cls.save()
             return JsonResponse({
                 'status': 'ok',
