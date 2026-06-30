@@ -27,13 +27,16 @@ python3 -m venv venv
 source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
-# 4. Tạo bảng dữ liệu
+# 4. Thiết lập file môi trường (.env) từ file mẫu
+cp .env.example .env            # Windows (Cmd): copy .env.example .env
+
+# 5. Tạo bảng dữ liệu
 python manage.py migrate
 
-# 5. Tạo dữ liệu mẫu
+# 6. Tạo dữ liệu mẫu
 python manage.py seed_demo
 
-# 6. Chạy server
+# 7. Chạy server
 python manage.py runserver
 ```
 

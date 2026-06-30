@@ -816,6 +816,7 @@ class StudentAssignmentDetailView(LoginRequiredMixin, View):
             'title': assignment.title,
             'class_name': assignment.class_obj.name,
             'due_date': assignment.due_date.strftime('%Y-%m-%dT%H:%M'),
+            'created_at': assignment.created_at.strftime('%d/%m/%Y %H:%M'),
             'teacher': assignment.class_obj.teacher_name,
             'file_name': assignment.file.name.split('/')[-1] if assignment.file else '',
             'file_size': '',

@@ -244,6 +244,15 @@
     assignmentModal.classList.add('open');
     formTitle.focus();
 
+    // Thiết lập min attribute để khóa các ngày giờ trong quá khứ (ngày giao bài <= hạn nộp)
+    const now = new Date();
+    const now_yyyy = now.getFullYear();
+    const now_mm = String(now.getMonth() + 1).padStart(2, '0');
+    const now_dd = String(now.getDate()).padStart(2, '0');
+    const now_hh = String(now.getHours()).padStart(2, '0');
+    const now_min = String(now.getMinutes()).padStart(2, '0');
+    formDueDate.min = `${now_yyyy}-${now_mm}-${now_dd}T${now_hh}:${now_min}`;
+
     // Điền mặc định hạn nộp là ngày mai lúc 23:59
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
