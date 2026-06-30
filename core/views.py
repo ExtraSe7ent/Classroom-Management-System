@@ -279,20 +279,44 @@ class ClassDetailView(LoginRequiredMixin, View):
 
         if action == 'enroll':
             student_ids = request.POST.getlist('student_ids[]')
-            enrolled = []
+            
+            class_schedules = class_obj.schedules.all()
+            
+            errors = []
+            students_to_enroll = []
+            
             for sid in student_ids:
                 try:
                     student = Student.objects.get(id=sid)
-                    class_obj.students.add(student)
-                    enrolled.append({
-                        'id': student.id,
-                        'student_id': student.student_id,
-                        'name': get_display_name(student.user),
-                        'phone': student.user.profile.phone or '',
-                        'email': student.user.email,
-                    })
+                    students_to_enroll.append(student)
+                    
+                    if class_schedules.exists():
+                        student_schedules = Schedule.objects.filter(class_obj__students=student)
+                        for cs in class_schedules:
+                            has_conflict = False
+                            for ss in student_schedules:
+                                if cs.day_of_week == ss.day_of_week and max(cs.start_time, ss.start_time) < min(cs.end_time, ss.end_time):
+                                    errors.append(f"{student.user.get_full_name()} (trùng với lớp {ss.class_obj.name})")
+                                    has_conflict = True
+                                    break
+                            if has_conflict:
+                                break
                 except Student.DoesNotExist:
                     pass
+            
+            if errors:
+                return JsonResponse({'status': 'error', 'message': "Không thể xếp lớp do học sinh sau bị trùng lịch: " + ", ".join(list(set(errors)))}, status=400)
+                
+            enrolled = []
+            for student in students_to_enroll:
+                class_obj.students.add(student)
+                enrolled.append({
+                    'id': student.id,
+                    'student_id': student.student_id,
+                    'name': get_display_name(student.user),
+                    'phone': student.user.profile.phone or '' if hasattr(student.user, 'profile') else '',
+                    'email': student.user.email,
+                })
             return JsonResponse({'status': 'ok', 'enrolled': enrolled})
 
         if action == 'drop':
@@ -366,6 +390,36 @@ class ScheduleView(LoginRequiredMixin, View):
                             'status': 'error',
                             'message': f'Lỗi trùng lịch phòng học. Phòng học đã có [{s.class_obj.name}] đăng ký học ở thời gian này.'
                         }, status=400)
+
+            teacher_conflict = Schedule.objects.filter(
+                class_obj__teacher=class_obj.teacher,
+                day_of_week=day
+            ).exclude(class_obj=class_obj)
+            for s in teacher_conflict:
+                if max(start, s.start_time) < min(end, s.end_time):
+                    return JsonResponse({
+                        'status': 'error',
+                        'message': f'Lỗi trùng lịch giáo viên. Bạn đã có lịch dạy lớp {s.class_obj.name} vào thời gian này.'
+                    }, status=400)
+
+            students = class_obj.students.all()
+            if students.exists():
+                student_conflict = Schedule.objects.filter(
+                    class_obj__students__in=students,
+                    day_of_week=day
+                ).exclude(class_obj=class_obj).distinct()
+                
+                conflicting_students = []
+                for s in student_conflict:
+                    if max(start, s.start_time) < min(end, s.end_time):
+                        overlapping = s.class_obj.students.filter(id__in=students.values_list('id', flat=True))
+                        for st in overlapping:
+                            conflicting_students.append(f"{st.user.get_full_name()} ({st.student_id})")
+                
+                if conflicting_students:
+                    conflicting_students = list(set(conflicting_students))
+                    msg = "Lịch học bị trùng với lịch của các học sinh sau: " + ", ".join(conflicting_students)
+                    return JsonResponse({'status': 'error', 'message': msg}, status=400)
 
             sched = form.save(commit=False)
             sched.class_obj = class_obj

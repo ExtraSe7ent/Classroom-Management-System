@@ -231,18 +231,3 @@ Mã OTP dùng để khôi phục mật khẩu.
 1. Màn hình đăng nhập → **Quên mật khẩu**.
 2. Nhập số điện thoại đã đăng ký → **Gửi mã** → nhận OTP qua email.
 3. Nhập mật khẩu mới + mã OTP → **Lưu thay đổi**.
-
----
-
-## 5. Lệnh hữu ích
-
-```bash
-docker compose up -d              # Bật PostgreSQL
-docker compose down               # Tắt (giữ dữ liệu)
-docker compose down -v            # Tắt + xóa sạch dữ liệu
-
-python manage.py migrate          # Áp dụng migration
-python manage.py seed_demo        # Tạo lại dữ liệu mẫu
-python manage.py createsuperuser  # Tạo tài khoản Django Admin
-python manage.py runserver        # Chạy server tại :8000
-```
