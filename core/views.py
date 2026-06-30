@@ -714,7 +714,7 @@ class StudentScheduleView(LoginRequiredMixin, View):
 
         student_schedule = []
         if student:
-            schedules = Schedule.objects.filter(class_obj__in=student.classes.all()).select_related('class_obj')
+            schedules = Schedule.objects.filter(class_obj__in=student.classes.all()).select_related('class_obj').order_by('day_of_week', 'start_time')
             for i, s in enumerate(schedules):
                 student_schedule.append({
                     'class_name': s.class_obj.name,
