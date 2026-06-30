@@ -782,7 +782,7 @@ class StudentAssignmentListView(LoginRequiredMixin, View):
 
         if student:
             classes = student.classes.all()
-            status_names = {'pending': 'Chờ chấm điểm', 'graded': 'Đã có điểm', 'missing': 'Quá hạn / Thiếu bài', 'not_submitted': 'Chưa làm'}
+            status_names = {'pending': 'Chờ chấm điểm', 'graded': 'Đã có điểm', 'missing': 'Quá hạn / Thiếu bài', 'missed': 'Quá hạn / Thiếu bài', 'not_submitted': 'Chưa làm'}
 
             for cls in classes:
                 for a in Assignment.objects.filter(class_obj=cls).order_by('-created_at'):
@@ -795,7 +795,7 @@ class StudentAssignmentListView(LoginRequiredMixin, View):
                         file_name = sub.file.name.split('/')[-1] if sub.file else ''
                         file_url = sub.file.url if sub.file else ''
                     except Submission.DoesNotExist:
-                        status = 'not_submitted'
+                        status = 'missed' if timezone.now() > a.due_date else 'not_submitted'
                         grade = None
                         feedback = ''
                         submitted_at = ''
@@ -842,7 +842,7 @@ class StudentAssignmentDetailView(LoginRequiredMixin, View):
             'file_url': assignment.file.url if assignment.file else '',
             'file_size': '',
             'description': assignment.description or '',
-            'status': 'not_submitted',
+            'status': 'missed' if timezone.now() > assignment.due_date else 'not_submitted',
             'grade': None,
             'feedback': '',
             'submitted_at': '',
