@@ -207,7 +207,7 @@ class StudentForm(forms.Form):
         data = self.cleaned_data
         user = User.objects.create_user(
             username=data['username'],
-            password='Student@123',
+            password=f"{data['username']}@123",
             first_name=data['first_name'],
             last_name=data['last_name'],
             email=data.get('email', ''),

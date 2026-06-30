@@ -430,7 +430,7 @@ class StudentListView(LoginRequiredMixin, View):
                     'classes': '',
                     'date_of_birth': str(user.profile.date_of_birth or ''),
                     'address': user.profile.address or '',
-                    'default_password': 'Student@123',
+                    'default_password': f'{user.username}@123',
                 })
             return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
 
