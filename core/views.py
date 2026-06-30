@@ -488,40 +488,6 @@ class StudentListView(LoginRequiredMixin, View):
                 })
             return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
 
-        if action == 'edit':
-            student_pk = request.POST.get('student_db_id')
-            student = get_object_or_404(Student, id=student_pk)
-            user = student.user
-            form = StudentEditForm(request.POST)
-            if form.is_valid():
-                d = form.cleaned_data
-                user.first_name = d['first_name']
-                user.last_name = d['last_name']
-                user.email = d.get('email', '')
-                user.save()
-                profile, _ = UserProfile.objects.get_or_create(user=user)
-                profile.phone = d.get('phone', '')
-                profile.date_of_birth = d.get('date_of_birth')
-                profile.address = d.get('address', '')
-                profile.save()
-                classes_str = ', '.join([c.name for c in student.classes.filter(teacher=request.user)])
-                return JsonResponse({
-                    'status': 'ok',
-                    'first_name': user.first_name,
-                    'last_name': user.last_name,
-                    'phone': profile.phone or '',
-                    'email': user.email,
-                    'classes': classes_str,
-                })
-            return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
-
-        if action == 'delete':
-            student_pk = request.POST.get('student_db_id')
-            student = get_object_or_404(Student, id=student_pk)
-            student_code = student.student_id
-            student.user.delete()
-            return JsonResponse({'status': 'ok', 'student_id': student_code})
-
         return JsonResponse({'status': 'error', 'message': 'Invalid action'}, status=400)
 
 class AttendanceView(LoginRequiredMixin, View):
