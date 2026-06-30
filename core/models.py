@@ -14,7 +14,7 @@ DAY_CHOICES = [
 
 
 
-# --- CẤU HÌNH TÀI KHOẢN ---
+# Cấu hình tài khoản
 
 class UserProfile(models.Model):
     ROLE_CHOICES = [
@@ -41,7 +41,7 @@ class UserProfile(models.Model):
 
 
 
-# --- QUẢN LÝ LỚP HỌC & HỌC SINH ---
+# Quản lý lớp học & học sinh
 
 class Class(models.Model):
     name = models.CharField(max_length=100)
@@ -91,7 +91,7 @@ class Student(models.Model):
 
 
 
-# --- LỊCH HỌC & BÀI TẬP ---
+# Lịch học & bài tập
 
 class Schedule(models.Model):
     class_obj = models.ForeignKey(Class, on_delete=models.CASCADE, related_name='schedules')
@@ -163,7 +163,7 @@ class Submission(models.Model):
 
 
 
-# --- ĐIỂM DANH & NHẬN XÉT ---
+# Điểm danh & nhận xét
 
 class Attendance(models.Model):
     STATUS_CHOICES = [
@@ -214,7 +214,7 @@ class DailyComment(models.Model):
 
 
 
-# --- XÁC THỰC OTP ---
+# Xác thực OTP
 
 class PasswordResetOTP(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='password_otps')

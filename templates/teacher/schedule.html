@@ -157,7 +157,7 @@
     return h * 60 + m;
   }
 
-  // ===== LƯU LỊCH HỌC (AJAX POST) =====
+  // Gửi biểu mẫu lưu lịch học
   scheduleForm.addEventListener('submit', async function(e) {
     e.preventDefault();
 
@@ -283,7 +283,7 @@
     }
   });
 
-  // ===== XÓA LỊCH HỌC (AJAX POST) =====
+  // Gửi yêu cầu xóa lịch học
   function triggerDeleteSchedule(button) {
     const row = button.closest('tr');
     const scheduleId = row.getAttribute('data-id');

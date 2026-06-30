@@ -33,9 +33,7 @@ def get_display_name(user):
     return ' '.join(p for p in parts if p).strip() or user.username
 
 
-# ================================
-# --- KHỐI XÁC THỰC (AUTH) ---
-# ================================
+# Khối xác thực (Auth)
 
 class LoginView(View):
     def get(self, request):
@@ -185,9 +183,7 @@ class ResetPasswordView(View):
         return JsonResponse({'status': 'ok', 'message': 'Đổi mật khẩu thành công!'})
 
 
-# ================================
-# --- KHỐI GIÁO VIÊN (TEACHER) ---
-# ================================
+# Khối giáo viên (Teacher)
 
 class TeacherDashboardView(LoginRequiredMixin, View):
     def get(self, request):
@@ -647,9 +643,7 @@ def _get_student_or_none(request):
         return None
 
 
-# ================================
-# --- KHỐI HỌC SINH (STUDENT) ---
-# ================================
+# Khối học sinh (Student)
 
 class StudentDashboardView(LoginRequiredMixin, View):
     def get(self, request):
@@ -895,9 +889,7 @@ class StudentAssignmentDetailView(LoginRequiredMixin, View):
 
 
 
-# ================================
-# --- KHỐI CHỨC NĂNG CHUNG ---
-# ================================
+# Chức năng chung
 
 class ProfileView(LoginRequiredMixin, View):
     def get(self, request):

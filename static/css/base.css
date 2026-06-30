@@ -1,9 +1,8 @@
-/* ===== CSS VARIABLES ===== */
 :root {
   /* Màu chủ đạo */
-  --primary: #4F46E5;        /* indigo - màu chính */
-  --primary-dark: #3730A3;   /* hover state */
-  --primary-light: #EEF2FF;  /* background nhạt */
+  --primary: #4F46E5;       
+  --primary-dark: #3730A3;  
+  --primary-light: #EEF2FF;  
 
   /* Màu trạng thái */
   --success: #16A34A;
@@ -69,7 +68,7 @@
   --topbar-height: 60px;
 }
 
-/* ===== RESET ===== */
+/* Reset */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -118,7 +117,7 @@ input, textarea, select {
   font-size: var(--text-sm);
 }
 
-/* ===== TYPOGRAPHY ===== */
+/* Typography */
 h1 { font-size: var(--text-2xl); font-weight: 700; color: var(--gray-900); }
 h2 { font-size: var(--text-xl);  font-weight: 600; color: var(--gray-800); }
 h3 { font-size: var(--text-lg);  font-weight: 600; color: var(--gray-800); }
@@ -132,7 +131,7 @@ h4 { font-size: var(--text-base);font-weight: 600; color: var(--gray-700); }
 .font-medium { font-weight: 500; }
 .font-bold   { font-weight: 700; }
 
-/* ===== UTILITIES ===== */
+/* Tiện ích */
 .d-flex        { display: flex; }
 .align-center  { align-items: center; }
 .justify-between { justify-content: space-between; }

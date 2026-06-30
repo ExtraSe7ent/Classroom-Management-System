@@ -1,4 +1,4 @@
-// ===== TOAST =====
+// Thông báo
 function showToast(message, type = 'success') {
   const container = document.getElementById('toastContainer');
   const toast = document.createElement('div');
@@ -11,7 +11,7 @@ function showToast(message, type = 'success') {
   setTimeout(() => toast.remove(), 3500);
 }
 
-// ===== MODAL XÁC NHẬN =====
+// Hộp thoại xác nhận
 function openModal(title, body, onConfirm) {
   document.getElementById('modalTitle').textContent = title;
   document.getElementById('modalBody').textContent = body;
@@ -26,12 +26,12 @@ function closeModal() {
   document.getElementById('modalConfirm').classList.remove('open');
 }
 
-// Đóng modal khi click ra ngoài
+// Đóng hộp thoại khi click ra ngoài
 document.getElementById('modalConfirm')?.addEventListener('click', function(e) {
   if (e.target === this) closeModal();
 });
 
-// ===== VALIDATE FILE =====
+// Kiểm tra định dạng tệp tin
 function validateFile(file, maxMB = 10) {
   const allowed = ['.pdf', '.doc', '.docx', '.png', '.jpg'];
   const ext = '.' + file.name.split('.').pop().toLowerCase();
@@ -46,13 +46,13 @@ function validateFile(file, maxMB = 10) {
   return true;
 }
 
-// ===== FORMAT DATE =====
+// Định dạng ngày tháng
 function formatDate(dateStr) {
   const d = new Date(dateStr);
   return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
-// ===== PASSWORD TOGGLE =====
+// Ẩn hiện mật khẩu
 function togglePassword(btn) {
   const input = btn.previousElementSibling;
   const show = input.type === 'password';
@@ -62,7 +62,7 @@ function togglePassword(btn) {
   btn.title = show ? 'Ẩn mật khẩu' : 'Hiện mật khẩu';
 }
 
-// ===== CSRF TOKEN (cho fetch/AJAX) =====
+// Lấy mã CSRF Token
 function getCookie(name) {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);

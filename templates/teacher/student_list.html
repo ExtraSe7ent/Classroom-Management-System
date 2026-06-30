@@ -176,7 +176,7 @@
   const classesHint = document.getElementById('classesHint');
   const formAddress = document.getElementById('formAddress');
 
-  // ===== TÌM KIẾM TRỰC TIẾP =====
+  // Tìm kiếm trực tiếp
   searchInput.addEventListener('input', function() {
     const keyword = this.value.trim().toLowerCase();
     let matchCount = 0;
@@ -202,7 +202,7 @@
     noResultsRow.style.display = (matchCount === 0) ? '' : 'none';
   });
 
-  // ===== MỞ MODAL THÊM MỚI =====
+  // Quản lý ẩn hiện Modal
   function openAddStudentModal() {
     studentForm.reset();
     
@@ -228,7 +228,7 @@
     if (e.target === this) closeStudentModal();
   });
 
-  // ===== LƯĂ FORM (AJAX POST) =====
+  // Gửi biểu mẫu lưu học sinh
   async function submitStudentForm() {
     const studentDbId = formStudentDbId.value;
     const studentId = formStudentId.value;

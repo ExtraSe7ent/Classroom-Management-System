@@ -2,8 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    # Auth
-    # --- XÁC THỰC (AUTH) ---
+    # Xác thực
     
 path('', views.LoginView.as_view(), name='login'),
     path('logout/', views.LogoutView.as_view(), name='logout'),
@@ -12,9 +11,7 @@ path('', views.LoginView.as_view(), name='login'),
     path('forgot-password/send-otp/', views.SendOTPView.as_view(), name='send_otp'),
     path('forgot-password/reset/', views.ResetPasswordView.as_view(), name='reset_password'),
 
-    # Teacher
-    
-    # --- MENU GIÁO VIÊN ---
+    # Menu giáo viên
     
 path('teacher-dashboard/', views.TeacherDashboardView.as_view(), name='teacher_dashboard'),
     path('classes/', views.ClassListView.as_view(), name='class_list'),
@@ -25,9 +22,7 @@ path('teacher-dashboard/', views.TeacherDashboardView.as_view(), name='teacher_d
     path('assignments/', views.AssignmentListView.as_view(), name='assignment_list'),
     path('assignments/<int:pk>/grading/', views.GradingView.as_view(), name='grading'),
 
-    # Student
-    
-    # --- MENU HỌC SINH ---
+    # Menu học sinh
     
 path('student-dashboard/', views.StudentDashboardView.as_view(), name='student_dashboard'),
     path('my-schedule/', views.StudentScheduleView.as_view(), name='student_schedule'),
@@ -35,9 +30,7 @@ path('student-dashboard/', views.StudentDashboardView.as_view(), name='student_d
     path('my-assignments/', views.StudentAssignmentListView.as_view(), name='student_assignment_list'),
     path('my-assignments/<int:pk>/', views.StudentAssignmentDetailView.as_view(), name='student_assignment_detail'),
 
-    # Chung
-    
-    # --- CHỨC NĂNG CHUNG ---
+    # Chức năng chung
     
 path('profile/', views.ProfileView.as_view(), name='profile'),
 ]

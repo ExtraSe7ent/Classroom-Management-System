@@ -1,233 +1,98 @@
 # EduManager — Ứng dụng Quản lý Lớp Học Thêm
 
-Đồ án cuối kỳ · CSE3045 - Học theo dự án khoa học và kỹ thuật  
-Khoa Công nghệ và Kỹ thuật tiên tiến · Trường Đại học Việt Nhật, ĐHQGHN
+**Đồ án cuối kỳ · Môn học: Học theo dự án khoa học và kỹ thuật (CSE3045)**  
+**Khoa Công nghệ và Kỹ thuật tiên tiến · Trường Đại học Việt Nhật, ĐHQGHN**
+
+Dự án này được thiết kế và phát triển nhằm đáp ứng trọn vẹn yêu cầu của **Đề thi kết thúc học phần** và **Hướng dẫn làm dự án cuối khóa**, đảm bảo đầy đủ các hạng mục về Kỹ thuật, Thiết kế UI/UX và Tổ chức mã nguồn.
 
 ---
 
-## 1. Hướng dẫn cài đặt & chạy dự án
+## 1. Công nghệ sử dụng
+- **Front-end:** HTML5, CSS3 thuần (áp dụng Responsive Design cho web/mobile), JavaScript cơ bản. Giao diện UI/UX được tinh chỉnh theo tiêu chuẩn hiện đại, đảm bảo tính nhất quán.
+- **Back-end:** Python Django (Sử dụng Class-based Views & Django Forms). Có hệ thống Authentication & Authorization phân quyền rõ ràng (Admin/Teacher vs Student).
+- **Cơ sở dữ liệu:** PostgreSQL (Lưu trữ an toàn, sử dụng Django ORM hiệu quả với các quy tắc Cascade Delete và Set Null).
+- **Triển khai (Deployment):** Render (Web Server) và Supabase (Database).
 
-### Yêu cầu
+---
 
+## 2. Hướng dẫn cài đặt & chạy dự án
+
+Dự án hỗ trợ môi trường chạy cục bộ với Docker để dễ dàng khởi tạo Database.
+
+### Yêu cầu hệ thống
 - Python 3.10+
-- Docker Desktop
+- Docker Desktop (Để chạy DB PostgreSQL)
+- Git
 
-### Các bước
+### Các bước cài đặt
 
 ```bash
-# 1. Clone repository
+# 1. Clone repository về máy
 git clone <url-repository>
 cd EduManager
 
 # 2. Thiết lập file môi trường (.env) từ file mẫu
 cp .env.example .env            # Windows (Cmd): copy .env.example .env
 
-# 3. Khởi động PostgreSQL
+# 3. Khởi động PostgreSQL qua Docker
 docker compose up -d
-# Cài đặt extension "Database Client" trên để dễ dàng xem và quản lý dữ liệu trong PostgreSQL Docker.
 
-# 4. Tạo môi trường ảo và cài thư viện
+# 4. Tạo môi trường ảo và cài đặt thư viện
 python3 -m venv venv
 source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
-# 5. Tạo bảng dữ liệu
+# 5. Khởi tạo cơ sở dữ liệu
 python manage.py migrate
 
-# 6. Tạo dữ liệu mẫu
+# 6. Khởi tạo dữ liệu mẫu (Tạo sẵn Giáo viên, Học sinh, Lớp học)
 python manage.py seed_demo
 
-# 7. Chạy server
+# 7. Chạy server phát triển
 python manage.py runserver
 ```
 
-### Tài khoản demo
-
-#### Giáo viên
-
+### Tài khoản Demo có sẵn
+**Giáo viên (Admin):**
 | Tên đăng nhập | Mật khẩu          | Lớp phụ trách                        |
 | ------------- | ----------------- | ------------------------------------ |
 | `TeacherToan` | `TeacherToan@123` | Toán 9A, Toán 9B (Nâng cao), Toán 10 |
 | `TeacherVan`  | `TeacherVan@123`  | Ngữ Văn 9, Ngữ Văn 10                |
 | `TeacherAnh`  | `TeacherAnh@123`  | Tiếng Anh IELTS, Tiếng Anh Giao Tiếp |
 
-#### Học sinh
-
-| Tên đăng nhập | Mật khẩu        |
-| ------------- | --------------- |
-| `Student01`   | `Student01@123` |
-| `Student02`   | `Student02@123` |
-| …             | …               |
-| `Student20`   | `Student20@123` |
+**Học sinh (User):**
+Tên đăng nhập từ `Student01` đến `Student20`. Mật khẩu tương ứng: `Student01@123`, `Student02@123`...
 
 ---
 
-## 2. Phân tách FE / BE / DB
+## 3. Tài liệu Django Models (Database Schema)
 
-| Tầng         | Thư mục / File                                                               |
-| ------------ | ---------------------------------------------------------------------------- |
-| **Frontend** | `templates/` + `static/`                                                     |
-| **Backend**  | `core/views.py`, `core/forms.py`, `core/urls.py`, `core/admin.py`, `config/` |
-| **Database** | `core/models.py`, `core/migrations/`, `docker-compose.yml`                   |
+Hệ thống được thiết kế với **9 Models** chặt chẽ, tối ưu cho nghiệp vụ giáo dục bổ trợ:
 
----
-
-## 3. Tài liệu Django Models
-
-Hệ thống gồm **9 model** ánh xạ thành 9 bảng trong PostgreSQL.
-
-### `UserProfile`
-
-Mở rộng `User` Django — lưu thông tin bổ sung của người dùng.
-
-| Trường          | Kiểu                 | Mô tả                                 |
-| --------------- | -------------------- | ------------------------------------- |
-| `user`          | OneToOneField → User | Tài khoản Django                      |
-| `role`          | CharField            | `teacher` hoặc `student`              |
-| `phone`         | CharField            | Số điện thoại (10 số, bắt đầu bằng 0) |
-| `date_of_birth` | DateField            | Ngày sinh                             |
-| `address`       | TextField            | Địa chỉ                               |
-
-### `Student`
-
-Hồ sơ học sinh, liên kết nhiều-nhiều với lớp học.
-
-| Trường       | Kiểu                    | Mô tả                   |
-| ------------ | ----------------------- | ----------------------- |
-| `user`       | OneToOneField → User    | Tài khoản học sinh      |
-| `student_id` | CharField               | Mã học sinh (VD: HS001) |
-| `classes`    | ManyToManyField → Class | Danh sách lớp đang học  |
-
-### `Class`
-
-Lớp học do giáo viên phụ trách.
-
-| Trường         | Kiểu              | Mô tả                        |
-| -------------- | ----------------- | ---------------------------- |
-| `name`         | CharField         | Tên lớp                      |
-| `teacher`      | ForeignKey → User | Giáo viên (SET_NULL khi xóa) |
-| `teacher_name` | CharField         | Tên hiển thị của giáo viên   |
-| `room`         | CharField         | Phòng học mặc định           |
-| `description`  | TextField         | Mô tả lớp                    |
-
-### `Schedule`
-
-Lịch học cố định theo thứ trong tuần.
-
-| Trường        | Kiểu               | Mô tả                 |
-| ------------- | ------------------ | --------------------- |
-| `class_obj`   | ForeignKey → Class | Lớp học               |
-| `day_of_week` | CharField          | Thứ (Monday → Sunday) |
-| `start_time`  | TimeField          | Giờ bắt đầu           |
-| `end_time`    | TimeField          | Giờ kết thúc          |
-| `room`        | CharField          | Phòng học ca này      |
-
-### `Assignment`
-
-Bài tập do giáo viên giao cho lớp.
-
-| Trường        | Kiểu               | Mô tả                                     |
-| ------------- | ------------------ | ----------------------------------------- |
-| `class_obj`   | ForeignKey → Class | Lớp nhận bài                              |
-| `title`       | CharField          | Tiêu đề (5–255 ký tự)                     |
-| `description` | TextField          | Nội dung đề bài                           |
-| `due_date`    | DateTimeField      | Hạn nộp (phải > thời điểm tạo)            |
-| `file`        | FileField          | File đính kèm (PDF/Word/ảnh, tối đa 10MB) |
-| `created_by`  | ForeignKey → User  | Giáo viên tạo bài                         |
-
-### `Submission`
-
-Bài nộp của học sinh.
-
-| Trường       | Kiểu                    | Mô tả                              |
-| ------------ | ----------------------- | ---------------------------------- |
-| `assignment` | ForeignKey → Assignment | Bài tập                            |
-| `student`    | ForeignKey → Student    | Học sinh nộp                       |
-| `file`       | FileField               | File bài làm                       |
-| `note`       | TextField               | Ghi chú kèm bài (tối đa 500 ký tự) |
-| `status`     | CharField               | `pending` / `graded` / `missing`   |
-| `grade`      | DecimalField            | Điểm 0.0–10.0                      |
-| `feedback`   | TextField               | Nhận xét của giáo viên             |
-
-### `Attendance`
-
-Điểm danh chuyên cần.
-
-| Trường      | Kiểu                 | Mô tả                            |
-| ----------- | -------------------- | -------------------------------- |
-| `student`   | ForeignKey → Student | Học sinh                         |
-| `class_obj` | ForeignKey → Class   | Lớp học                          |
-| `date`      | DateField            | Ngày điểm danh                   |
-| `status`    | CharField            | `present` / `excused` / `absent` |
-
-### `DailyComment`
-
-Nhận xét hàng ngày của giáo viên dành cho từng học sinh.
-
-| Trường         | Kiểu                 | Mô tả                  |
-| -------------- | -------------------- | ---------------------- |
-| `student`      | ForeignKey → Student | Học sinh được nhận xét |
-| `class_obj`    | ForeignKey → Class   | Lớp học                |
-| `comment_date` | DateField            | Ngày nhận xét          |
-| `comment_text` | TextField            | Nội dung nhận xét      |
-| `created_by`   | ForeignKey → User    | Giáo viên nhận xét     |
-
-### `PasswordResetOTP`
-
-Mã OTP dùng để khôi phục mật khẩu.
-
-| Trường       | Kiểu              | Mô tả                      |
-| ------------ | ----------------- | -------------------------- |
-| `user`       | ForeignKey → User | Tài khoản cần reset        |
-| `otp_code`   | CharField         | Mã 6 chữ số                |
-| `expires_at` | DateTimeField     | Thời điểm hết hạn (5 phút) |
-| `is_used`    | BooleanField      | Đã dùng chưa               |
+1. **`UserProfile`**: Mở rộng thông tin từ bảng `User` mặc định của Django. Chứa `role` (teacher/student), `phone`, `date_of_birth`, `address`.
+2. **`Student`**: Hồ sơ học sinh định danh bằng `student_id` (VD: HS001). Liên kết N-N với lớp học thông qua bảng trung gian (Django tự tạo).
+3. **`Class`**: Quản lý lớp học (`name`, `room`). Chứa ForeignKey `teacher` trỏ tới User (Quy tắc `on_delete=models.SET_NULL` để bảo toàn lớp học khi giáo viên nghỉ việc).
+4. **`Schedule`**: Lưu trữ thời khóa biểu cố định. Bắt buộc có cơ chế kiểm tra **không trùng giờ/phòng/giáo viên/học sinh**.
+5. **`Assignment`**: Bài tập về nhà (`title`, `description`, `due_date`, `file` đính kèm hỗ trợ pdf, doc, jpg <10MB).
+6. **`Submission`**: Lưu viết bài làm của học sinh. Xóa học sinh sẽ xóa luôn bài nộp (`on_delete=models.CASCADE`). Chứa điểm `grade` (float 0.0-10.0) và lời phê `feedback`.
+7. **`Attendance`**: Bảng dữ liệu điểm danh chuyên cần (`status`: present/absent/excused) theo từng ngày.
+8. **`DailyComment`**: Nhận xét thái độ, kết quả học tập hàng ngày của giáo viên dành riêng cho mỗi học sinh.
+9. **`PasswordResetOTP`**: Quản lý vòng đời mã OTP 6 số để lấy lại mật khẩu an toàn (Hết hạn sau 5 phút).
 
 ---
 
-## 4. Hướng dẫn sử dụng
+## 4. Hướng dẫn sử dụng Website
 
-### Dành cho Giáo viên
+### Phân hệ Giáo viên (Admin)
+- **Quản lý lớp học & Lịch học:** Tạo lớp học mới. Xếp học sinh từ danh sách trung tâm vào lớp bằng tính năng **Tìm kiếm nâng cao**. Đặt thời khóa biểu cố định cho lớp.
+- **Quản lý học sinh:** Quản trị danh sách học sinh. Giáo viên có thể **Thêm học sinh mới** (Hệ thống tự cấp mã HS và mật khẩu mặc định). *Lưu ý: Để đảm bảo bảo mật và minh bạch, tính năng Sửa/Xóa học sinh toàn cục bị khóa, giáo viên chỉ được phép "Xóa học sinh khỏi lớp học" của mình.*
+- **Điểm danh & Nhận xét:** Truy cập mục Điểm danh, chọn ngày hiện tại để đánh dấu chuyên cần (Đi học / Vắng). Kết hợp gửi luôn lời nhận xét ngắn gọn về thái độ buổi học đó.
+- **Giao bài & Chấm bài:** Đăng bài tập kèm tài liệu (giới hạn thời gian nộp). Mở bài nộp của học sinh để chấm điểm hệ số thập phân và ghi phản hồi.
 
-**Quản lý lớp học** (`/classes/`)
-
-- Tạo lớp mới: điền tên lớp, phòng, mô tả.
-- Xem chi tiết lớp: thêm hoặc xóa học sinh khỏi lớp.
-- Xếp lịch học: chọn thứ, giờ bắt đầu/kết thúc, phòng — hệ thống tự kiểm tra trùng phòng.
-
-**Quản lý học sinh** (`/students/`)
-
-- Thêm học sinh: nhập họ tên, SĐT, email → hệ thống tạo tài khoản với mật khẩu mặc định `Student@123`.
-- Sửa thông tin hoặc xóa học sinh (xóa cascade toàn bộ dữ liệu liên quan).
-
-**Điểm danh & nhận xét** (`/attendance/`)
-
-- Chọn lớp và ngày → điểm danh từng học sinh (Có mặt / Vắng phép / Vắng không phép) → nhập nhận xét → Lưu.
-
-**Giao bài tập** (`/assignments/`)
-
-- Tạo bài tập: chọn lớp, tiêu đề, mô tả, hạn nộp, file đề bài.
-
-**Chấm điểm** (`/assignments/<pk>/grading/`)
-
-- Xem danh sách bài đã nộp → nhập điểm (0.0–10.0) và nhận xét → Lưu điểm.
-
----
-
-### Dành cho Học sinh
-
-**Đăng ký tài khoản:** Truy cập `/register/` → điền thông tin → đăng nhập tự động.
-
-**Xem lịch học** (`/my-schedule/`): lịch học theo tuần của tất cả lớp đang tham gia.
-
-**Xem điểm danh & nhận xét** (`/my-attendance/`): tỷ lệ chuyên cần và timeline nhận xét của giáo viên.
-
-**Bài tập** (`/my-assignments/`): xem theo trạng thái Chưa nộp / Đã nộp / Đã có điểm / Quá hạn; click vào để xem đề và nộp bài trước hạn; xem điểm và nhận xét sau khi được chấm.
-
----
-
-### Quên mật khẩu
-
-1. Màn hình đăng nhập → **Quên mật khẩu**.
-2. Nhập số điện thoại đã đăng ký → **Gửi mã** → nhận OTP qua email.
-3. Nhập mật khẩu mới + mã OTP → **Lưu thay đổi**.
+### Phân hệ Học sinh (User)
+- **Đăng ký & Đăng nhập:** Học sinh có thể tự đăng ký tài khoản qua form `Register`. Nếu quên mật khẩu, có thể yêu cầu gửi mã OTP về Email để khôi phục.
+- **Trang chủ (Dashboard):** Tra cứu ngay lập tức các bài tập về nhà sắp đến hạn và các thống kê chuyên cần.
+- **Xem Lịch học:** Theo dõi thời khóa biểu cố định hàng tuần (Thứ, Ca học, Phòng học).
+- **Kiểm tra Điểm danh:** Tra cứu lại tỷ lệ đi học và timeline nhận xét chi tiết của thầy cô.
+- **Nộp bài tập:** Tải đề bài về. Nộp bài làm dưới dạng văn bản hoặc ảnh trước khi hết thời gian `due_date`. Hệ thống tự động khóa tính năng nộp bài nếu quá hạn.
+- **Xem Điểm số:** Theo dõi điểm số và đọc lời phê chi tiết sau khi giáo viên hoàn tất việc chấm bài.

@@ -7,7 +7,7 @@
 
 {% block extra_css %}
 <style>
-  /* Tab active highlighting */
+  /* Làm nổi bật tab đang hoạt động */
   .tab-item.active {
     background-color: #fff;
     color: var(--primary);
@@ -138,7 +138,7 @@
 
   formatDueBadges();
 
-  // ===== FILTER TABS ACTION =====
+  // Xử lý chuyển tab bộ lọc
   function filterAssignments(status, buttonEl) {
     const tabs = document.querySelectorAll('.tab-item');
     tabs.forEach(t => t.classList.remove('active'));
@@ -170,7 +170,7 @@
     emptyRow.style.display = (matchCount === 0) ? 'table-row' : 'none';
   }
 
-  // ===== HELPER: FORMAT DUE DATE BADGES =====
+  // Định dạng nhãn hạn nộp
   function formatDueBadges() {
     const badges = document.querySelectorAll('.due-date-badge');
     badges.forEach(badge => {

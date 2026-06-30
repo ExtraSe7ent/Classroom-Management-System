@@ -316,7 +316,7 @@
     }, 1000);
   }
 
-  // Gửi OTP - gọi backend gửi mã về email gắn với SĐT
+  // Gửi OTP
   sendOtpBtn.addEventListener('click', async function() {
     const phone = forgotPhone.value.trim();
     if (!phone) {
@@ -362,7 +362,7 @@
     }
   });
 
-  // ===== SUBMIT FORM ĐĂNG NHẬP =====
+  // Gửi biểu mẫu đăng nhập
   loginForm.addEventListener('submit', function(event) {
     hideClientError();
 
@@ -382,7 +382,7 @@
     }
   });
 
-  // ===== SUBMIT FORM QUÊN MẬT KHẨU =====
+  // Gửi biểu mẫu quên mật khẩu
   forgotPasswordForm.addEventListener('submit', async function(event) {
     event.preventDefault();
     hideClientError();

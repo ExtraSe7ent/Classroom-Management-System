@@ -7,7 +7,7 @@
 
 {% block extra_css %}
 <style>
-  /* Custom segment radio options for attendance */
+  /* Lựa chọn điểm danh */
   .attendance-group {
     display: flex;
     gap: var(--space-2);
@@ -40,7 +40,7 @@
     user-select: none;
   }
   
-  /* Present states */
+  /* Trạng thái đi học */
   .attendance-option.present input[type="radio"]:checked + .attendance-label {
     background-color: var(--success-light);
     border-color: var(--success);
@@ -53,7 +53,7 @@
     color: var(--success);
   }
 
-  /* Excused states */
+  /* Trạng thái vắng có phép */
   .attendance-option.excused input[type="radio"]:checked + .attendance-label {
     background-color: var(--warning-light);
     border-color: var(--warning);
@@ -66,7 +66,7 @@
     color: var(--warning);
   }
 
-  /* Unexcused states */
+  /* Trạng thái vắng không phép */
   .attendance-option.absent input[type="radio"]:checked + .attendance-label {
     background-color: var(--danger-light);
     border-color: var(--danger);
@@ -79,7 +79,7 @@
     color: var(--danger);
   }
 
-  /* Filters styling */
+  /* Kiểu dáng bộ lọc */
   .filter-panel {
     background-color: #fff;
     border-radius: var(--radius-lg);
@@ -111,7 +111,7 @@
     min-width: 200px;
   }
   
-  /* Quick statistics board */
+  /* Bảng thống kê nhanh */
   .stat-banner {
     display: flex;
     gap: var(--space-4);
@@ -244,7 +244,7 @@
   const attendanceTableBody = document.getElementById('attendanceTableBody');
   const attendanceForm = document.getElementById('attendanceForm');
   
-  // Stat elements
+  // Các thẻ hiển thị thống kê
   const statTotal = document.getElementById('statTotal');
   const statPresent = document.getElementById('statPresent');
   const statExcused = document.getElementById('statExcused');
@@ -274,7 +274,7 @@
   // Chạy lần đầu tiên khi tải trang
   renderAttendanceTable(selectClass.value);
 
-  // ===== RENDER TABLE =====
+  // Hiển thị danh sách điểm danh
   function renderAttendanceTable(classId) {
     const className = selectClass.options[selectClass.selectedIndex].text;
     classTitleText.textContent = `Bảng điểm danh & nhận xét: ${className}`;
@@ -336,7 +336,7 @@
     recalculateStats();
   }
 
-  // ===== RECALCULATE STATS =====
+  // Tính toán thống kê điểm danh
   function recalculateStats() {
     const rows = attendanceTableBody.querySelectorAll('tr');
     let total = 0;
@@ -369,7 +369,7 @@
     statAbsent.textContent = absent;
   }
 
-  // ===== QUICK ACTIONS: SET ALL PRESENT =====
+  // Đánh dấu đi học cho tất cả
   function resetToPresent() {
     const radios = attendanceTableBody.querySelectorAll('input[type="radio"][value="present"]');
     radios.forEach(radio => {
@@ -379,7 +379,7 @@
     showToast('Đã đặt trạng thái đi học cho tất cả.', 'info');
   }
 
-  // ===== SUBMIT FORM (AJAX POST) =====
+  // Gửi biểu mẫu điểm danh
   attendanceForm.addEventListener('submit', async function(e) {
     e.preventDefault();
 
@@ -394,7 +394,7 @@
     }
 
     const submitBtn = attendanceForm.querySelector('button[type="submit"]');
-    if (submitBtn.disabled) return; // Chống double submit
+    if (submitBtn.disabled) return; // Chống gửi trùng lặp
     submitBtn.disabled = true;
     submitBtn.textContent = 'Đang lưu...';
 
@@ -412,7 +412,7 @@
       if (!checkedRadio) return;
 
       const status = checkedRadio.value;
-      // Lấy student_id từ name attribute của radio (format: "status_HS001")
+      // Lấy mã học sinh từ thuộc tính name của nút radio
       const studentId = checkedRadio.name.replace('status_', '');
       const remarks = row.querySelector('input[type="text"]')?.value || '';
 

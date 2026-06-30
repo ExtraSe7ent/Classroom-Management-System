@@ -1,4 +1,4 @@
-/* ===== BUTTON ===== */
+/* Button */
 .btn {
   display: flex;
   align-items: center;
@@ -72,7 +72,7 @@
   cursor: not-allowed;
 }
 
-/* ===== CARD ===== */
+/* Card */
 .card {
   background-color: #fff;
   border-radius: var(--radius-lg);
@@ -137,7 +137,7 @@
   margin-top: var(--space-1);
 }
 
-/* ===== BADGE ===== */
+/* Badge */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -154,7 +154,7 @@
 .badge-info     { background-color: var(--info-light);    color: var(--info);    }
 .badge-gray     { background-color: var(--gray-100);      color: var(--gray-600);}
 
-/* ===== TABLE ===== */
+/* Table */
 .table-wrapper {
   overflow-x: auto;
   border-radius: var(--radius-lg);
@@ -199,7 +199,7 @@
   background-color: var(--gray-50);
 }
 
-/* ===== FORM ===== */
+/* Form */
 .form-group {
   display: flex;
   flex-direction: column;
@@ -261,7 +261,7 @@ textarea.form-control {
   color: var(--gray-500);
 }
 
-/* ===== PASSWORD TOGGLE ===== */
+/* Password Toggle */
 .pwd-toggle {
   position: absolute;
   right: var(--space-3);
@@ -278,7 +278,7 @@ textarea.form-control {
 }
 .pwd-toggle:hover { color: var(--gray-600); }
 
-/* ===== MODAL ===== */
+/* Modal */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -352,7 +352,7 @@ textarea.form-control {
   gap: var(--space-3);
 }
 
-/* ===== TOAST ===== */
+/* Toast */
 .toast-container {
   position: fixed;
   bottom: var(--space-6);
@@ -401,7 +401,7 @@ textarea.form-control {
   to   { transform: translateX(0);    opacity: 1; }
 }
 
-/* ===== TAB FILTER ===== */
+/* Tab Filter */
 .tab-filter {
   display: flex;
   gap: var(--space-1);
@@ -430,7 +430,7 @@ textarea.form-control {
   box-shadow: var(--shadow-sm);
 }
 
-/* ===== SEARCH BAR ===== */
+/* Search Bar */
 .search-bar {
   display: flex;
   align-items: center;
@@ -457,7 +457,7 @@ textarea.form-control {
   flex-shrink: 0;
 }
 
-/* ===== EMPTY STATE ===== */
+/* Empty State */
 .empty-state {
   display: flex;
   flex-direction: column;

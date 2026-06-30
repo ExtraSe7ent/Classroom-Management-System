@@ -238,7 +238,7 @@
     noResultsRow.style.display = (matchCount === 0) ? '' : 'none';
   });
 
-  // ===== MODAL ACTIONS =====
+  // Quản lý ẩn hiện Modal
   function openAddAssignmentModal() {
     assignmentForm.reset();
     assignmentModal.classList.add('open');
@@ -270,20 +270,20 @@
     if (e.target === this) closeAddAssignmentModal();
   });
 
-  // ===== SUBMIT FORM (AJAX POST) =====
+  // Gửi biểu mẫu giao bài tập
   async function submitAssignmentForm() {
     const title = formTitle.value.trim();
     const clsName = formClass.value;
     const dueDateStr = formDueDate.value;
     const desc = formDescription.value.trim();
 
-    // 1. Check empty title or class name
+    // 1. Kiểm tra tiêu đề hoặc lớp bị bỏ trống
     if (!title || !clsName) {
       showToast('Vui lòng nhập đầy đủ các thông tin bắt buộc (*).', 'danger');
       return;
     }
 
-    // 2. Title length validation: [5; 255]
+    // 2. Kiểm tra độ dài tiêu đề từ 5 đến 255 ký tự
     if (title.length < 5 || title.length > 255) {
       showToast('Tiêu đề bài tập phải từ 5 đến 255 ký tự.', 'danger');
       formTitle.focus();
@@ -296,7 +296,7 @@
       return;
     }
 
-    // 4. Validate due_date is in the future (due_date > now rule)
+    // 4. Kiểm tra hạn nộp phải lớn hơn thời gian hiện tại
     const selectedDate = new Date(dueDateStr);
     const now = new Date();
     if (selectedDate <= now) {
@@ -305,13 +305,13 @@
       return;
     }
 
-    // 3. Validate file nếu có
+    // 3. Kiểm tra tệp tin nếu có
     if (formFile.files.length > 0) {
       const file = formFile.files[0];
       if (!validateFile(file, 10)) return;
     }
 
-    // AJAX POST với file upload
+    // Gửi yêu cầu AJAX để tải file lên
     const formData = new FormData();
     formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
     formData.append('title', title);

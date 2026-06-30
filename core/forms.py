@@ -44,7 +44,7 @@ def validate_upload_file(file):
 
 
 
-# --- FORM TÀI KHOẢN & XÁC THỰC ---
+# Form tài khoản & xác thực
 
 class UserProfileForm(forms.ModelForm):
     first_name = forms.CharField(max_length=150, required=False, label='Tên')
@@ -147,7 +147,7 @@ class ChangePasswordForm(forms.Form):
 
 
 
-# --- FORM QUẢN LÝ (GIÁO VIÊN) ---
+# Form quản lý (Giáo viên)
 
 class ClassForm(forms.ModelForm):
     class Meta:
@@ -245,7 +245,7 @@ class StudentEditForm(forms.Form):
 
 
 
-# --- FORM LỊCH HỌC & BÀI TẬP ---
+# Form lịch học & bài tập
 
 class ScheduleForm(forms.ModelForm):
     class_obj = forms.ModelChoiceField(queryset=Class.objects.all(), required=False)
@@ -335,7 +335,7 @@ class GradeSubmissionForm(forms.ModelForm):
 
 
 
-# --- FORM BÀI LÀM (HỌC SINH) ---
+# Form bài làm (Học sinh)
 
 class SubmissionForm(forms.ModelForm):
     class Meta:

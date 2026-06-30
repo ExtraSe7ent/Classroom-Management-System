@@ -222,7 +222,7 @@
     return rows.map(row => row.getAttribute('data-student-id'));
   }
 
-  // ===== MODAL =====
+  // Quản lý ẩn hiện Modal
   function openEnrollModal() {
     const enrolledIds = getEnrolledIds();
 
@@ -281,7 +281,7 @@
     });
   }
 
-  // ===== XẾP HỌC SINH (AJAX POST) =====
+  // Gửi biểu mẫu xếp học sinh
   async function submitEnrollForm() {
     const newSelected = checkboxes.filter(cb => cb.checked && !cb.disabled);
 
@@ -341,7 +341,7 @@
     }
   }
 
-  // ===== XÓA HỌC SINH KHỎI LỚP (AJAX POST) =====
+  // Gửi yêu cầu xóa học sinh khỏi lớp
   function triggerDropStudent(button) {
     const row = button.closest('tr');
     const studentDbId = row.getAttribute('data-student-db-id') || row.getAttribute('data-student-id');

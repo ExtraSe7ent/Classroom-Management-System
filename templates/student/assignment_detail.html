@@ -42,7 +42,7 @@
     font-weight: 600;
   }
 
-  /* Score Banner for Graded HW */
+  /* Banner điểm số */
   .score-banner {
     background: linear-gradient(135deg, var(--success) 0%, #16A34A 100%);
     color: #fff;
@@ -69,7 +69,7 @@
     flex-shrink: 0;
   }
 
-  /* Banner general states */
+  /* Trạng thái banner */
   .status-banner {
     padding: var(--space-4) var(--space-5);
     border-radius: var(--radius-lg);
@@ -93,7 +93,7 @@
     color: #991B1B;
   }
 
-  /* File item in submission details */
+  /* Hiển thị file đã nộp */
   .uploaded-file-card {
     background-color: var(--gray-50);
     border: 1px solid var(--gray-200);
@@ -315,7 +315,7 @@
 </div>
 
 <script>
-  // Format due date in information box
+  // Định dạng hạn nộp
   const textDueDate = document.getElementById('textDueDate');
   if (textDueDate) {
     const isoStr = textDueDate.getAttribute('data-due-iso');

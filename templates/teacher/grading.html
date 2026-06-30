@@ -7,7 +7,7 @@
 
 {% block extra_css %}
 <style>
-  /* Layout for grading screen */
+  /* Bố cục màn hình chấm bài */
   .grading-layout {
     display: grid;
     grid-template-columns: 320px 1fr;
@@ -15,7 +15,7 @@
     align-items: start;
   }
 
-  /* Left column: Student list */
+  /* Cột trái: Danh sách học sinh */
   .student-sidebar {
     display: flex;
     flex-direction: column;
@@ -57,7 +57,7 @@
     transition: color 0.2s;
   }
 
-  /* Right column: grading space */
+  /* Cột phải: Không gian chấm bài */
   .grading-panel {
     min-height: 500px;
   }
@@ -182,7 +182,7 @@
 </script>
 
 <script>
-  // Parse submissions list từ server
+  // Phân tích danh sách nộp bài từ máy chủ
   const submissions = JSON.parse(document.getElementById('submissionsDataJson').textContent);
   
   let activeIndex = 0;
@@ -193,7 +193,7 @@
   renderStudentList();
   selectStudent(0);
 
-  // ===== RENDER SIDEBAR =====
+  // Hiển thị danh sách học sinh
   function renderStudentList() {
     listContainer.innerHTML = '';
     submissions.forEach((sub, index) => {
@@ -225,7 +225,7 @@
     });
   }
 
-  // ===== SELECT STUDENT =====
+  // Chọn học sinh
   function selectStudent(index) {
     activeIndex = index;
     
@@ -357,7 +357,7 @@
     }
   }
 
-  // ===== SUBMIT GRADING FORM (AJAX POST) =====
+  // Gửi điểm số và phản hồi
   async function submitGradeForm(studentIndex) {
     const inputGrade = document.getElementById('inputGrade');
     const inputFeedback = document.getElementById('inputFeedback');
